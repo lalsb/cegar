@@ -24,16 +24,15 @@
 
 package com.app;
 
-import com.brunomnsilva.smartgraph.containers.SmartGraphDemoContainer;
 import com.brunomnsilva.smartgraph.graph.Graph;
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
-import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
@@ -98,8 +97,13 @@ public class Main extends Application {
 		flowPane.getChildren().addAll(neu, speichern, loeschen);
 		flowPane.setHgap(2);
 		
+		Label title = new Label("Einfacher gerichteter Graph:");
+		title.setPadding(new Insets(10, 10, 10, 10));
+		
+		
 		BorderPane root = new BorderPane();
 		root.setPadding(new Insets(10, 10, 10, 10));
+		root.setTop(title);
 		root.setCenter(graphView);
 		root.setBottom(flowPane);
 			
@@ -110,8 +114,7 @@ public class Main extends Application {
 		stage.show();
 
 		graphView.init();
-
-		//graphView.setAutomaticLayout(true);
+		graphView.setAutomaticLayout(true);
 
 	}
 }
