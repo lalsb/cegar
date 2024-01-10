@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.app;
+package com.app.model;
 
 import com.brunomnsilva.smartgraph.graph.Graph;
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
@@ -52,7 +52,7 @@ public class Main extends Application {
 	public void start(Stage ignored) {
 
 		Graph<String, String> g = new GraphEdgeList<>();
-
+		
 		g.insertVertex("A");
 		g.insertVertex("B");
 		g.insertVertex("C");
@@ -82,6 +82,7 @@ public class Main extends Application {
 		g.insertEdge("H", "L", "10");
 		g.insertEdge("H", "M", "11");
 		g.insertEdge("H", "N", "12");
+		g.insertEdge("M", "M", "Loop!");
 
 		g.insertEdge("A", "H", "0");
 
@@ -97,7 +98,7 @@ public class Main extends Application {
 		flowPane.getChildren().addAll(neu, speichern, loeschen);
 		flowPane.setHgap(2);
 		
-		Label title = new Label("Einfacher gerichteter Graph:");
+		Label title = new Label("Kripke Struct:");
 		title.setPadding(new Insets(10, 10, 10, 10));
 		
 		
