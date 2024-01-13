@@ -42,7 +42,7 @@ import javafx.stage.StageStyle;
  *
  * @author brunomnsilva
  */
-public class Main extends Application {
+public class GraphExample extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
