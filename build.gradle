@@ -16,16 +16,32 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
 
 	// https://central.sonatype.com/namespace/com.brunomnsilva
     implementation group: 'com.brunomnsilva', name: 'smartgraph', version: '1.0.0'
+    
+    // https://mvnrepository.com/artifact/org.graphstream/gs-ui
     implementation group: 'org.graphstream', name: 'gs-ui-javafx', version: '2.0'
+    
+    // https://mvnrepository.com/artifact/org.graphstream/gs-core
     implementation group: 'org.graphstream', name: 'gs-core', version: '2.0'
+    
+    // https://mvnrepository.com/artifact/org.graphstream/gs-algo
     implementation group: 'org.graphstream', name: 'gs-algo', version: '2.0'
     
      // https://mvnrepository.com/artifact/org.mariuszgromada.math/MathParser.org-mXparser  
     implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.2.1'
+    
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 run {
