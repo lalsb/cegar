@@ -22,7 +22,7 @@ test {
 
 dependencies {
 
-	// https://central.sonatype.com/namespace/com.brunomnsilva
+	// https://mvnrepository.com/artifact/com.brunomnsilva/smartgraph
     implementation group: 'com.brunomnsilva', name: 'smartgraph', version: '1.0.0'
     
     // https://mvnrepository.com/artifact/org.graphstream/gs-ui

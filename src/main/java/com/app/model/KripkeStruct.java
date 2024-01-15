@@ -2,15 +2,19 @@ package com.app.model;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 
 import com.app.model.exceptions.KripkeStructureInvalidException;
 
 /**
- * MultiGraph
- * A graph implementation that supports multiple edges between two nodes.
- * @author linus
+ * An implementation of a Kripke structures which is a directed graph whose vertices are labeled by a set of atomic propositions.
+ * 
+ * Requires the GraphStream graph implementation Multigraph which supports multiple edges between two nodes.
+ * 
+ * @author Linus Alsbach
  *
  */
 public class KripkeStruct extends MultiGraph{
@@ -33,31 +37,49 @@ public class KripkeStruct extends MultiGraph{
 
     public void validate() {
         if (this.getNodeCount() == 0) {
-            throw new KripkeStructureInvalidException("Set of states is empty.");
+            throw new KripkeStructureInvalidException("Set of states S is empty.");
         }
 
         if (initialStates.isEmpty()) {
-            throw new KripkeStructureInvalidException("Set of initial states is empty.");
+            throw new KripkeStructureInvalidException("Set of initial states I is empty.");
         }
 
-        validateTransitionsAreLeftTotal();
+        validateLeftTotalRelation();
+        
+        System.out.println("The Kripke structure satifies all formal properties.");
     }
 
     public Set<Node> getInitialStates() {
         return initialStates;
     }
-
-    public Set<Node> getAllSuccessorStates(Node state) {
-    	return null;
+    
+    public Set<Node> getStates() {
+    	
+    	Set<Node> nodeSet = new HashSet<>();   	
+		this.nodes().forEach(nodeSet::add);
+        return nodeSet; 
+    }
+    
+    public Set<Edge> getTransitions() {
+    	
+    	Set<Edge> edgeSet = new HashSet<>();   	
+		this.edges().forEach(edgeSet::add);
+        return edgeSet; 
+    }
+    
+    public Set<Node> getImage(Node node) {
+    	Set<Node> imageSet = new HashSet<>(); 
+    	node.neighborNodes().forEach(imageSet::add);
+    	return imageSet;
     }
 
-    private void validateTransitionsAreLeftTotal() {
-        // states.forEach(state -> {
-          //  if (transitions.getOrDefault(state, new HashSet<>()).isEmpty()) {
-            //    throw new KripkeStructureInvalidException(
-                      //  String.format("There is no transition starting from state %s.", state));
-         //   }
-       // });
+    private void validateLeftTotalRelation() {
+    	
+		for(Node node: this) {
+			if(node.leavingEdges().iterator().hasNext()) {
+				throw new KripkeStructureInvalidException(String.format("State %s does not satisfy the left total property.", node.getAttribute("ui.label")));
+				}
+		}
     }
 
 	

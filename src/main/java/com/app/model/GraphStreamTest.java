@@ -12,6 +12,9 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.*;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 
+import com.app.util.SmartGraphWrapper;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -72,9 +75,11 @@ public class GraphStreamTest extends Application{
 
 		g.addEdge("0", "A", "H");
 
+		/**
 		g.setAttribute("ui.quality");
 		g.nodes().forEach(node -> node.setAttribute("ui.label", node.getId()));
 		g.nodes().forEach(node -> node.setAttribute("ui.style", "text-alignment: at-right; text-size: 20; text-mode: normal;"));
+		
 		
 		FxViewer v = new FxViewer(g, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
 		
@@ -84,6 +89,10 @@ public class GraphStreamTest extends Application{
 		g.setAttribute("ui.antialias");
 		g.setAttribute("ui.quality");
 		g.setAttribute("ui.stylesheet", styleSheet);
+		**/
+		
+		
+		SmartGraphPanel<String, String> panel = SmartGraphWrapper.getInstance().generateJavaFXView(g); // Für Wrapper-Test!!
 		
 		Button nodes = new Button("Nodes");
 		nodes.setOnAction((event)-> {
@@ -102,6 +111,8 @@ public class GraphStreamTest extends Application{
 			;});
 		
 		Button loeschen = new Button("Löschen");	
+		
+		
 		FlowPane flowPane = new FlowPane();
 		flowPane.setPadding(new Insets(10, 0, 0, 0));
 		flowPane.getChildren().addAll(nodes, edges, loeschen);
@@ -121,5 +132,7 @@ public class GraphStreamTest extends Application{
 		stage.setTitle("JavaFXGraph Visualization");
 		stage.setScene(scene);
 		stage.show();
+		
+		panel.init(); // Für Wrapper-Test!!
 	}
 }
