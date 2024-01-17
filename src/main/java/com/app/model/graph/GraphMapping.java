@@ -1,4 +1,4 @@
-package com.app.model;
+package com.app.model.graph;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

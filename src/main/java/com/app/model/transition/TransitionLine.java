@@ -1,4 +1,4 @@
-package com.app.util;
+package com.app.model.transition;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,16 +9,12 @@ import java.util.regex.Pattern;
 
 import org.mariuszgromada.math.mxparser.Expression;
 
-import com.app.model.AtomicFormula;
-
 /**
- * Class to parse a single line of a Transition Block
- * Preconditions:
- * - String contains allowed symbols only
+ * Transition line implementation that parses one transition line.
  * @author linus
  *
  */
-public class TransitionParser {
+public class TransitionLine {
 
 	public static final String LITERALS = "[A-Za-z]+";
 	public static final String JUNCTIONS = "[&|]";
@@ -29,7 +25,7 @@ public class TransitionParser {
 	private String action;
 	private List<AtomicFormula> atoms;
 
-	public TransitionParser(String transition) {
+	public TransitionLine(String transition) {
 		this.transition = transition;
 		this.isValid();
 		this.parse();

@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.app.model.AtomicFormula;
+import com.app.model.transition.AtomicFormula;
+import com.app.model.transition.TransitionBlock;
+import com.app.model.transition.TransitionLine;
 
 class ParserTest {
 
@@ -23,7 +25,7 @@ class ParserTest {
         
         String transition = sb.toString();
 		
-		TransitionParser p = new TransitionParser(transition);
+		TransitionLine p = new TransitionLine(transition);
 		String action = p.actionSubstring();
 		
 		Assertions.assertEquals("0", action);
@@ -46,7 +48,7 @@ class ParserTest {
 
         String block = sb.toString();
         
-        BlockParser b = new BlockParser(block);
-        b.pass();
+        TransitionBlock b = new TransitionBlock(block, null);
+        b.transitions();
 	}
 }

@@ -1,4 +1,4 @@
-package com.app.model;
+package com.app.model.transition;
 
 import java.util.Set;
 

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.app.model;
+package com.app.model.graph;
 
 import com.brunomnsilva.smartgraph.graph.Graph;
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList;

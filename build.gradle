@@ -13,7 +13,7 @@ repositories {
 }
 
 javafx {
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.fxml']
 }
 
 test {
@@ -42,6 +42,12 @@ dependencies {
     
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    
+    // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher (Gradle java.lang.NoSuchMethodError problem)
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
+    // https://mvnrepository.com/artifact/io.github.mkpaz/atlantafx-base
+    implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
 }
 
 run {

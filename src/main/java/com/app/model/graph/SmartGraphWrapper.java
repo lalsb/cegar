@@ -1,4 +1,4 @@
-package com.app.util;
+package com.app.model.graph;
 
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;

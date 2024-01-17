@@ -1,4 +1,4 @@
-package com.app.model;
+package com.app.model.graph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,6 @@ import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.fx_viewer.*;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 
-import com.app.util.SmartGraphWrapper;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 import javafx.application.Application;
@@ -37,7 +36,7 @@ public class GraphStreamTest extends Application{
 	@Override
 	public void start(Stage ignored) {
 
-		Graph g = new MultiGraph("My Graph");
+		KripkeStruct g = new KripkeStruct("g");
 
 		System.setProperty("org.graphstream.ui", "javafx"); // set ui library
 		
@@ -92,7 +91,8 @@ public class GraphStreamTest extends Application{
 		**/
 		
 		
-		SmartGraphPanel<String, String> panel = SmartGraphWrapper.getInstance().generateJavaFXView(g); // Für Wrapper-Test!!
+		//SmartGraphPanel<String, String> panel = SmartGraphWrapper.getInstance().generateJavaFXView(g); // Für Wrapper-Test!!
+		SmartGraphPanel<String, String> panel = g.generateVisuals();
 		
 		Button nodes = new Button("Nodes");
 		nodes.setOnAction((event)-> {
@@ -108,17 +108,14 @@ public class GraphStreamTest extends Application{
 			List<Edge> edgeList = new ArrayList<>();
 			g.edges().forEach(edgeList::add);
 			System.out.println(edgeList);
-			;});
-		
-		Button loeschen = new Button("Löschen");	
-		
+			;});	
 		
 		FlowPane flowPane = new FlowPane();
 		flowPane.setPadding(new Insets(10, 0, 0, 0));
-		flowPane.getChildren().addAll(nodes, edges, loeschen);
+		flowPane.getChildren().addAll(nodes, edges);
 		flowPane.setHgap(2);
 
-		Label title = new Label("Kripke Struct:");
+		Label title = new Label("Kripke structure:");
 		title.setPadding(new Insets(10, 10, 10, 10));
 
 		BorderPane root = new BorderPane();
