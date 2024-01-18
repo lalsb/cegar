@@ -1,13 +1,20 @@
 package com.app.model.graph;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.mariuszgromada.math.mxparser.Argument;
+import org.mariuszgromada.math.mxparser.Expression;
 
 import com.app.model.exceptions.KripkeStructureInvalidException;
+import com.app.model.transition.TransitionBlock;
+import com.app.model.transition.TransitionLine;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 /**
@@ -25,6 +32,15 @@ public class KripkeStruct extends MultiGraph{
 	public KripkeStruct(String id) {
 		super(id);
 		initialStates = new HashSet<Node>();
+	}
+	
+	/**
+	 * Master method to generate a JavaFX viewable graph
+	 * @return
+	 */
+	public SmartGraphPanel<String, String> generateVisuals() {
+		return SmartGraphWrapper.getInstance().generateJavaFXView(this);
+		
 	}
 	
 	public boolean isValid() {
@@ -86,11 +102,6 @@ public class KripkeStruct extends MultiGraph{
     	node.neighborNodes().forEach(imageSet::add);
     	return imageSet;
     }
-    
-	public SmartGraphPanel<String, String> generateVisuals() {
-		return SmartGraphWrapper.getInstance().generateJavaFXView(this);
-		
-	}
 
     private void validateLeftTotalRelation() {
     	

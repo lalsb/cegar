@@ -1,15 +1,22 @@
 package com.app.ui;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.app.model.exceptions.VariableInvalidExpection;
+import com.app.model.transition.TransitionController;
 import com.app.model.transition.Variable;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 
 public class MainController {
@@ -74,14 +81,14 @@ public class MainController {
 	// Handle the "Add" button action
 	@FXML
 	private void handleAddVariable() {
-		
+
 		try {
 			validate();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
-		
+
 		// Get data from fields
 		String name = nameField.getText();
 		Double value = parseDouble(valueField.getText());
@@ -114,8 +121,29 @@ public class MainController {
 	// Handle the "Create Graph" button action
 	@FXML
 	private void handleCreateGraph() {
-		// Get the  variable
-		variableTableView.getItems();
+
+		// Get the  variables
+		List<Variable> varTable = variableTableView.getItems();
+
+		// Call TransitionController
+		//TransitionController.getInstance().createStruct(varTable);
+
+		Stage graphStage = new Stage();
+		graphStage.initModality(Modality.APPLICATION_MODAL);
+		graphStage.setTitle("Graph");
+		
+		try{
+			graphStage.getIcons().add(new Image("icon.png"));
+		} catch (Exception e){
+			System.out.println("Missing file \"icon.png\".");
+		} 
+		
+		// Set the scene with the SmartGraphPanel
+		graphStage.setScene(new Scene(new BorderPane(), 600, 400));
+
+		// Show the graph window
+		graphStage.show();
+
 	}
 
 	// Helper method to clear input fields
@@ -126,7 +154,7 @@ public class MainController {
 		maxValueField.clear();
 		transitionBlockField.clear();
 	}
-	
+
 	// Helper method to validate input data, handling possible exceptions
 	private void validate() {
 		for (TextField field : Arrays.asList(nameField, valueField, minValueField, maxValueField)) {

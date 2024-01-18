@@ -98,4 +98,10 @@ public class TransitionLine {
 			atoms.add(new AtomicFormula(e)); // Atomc formula object
 		}
 	}
+
+	public Variable[] tryTuple(Variable[] tuple) {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}
 }

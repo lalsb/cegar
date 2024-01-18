@@ -1,7 +1,10 @@
 package com.app.model.transition;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -21,8 +24,8 @@ public class TransitionBlock {
 	private Variable var;
 	private List<TransitionLine> transitions;
 
-	public TransitionBlock(String block, Variable var) {
-		this.block = block;	
+	public TransitionBlock(Variable var) {
+		this.block = var.getTransitionBlock();
 		this.var = var;
 		try {
             validate();
@@ -32,38 +35,42 @@ public class TransitionBlock {
         }
 	}
 	
-	public KripkeStruct model() {
-		
-		KripkeStruct m = new KripkeStruct("m");
-		
-		// Define initial states
-		Node i = m.addNode(String.format("%d", var.getValue()));
-		
-		// toBeTested list == initial states
-		
-			// take one tuple from toBeTested
-			// test one transitions until on condition is satisfied
-				// perform action -> new tuple
-				// if new tuple doesnt exist create new tuple and add it to toBeTested List
-				// transition between old and new tuple
-				// continue with other conditions
-				// if end of conidtions is reached, remove old tuple form ToBeTested List
-		
-		
-		
-		return null;
-		
+	/**
+	 * Returns corresponding variable
+	 * @return
+	 */
+	public Variable getVariable() {
+		return this.var;
 	}
-
+	
+	/**
+	 * Return list of transition lines
+	 * @return
+	 */
 	public List<TransitionLine> transitions(){
 		return transitions;
+	}
+	
+	/**
+	 * Checks each transition line for a certain combination of values
+	 * @param tuple
+	 * @return
+	 */
+	public Set<Variable[]> tryTuple(Variable[] tuple) {
+		
+		Set<Variable[]> newTuples = new HashSet<Variable[]>();
+		
+		for(TransitionLine transition: transitions) {
+			newTuples.add(transition.tryTuple(tuple));
+		}
+		
+		return newTuples;
 	}
 	
 	private void validate() {
 		if(!Pattern.compile(ALLOWED).matcher(block).find()) {
 			throw new TransitionBlockInvalidException("Invalid symbol in transition block.");
 		}
-		
 	}
 
 	private void parse() {
@@ -72,6 +79,8 @@ public class TransitionBlock {
 				.map(x -> x.trim())
 				.filter(x -> x.length() > 0)
 				.collect(Collectors.toList());
+		
+		this.transitions = new LinkedList<TransitionLine>();
 		
 		for(String line: lines) {
 			transitions.add(new TransitionLine(line));

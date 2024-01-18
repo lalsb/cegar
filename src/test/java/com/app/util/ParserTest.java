@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.app.model.transition.AtomicFormula;
 import com.app.model.transition.TransitionBlock;
 import com.app.model.transition.TransitionLine;
+import com.app.model.transition.Variable;
 
 class ParserTest {
 
@@ -31,7 +32,7 @@ class ParserTest {
 		Assertions.assertEquals("0", action);
 		
 		for(AtomicFormula a: p.atoms()) {
-			System.out.println(a);
+			//System.out.println(a);
 		}
 		
 		Assertions.assertTrue(p.atoms().toString().contains("y!=x"));
@@ -47,8 +48,8 @@ class ParserTest {
         sb.append("y=0&x=0:x+3");
 
         String block = sb.toString();
+        Variable var = new Variable("x", 0, 0, 0, block);
         
-        TransitionBlock b = new TransitionBlock(block, null);
-        b.transitions();
+        TransitionBlock b = new TransitionBlock(var);
 	}
 }

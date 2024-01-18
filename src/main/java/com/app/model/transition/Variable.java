@@ -59,9 +59,13 @@ public class Variable {
     public void setTransitionBlock(String transitionBlock) {
         this.transitionBlock = transitionBlock;
     }
-
+    
     @Override
     public String toString() {
+        return String.format("%d", value);
+    }
+
+    public String fullString() {
         return "Variable{" +
                 "name='" + name + '\'' +
                 ", value=" + value +
