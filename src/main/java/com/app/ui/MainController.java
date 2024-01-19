@@ -1,20 +1,30 @@
 package com.app.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.app.model.exceptions.VariableInvalidExpection;
 import com.app.model.transition.TransitionController;
 import com.app.model.transition.Variable;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -23,12 +33,13 @@ public class MainController {
 
 	@FXML
 	private TableView<Variable> variableTableView;
+	
+	private ObservableList<Variable> tempVariableList = FXCollections.observableArrayList();
+	
+	private List<Variable> variableList;
 
 	@FXML
 	private TableColumn<Variable, String> nameColumn;
-
-	@FXML
-	private TableColumn<Variable, Double> valueColumn;
 
 	@FXML
 	private TextField nameField;
@@ -51,13 +62,18 @@ public class MainController {
 
 	@FXML
 	private Button deleteButton;
+	
+	@FXML
+    private Button saveButton;
+
+    @FXML
+    private Button loadButton;
 
 	// Initialize method is called after the FXML file is loaded
 	@FXML
 	private void initialize() {
 		// Set up the columns in the TableView
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-		valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 
 		// Add a listener to the selected item property
 		variableTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Variable>() {
@@ -73,6 +89,13 @@ public class MainController {
 				}
 			}
 		});
+		
+		// Set up variable List
+		variableList = new LinkedList<Variable>();
+		
+		// Set the items in the TableView
+		variableTableView.setItems(tempVariableList);
+
 
 		// Set up selection model for TableView
 		variableTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -100,7 +123,7 @@ public class MainController {
 		Variable variable = new Variable(name, value, minValue, maxValue, transitionBlock);
 
 		// Add the variable to the TableView
-		variableTableView.getItems().add(variable);
+		tempVariableList.add(variable);
 
 		// Clear the input fields
 		clearFields();
@@ -114,19 +137,66 @@ public class MainController {
 
 		if (selectedVariable != null) {
 			// Remove the selected variable from the TableView
-			variableTableView.getItems().remove(selectedVariable);
+			tempVariableList.remove(selectedVariable);
 		}
 	}
+	
+	@FXML
+    private void handleSaveVariables() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Variables");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Serialized Files", "*.ser"));
+            File file = fileChooser.showSaveDialog(variableTableView.getScene().getWindow());
+
+            if (file != null) {
+                try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+                	
+                	// Save the variables from the observable list
+                	variableList.clear();
+                	variableList.addAll(tempVariableList);
+                    oos.writeObject(variableList);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();  // Handle or log the exception as needed
+        }
+	}
+	
+	@FXML
+    private void handleLoadVariables() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Variables");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Serialized Files", "*.ser"));
+            File file = fileChooser.showOpenDialog(variableTableView.getScene().getWindow());
+
+            if (file != null) {
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                    List<Variable> loadedVariables = (List<Variable>) ois.readObject();
+                    
+                    // Load all the variables into the observable list
+                    variableList.clear();
+                    variableList.addAll(loadedVariables);
+                    tempVariableList.setAll(loadedVariables);
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();  // Handle or log the exception as needed
+        }
+    }
+    
 
 	// Handle the "Create Graph" button action
 	@FXML
 	private void handleCreateGraph() {
 
-		// Get the  variables
-		List<Variable> varTable = variableTableView.getItems();
+		// Save the variables from the observable list
+		variableList.clear();
+		variableList.addAll(tempVariableList);
 
 		// Call TransitionController
-		//TransitionController.getInstance().createStruct(varTable);
+		SmartGraphPanel<String, String> panel = TransitionController.getInstance().createStruct(variableList).generateVisuals();
 
 		Stage graphStage = new Stage();
 		graphStage.initModality(Modality.APPLICATION_MODAL);
@@ -139,7 +209,7 @@ public class MainController {
 		} 
 		
 		// Set the scene with the SmartGraphPanel
-		graphStage.setScene(new Scene(new BorderPane(), 600, 400));
+		graphStage.setScene(new Scene(panel, 600, 400));
 
 		// Show the graph window
 		graphStage.show();

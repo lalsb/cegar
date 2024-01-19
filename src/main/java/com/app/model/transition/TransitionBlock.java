@@ -12,6 +12,7 @@ import org.graphstream.graph.Node;
 
 import com.app.model.exceptions.TransitionBlockInvalidException;
 import com.app.model.graph.KripkeStruct;
+import com.app.util.StringUtils;
 
 /**
  * Transition block implementation that splits transition blocks by line and passes them on.
@@ -58,15 +59,26 @@ public class TransitionBlock {
 	 */
 	public Set<Variable[]> tryTuple(Variable[] tuple) {
 		
-		Set<Variable[]> newTuples = new HashSet<Variable[]>();
+		Set<Variable[]> newTupleSet = new HashSet<Variable[]>();
 		
 		for(TransitionLine transition: transitions) {
-			newTuples.add(transition.tryTuple(tuple));
+			
+			Variable[] newTuple = transition.tryTuple(tuple);
+			
+			if(newTuple != null) {
+				newTupleSet.add(newTuple);
+				System.out.println("found tuple in bock: " + this.getVariable().getName() + ": "+ Arrays.deepToString(newTuple));
+			}
 		}
 		
-		return newTuples;
+		System.out.println("new tuple set from block " + this.getVariable().getName() + ": " + StringUtils.setToString(newTupleSet) + " returning");
+		return newTupleSet;
 	}
 	
+	/**
+	 * Checks if the entire transition block contains disallowed symbols in which case it
+	 * @throws TransitionBlockInvalidException
+	 */
 	private void validate() {
 		if(!Pattern.compile(ALLOWED).matcher(block).find()) {
 			throw new TransitionBlockInvalidException("Invalid symbol in transition block.");
@@ -83,7 +95,7 @@ public class TransitionBlock {
 		this.transitions = new LinkedList<TransitionLine>();
 		
 		for(String line: lines) {
-			transitions.add(new TransitionLine(line));
+			transitions.add(new TransitionLine(line, var));
 		}
 	}
 }

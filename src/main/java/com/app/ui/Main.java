@@ -1,5 +1,7 @@
 package com.app.ui;
 
+import org.mariuszgromada.math.mxparser.License;
+
 import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+    	
+    	// MX Parser
+    	License.iConfirmNonCommercialUse("Linus Alsbach");
     	
     	// Load CSS Stylesheet
     	Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());

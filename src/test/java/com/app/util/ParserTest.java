@@ -26,7 +26,7 @@ class ParserTest {
         
         String transition = sb.toString();
 		
-		TransitionLine p = new TransitionLine(transition);
+		TransitionLine p = new TransitionLine(transition, new Variable("", 0, 0, 0, ""));
 		String action = p.actionSubstring();
 		
 		Assertions.assertEquals("0", action);

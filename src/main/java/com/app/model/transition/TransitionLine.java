@@ -1,5 +1,6 @@
 package com.app.model.transition;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
 /**
@@ -21,12 +23,14 @@ public class TransitionLine {
 	public static final String TRANSITION_SEPERATOR = ":";
 	
 	private String transition;
+	private Variable var;
 	private String conditions;
 	private String action;
 	private List<AtomicFormula> atoms;
 
-	public TransitionLine(String transition) {
+	public TransitionLine(String transition, Variable var) {
 		this.transition = transition;
+		this.var = var;
 		this.isValid();
 		this.parse();
 	}
@@ -99,9 +103,54 @@ public class TransitionLine {
 		}
 	}
 
+	/**
+	 * Checks if the condition string is true for the given array variable values
+	 * @param tuple array of type Variable[] containing variables with corresponding values
+	 * @return new tuple if there is one or null if there is none
+	 */
 	public Variable[] tryTuple(Variable[] tuple) {
-		return null;
-		// TODO Auto-generated method stub
 		
+		Variable[] tupleCopy = cleanCopy(tuple);
+		
+		Argument[] arguments = new Argument[tupleCopy.length];
+		
+		for(int i = 0; i < tupleCopy.length; i++) {
+			arguments[i] = new Argument(tupleCopy[i].getName());
+			arguments[i].setArgumentValue(tupleCopy[i].getValue());
+		}
+				
+		Expression c = new Expression(conditions,arguments);
+		
+		// Check if condition is true
+		if(c.calculate() == (1.0)) {
+			
+			// Calculate new value for var
+			Expression a = new Expression(action,arguments);
+			double newValue = a.calculate();
+			
+			// Check if new value is in fact new and in bounds
+			for(Variable var: tupleCopy) {
+				if(var.getName().equals(this.var.getName()) && var.isInBounds(newValue) && newValue != var.getValue()) {
+					var.setValue(newValue);
+					// if so, return new tuple
+					return tupleCopy;
+				}
+			}
+			
+		} 
+		
+		// Conditions false or new value not new or not in bounds
+		return null;
+	}
+	
+public Variable[] cleanCopy(Variable[] tuple) {
+		
+		Variable[] copy = new Variable[tuple.length];
+		
+		for(int i = 0; i < tuple.length; i++) {
+			copy[i] = new Variable(tuple[i].getName(), tuple[i].getValue(), tuple[i].getMinValue(), tuple[i].getMaxValue(), tuple[i].getTransitionBlock());
+		}
+		
+		return copy;	
 	}
 }
