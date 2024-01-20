@@ -1,4 +1,4 @@
-package com.app.model.transition;
+package com.app.model.framework;
 
 import java.io.Serializable;
 
@@ -8,15 +8,15 @@ import javafx.beans.property.SimpleDoubleProperty;
 public class Variable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private String name;
-	private double value; // Use DoubleProperty for binding
+	private String id;
+	private double initValue; // Use DoubleProperty for binding
 	private double minValue;
 	private double maxValue;
 	private String transitionBlock;
 
 	public Variable(String name, double value, double minValue, double maxValue, String transitionBlock) {
-		this.name = name;
-		this.value = value;
+		this.id = name;
+		this.initValue = value;
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 		this.transitionBlock = transitionBlock;
@@ -24,20 +24,16 @@ public class Variable implements Serializable {
 
 	// Getters and setters for the attributes
 
-	public String getName() {
-		return name;
-	}
-
-	public double valueProperty() {
-		return value;
+	public String getId() {
+		return id;
 	}
 
 	public double getValue() {
-		return value;
+		return initValue;
 	}
 
 	public void setValue(double value) {
-		this.value = value;
+		this.initValue = value;
 	}
 
 	public double getMinValue() {
@@ -66,13 +62,13 @@ public class Variable implements Serializable {
 
 	@Override
 	public String toString() {
-		return "" + value;
+		return "" + initValue;
 	}
 
 	public String fullString() {
 		return "Variable{" +
-				"name='" + name + '\'' +
-				", value=" + value +
+				"name='" + id + '\'' +
+				", value=" + initValue +
 				", minValue=" + minValue +
 				", maxValue=" + maxValue +
 				", transitionBlock=" +  transitionBlock +

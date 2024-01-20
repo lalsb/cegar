@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.app.model.transition.AtomicFormula;
-import com.app.model.transition.TransitionBlock;
-import com.app.model.transition.TransitionLine;
-import com.app.model.transition.Variable;
+import com.app.model.framework.AtomicFormula;
+import com.app.model.framework.TransitionBlock;
+import com.app.model.framework.TransitionLine;
+import com.app.model.framework.Variable;
 
 class ParserTest {
 

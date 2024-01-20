@@ -1,20 +1,15 @@
 package com.app.model.graph;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.mariuszgromada.math.mxparser.Argument;
-import org.mariuszgromada.math.mxparser.Expression;
 
 import com.app.model.exceptions.KripkeStructureInvalidException;
-import com.app.model.transition.TransitionBlock;
-import com.app.model.transition.TransitionLine;
+import com.app.model.framework.Variable;
+
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 /**
@@ -27,22 +22,42 @@ import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
  */
 public class KripkeStruct extends MultiGraph{
 	
-	private Set<Node> initialStates;
+	/**
+	 * Map of variable id and variable
+	 */
+	private Map<String, Variable> vars;
 
-	public KripkeStruct(String id) {
+	public KripkeStruct(String id, Variable ...variables) {
 		super(id);
-		initialStates = new HashSet<Node>();
+		
+		// Fill map
+		vars = new HashMap<String, Variable>();	
+		Arrays.asList(variables).forEach(x -> {vars.put(x.getId(), x);});
 	}
 	
 	/**
-	 * Master method to generate a JavaFX viewable graph
+	 * Generate a JavaFX viewable graph using SmartGraphWrapper.
 	 * @return
 	 */
 	public SmartGraphPanel<String, String> generateVisuals() {
 		return SmartGraphWrapper.getInstance().generateJavaFXView(this);
 		
 	}
+
+	/**
+	 * For a certain value check if a value is allowed or disallowed.
+	 * @param variable Variable
+	 * @param value	double
+	 * @return 
+	 */
+	public boolean isInBounds(String variable, double value) {
+		return vars.get(variable).isInBounds(value);
+	}
 	
+	/**
+	 * Validation method
+	 * @return
+	 */
 	public boolean isValid() {
         try {
             validate();
@@ -53,56 +68,24 @@ public class KripkeStruct extends MultiGraph{
         return true;
     }
 
+	/**
+	 * Validation method
+	 * @return
+	 */
     public void validate() {
         if (this.getNodeCount() == 0) {
             throw new KripkeStructureInvalidException("Set of states S is empty.");
         }
-
-        if (initialStates.isEmpty()) {
-            throw new KripkeStructureInvalidException("Set of initial states I is empty.");
-        }
-
+        
         validateLeftTotalRelation();
         
         System.out.println("The Kripke structure satifies all formal properties.");
     }
-    
-    public void addInitialStates(Node ...nodes) {
-    	for(Node node: nodes) {
-    		initialStates.add(node);
-    		}
-    	}
-    
-    public void removeInitialStates(Node ...nodes) {
-    	for(Node node: nodes) {
-    		initialStates.remove(node);
-    		}
-    	}
 
-    public Set<Node> getInitialStates() {
-        return initialStates;
-    }
-    
-    public Set<Node> getStates() {
-    	
-    	Set<Node> nodeSet = new HashSet<>();   	
-		this.nodes().forEach(nodeSet::add);
-        return nodeSet; 
-    }
-    
-    public Set<Edge> getTransitions() {
-    	
-    	Set<Edge> edgeSet = new HashSet<>();   	
-		this.edges().forEach(edgeSet::add);
-        return edgeSet; 
-    }
-    
-    public Set<Node> getImage(Node node) {
-    	Set<Node> imageSet = new HashSet<>(); 
-    	node.neighborNodes().forEach(imageSet::add);
-    	return imageSet;
-    }
-
+    /**
+	 * Validation method
+	 * @return
+	 */
     private void validateLeftTotalRelation() {
     	
 		for(Node node: this) {

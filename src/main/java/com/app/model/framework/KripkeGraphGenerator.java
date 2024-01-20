@@ -1,56 +1,120 @@
-package com.app.model.transition;
+package com.app.model.framework;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
-import org.graphstream.graph.Node;
+import org.graphstream.algorithm.generator.Generator;
+import org.graphstream.stream.SourceBase;
 
-import com.app.model.graph.KripkeStruct;
-import com.app.util.StringUtils;
+import com.app.model.graph.ConsoleSink;
+import com.app.model.graph.State;
 
-public class TransitionController{
+public class KripkeGraphGenerator extends SourceBase
+implements Generator {
 
-	private static TransitionController INSTANCE;
+	int nodeID = 0;
+	int edgeID = 0;
 
-	private Set<TransitionBlock> transitionblocks;
-	private Set<Variable[]> tupleSet;
+	/**
+	 * Map of variable id and variable e.g. look-up-table for variables by id
+	 */
+	public Map<String, Variable> vars;
+	/**
+	 * Map of variable ids as keys with corresponding values e.g. a 'state'
+	 */
+	State current;
 
-	private TransitionController() {        
+	Iterator<State> i;
+
+	Set<State> audited;
+	Set<State> unaudited;
+	Set<State> found;
+	Set<State> added;
+
+	public KripkeGraphGenerator(Map<String, Variable> vars) {
+		super();
+		this.vars = vars;
+		this.addSink(new ConsoleSink());
+
+		audited = new HashSet<State>();
+		unaudited = new HashSet<State>();
+		found = new HashSet<State>();
+		added = new HashSet<State>();
 	}
 
-	public static TransitionController getInstance() {
-		if(INSTANCE == null) {
-			INSTANCE = new TransitionController();
-		}
+	public void begin() {
 
-		return INSTANCE;
+		current = new State(Integer.toString(nodeID)); // Create state
+		vars.forEach((k,v) -> current.put(k, v.getValue())); // Add initial values
+		unaudited.add(current);
 	}
 
+	public boolean nextEvents() {
 
-	public KripkeStruct createStruct(List<Variable> varTable) {
-
-		// Kripke structure
-		KripkeStruct struct = new KripkeStruct("");
-
-		// Set of transition blocks
-		transitionblocks = new HashSet<TransitionBlock>();
-
-		for(Variable var: varTable) {
-			System.out.println(var.fullString());
-			transitionblocks.add(new TransitionBlock(var));	 
+		i = unaudited.iterator();
+		
+		if(!i.hasNext()) {
+			return false;
 		}
 
-		// Set of states
-		tupleSet = new HashSet<Variable[]>();
+		current = i.next();
+		addNode(current); // Send node to graph
 
-		// Array of variables
+		for(Variable var: vars.values()) {
+			for(State s : new TransitionBlock(var).audit(current)) {
+				found.add(s);
+				addEdge(current, s);
+			}
+		}
+		
+		audited.add(current); // Current audit complete
+		found.removeAll(audited);
+		unaudited.addAll(found);
+
+		return true;
+	}
+
+	public void end() {
+		// Nothing to do
+	}
+
+	/**
+	 * Sends a node to the generator sink (graph)
+	 * @param state
+	 */
+	protected void addNode(State state) {
+		sendNodeAdded(sourceId, Integer.toString(nodeID));
+
+		for (var entry : state.entrySet()) {
+			this.sendNodeAttributeAdded(sourceId, Integer.toString(nodeID), entry.getKey(), entry.getValue());
+		}
+
+		nodeID++;
+	}
+
+	
+	/**
+	 * Sends an edge to the generator sink (graph)
+	 * @param from
+	 * @param to
+	 */
+	private void addEdge(State from, State to) {
+		this.sendEdgeAdded(sourceId,  Integer.toString(edgeID), from.id(), to.id(), true);
+		
+		edgeID++;
+
+	}
+
+}
+/**
+//Array of variables
 		Variable[] tuple = varTable.toArray(new Variable[0]);
 
 		// Add initial state to stack of states
 		tupleSet.add(tuple);
-		
+
 		Set<Variable[]> testedTupleSet = new HashSet<Variable[]>();
 
 		// Build states and edges
@@ -100,7 +164,7 @@ public class TransitionController{
 						contains = true;
 					}	
 				}
-				
+
 				for(Variable[] onetestedTuple : testedTupleSet) {
 					if(Arrays.deepToString(oneNewTuple).equals(Arrays.deepToString(onetestedTuple))){
 						contains = true;
@@ -113,14 +177,14 @@ public class TransitionController{
 					tupleSet.add(oneNewTuple);
 				}
 			}
-			
+
 			Variable[] toRemove = null;
 			for(Variable[] oneOldTuple : tupleSet) {
 				if(Arrays.deepToString(oneOldTuple).equals(Arrays.deepToString(currentTuple))){
 					toRemove = oneOldTuple;
 				}
 			}
-			
+
 			if(toRemove != null) {
 				tupleSet.remove(toRemove);
 			}
@@ -133,16 +197,4 @@ public class TransitionController{
 
 		return struct;
 	}
-
-	public Variable[] cleanCopy(Variable[] tuple) {
-
-		Variable[] copy = new Variable[tuple.length];
-
-		for(int i = 0; i < tuple.length; i++) {
-			copy[i] = new Variable(tuple[i].getName(), tuple[i].getValue(), tuple[i].getMinValue(), tuple[i].getMaxValue(), tuple[i].getTransitionBlock());
-		}
-
-		return copy;	
-	}
-
-}
+ **/

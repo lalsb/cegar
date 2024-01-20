@@ -70,9 +70,6 @@ class KripkeStructTest {
 		// Transition (Loop)
 		m.addEdge("Loop!", "M", "M");
 
-		// Initial States
-		m.addInitialStates(m.getNode("A"));
-
 	}
 
 	@Test
@@ -80,7 +77,5 @@ class KripkeStructTest {
 		
 		// Assertions
 		Assertions.assertTrue(m.isValid());
-		Assertions.assertEquals(m.getImage(m.getNode("A")).size(), 7);
-		Assertions.assertTrue(m.getImage(m.getNode("A")).contains(m.getNode("B")));
 	}
 }

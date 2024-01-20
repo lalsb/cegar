@@ -1,4 +1,5 @@
-package com.app.model.transition;
+package com.app.model.framework;
+
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.graphstream.graph.Node;
 
 import com.app.model.exceptions.TransitionBlockInvalidException;
 import com.app.model.graph.KripkeStruct;
+import com.app.model.graph.State;
 import com.app.util.StringUtils;
 
 /**
@@ -53,29 +55,6 @@ public class TransitionBlock {
 	}
 	
 	/**
-	 * Checks each transition line for a certain combination of values
-	 * @param tuple
-	 * @return
-	 */
-	public Set<Variable[]> tryTuple(Variable[] tuple) {
-		
-		Set<Variable[]> newTupleSet = new HashSet<Variable[]>();
-		
-		for(TransitionLine transition: transitions) {
-			
-			Variable[] newTuple = transition.tryTuple(tuple);
-			
-			if(newTuple != null) {
-				newTupleSet.add(newTuple);
-				System.out.println("found tuple in bock: " + this.getVariable().getName() + ": "+ Arrays.deepToString(newTuple));
-			}
-		}
-		
-		System.out.println("new tuple set from block " + this.getVariable().getName() + ": " + StringUtils.setToString(newTupleSet) + " returning");
-		return newTupleSet;
-	}
-	
-	/**
 	 * Checks if the entire transition block contains disallowed symbols in which case it
 	 * @throws TransitionBlockInvalidException
 	 */
@@ -97,5 +76,24 @@ public class TransitionBlock {
 		for(String line: lines) {
 			transitions.add(new TransitionLine(line, var));
 		}
+	}
+
+	/**
+	 * Audits a transition block (e.g. all transition lines)
+	 * @param current
+	 * @return found states
+	 */
+	public Set<State> audit(State current) {
+		
+		Set<State> found = new HashSet<State>();
+		
+		for(TransitionLine transition: transitions) {
+			State s = transition.audit(current);
+			
+			if(s != null) {
+				found.add(s);
+			}
+		}
+		return found;
 	}
 }

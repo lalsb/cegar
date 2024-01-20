@@ -1,14 +1,48 @@
 package com.app.model.graph;
 
-import org.graphstream.graph.implementations.AbstractGraph;
-import org.graphstream.graph.implementations.MultiNode;
+import java.util.HashMap;
 
-public class State extends MultiNode {
+import org.mariuszgromada.math.mxparser.Argument;
 
-	public State(AbstractGraph graph, String id) {
-		super(graph, id);
+@SuppressWarnings("serial")
+public class State extends HashMap<String, Double> {
+
+	private String id;
+	
+	public State() {
+		this("");
 	}
 	
+	public State(String id) {
+	super();
+	this.id = id;
+	}
 	
-
+	public String id() {
+		return id;
+	}
+	
+	public boolean equals(State other) {
+		return super.equals(other);
+	}
+	
+	/**
+	 * Generates an array of arguments as required for expression checking by mXParser.
+	 * @return
+	 */
+	public Argument[] genereateArguments() {
+		
+		Argument[] arguments = new Argument[this.size()];
+		
+		int i = 0;
+		for(var entry: this.entrySet()) {
+			arguments[i] = new Argument(entry.getKey());
+			arguments[i].setArgumentValue(entry.getValue());
+			i++;
+		}
+		
+		return arguments;
+		
+	}
+	
 }

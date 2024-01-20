@@ -11,8 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.app.model.exceptions.VariableInvalidExpection;
-import com.app.model.transition.TransitionController;
-import com.app.model.transition.Variable;
+import com.app.model.framework.ModelManager;
+import com.app.model.framework.Variable;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 import javafx.beans.value.ChangeListener;
@@ -30,6 +30,8 @@ import javafx.stage.Stage;
 
 
 public class MainController {
+	
+	private ModelManager manager;
 
 	@FXML
 	private TableView<Variable> variableTableView;
@@ -72,6 +74,9 @@ public class MainController {
 	// Initialize method is called after the FXML file is loaded
 	@FXML
 	private void initialize() {
+		
+		// Init ModelManager()
+		manager = new ModelManager("m");
 		// Set up the columns in the TableView
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -81,7 +86,7 @@ public class MainController {
 			public void changed(ObservableValue<? extends Variable> observable, Variable oldValue, Variable newValue) {
 				if (newValue != null) {
 					// Fill the fields with the values from the selected item
-					nameField.setText(newValue.getName());
+					nameField.setText(newValue.getId());
 					valueField.setText(String.valueOf(newValue.getValue()));
 					minValueField.setText(String.valueOf(newValue.getMinValue()));
 					maxValueField.setText(String.valueOf(newValue.getMaxValue()));
@@ -189,14 +194,15 @@ public class MainController {
 
 	// Handle the "Create Graph" button action
 	@FXML
-	private void handleCreateGraph() {
+	private void handleGenerateGraph() {
 
 		// Save the variables from the observable list
 		variableList.clear();
 		variableList.addAll(tempVariableList);
 
-		// Call TransitionController
-		SmartGraphPanel<String, String> panel = TransitionController.getInstance().createStruct(variableList).generateVisuals();
+		// Call ModelManager
+		manager.load(variableList.toArray(new Variable[0]));
+		SmartGraphPanel<String, String> panel = manager.generateGraph().generateVisuals();
 
 		Stage graphStage = new Stage();
 		graphStage.initModality(Modality.APPLICATION_MODAL);

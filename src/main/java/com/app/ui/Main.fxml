@@ -87,7 +87,7 @@
 				prefWidth="90.0" text="Load" />
 			<Button onAction="#handleSaveVariables" prefHeight="25.0"
 				prefWidth="93.0" text="Save" />
-			<Button onAction="#handleCreateGraph" prefHeight="25.0"
+			<Button onAction="#handleGenerateGraph" prefHeight="25.0"
 				prefWidth="184.0" text="Create Graph" />
 		</children>
 	</FlowPane>
