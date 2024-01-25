@@ -62,11 +62,8 @@ public class Variable implements Serializable {
 
 	@Override
 	public String toString() {
-		return "" + initValue;
-	}
-
-	public String fullString() {
-		return "Variable{" +
+		return "\n" +
+				"Variable{" +
 				"name='" + id + '\'' +
 				", value=" + initValue +
 				", minValue=" + minValue +

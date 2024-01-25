@@ -3,31 +3,35 @@ package com.app.model.framework;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import org.graphstream.stream.Sink;
-import org.graphstream.stream.SinkAdapter;
-
-import com.app.model.graph.ConsoleSink;
 import com.app.model.graph.KripkeStruct;
 
 public class ModelManager{
 
-	private Set<TransitionBlock> transitionblocks;
 	/**
 	 * Map of variable id and variable
 	 */
 	public Map<String, Variable> vars;
+	/**
+	 * Map of variable id and transition block
+	 */
+	public Map<String, TransitionBlock> transitionBlocks;
 	public String id;
+	
+	/**
+	 * Iteration limit for all the generators
+	 */
+	public static final int ITERATION_LMIT = 1000;
 
 	public ModelManager(String id) {
 		// Init
 		this.id = id;
 		vars = new HashMap<String, Variable>();	
+		transitionBlocks = new HashMap<String, TransitionBlock>();
 	}
 
 	/**
-	 * Reveive all the user input and load it into local variables.
+	 * Receive all the user input and load it into local variables.
 	 * @param id
 	 * @param variables
 	 */
@@ -36,11 +40,13 @@ public class ModelManager{
 		Arrays.asList(variables).forEach(x -> {
 
 			vars.put(x.getId(), x); // fill map
-			transitionblocks.add(new TransitionBlock(x)); // fill set of transition blocks
-
+			transitionBlocks.put(x.getId(), new TransitionBlock(x));
 		});
 	}
-
+	
+	public Map<String, TransitionBlock> getTransitionBlocks(){
+		return transitionBlocks;
+	}
 
 	/**
 	 * Generates a Graph corresponding to the model.
@@ -53,24 +59,37 @@ public class ModelManager{
 		KripkeGraphGenerator gen = new KripkeGraphGenerator(vars);
 
 		gen.addSink(graph);
-		graph.addSink(new ConsoleSink()); // Print to Console
+		//graph.addSink(new ConsoleSink(graph)); // Print to Console
 
+		int i = 0;
 		gen.begin();
-		while(gen.nextEvents()) {} // returns if finished
+		while(gen.nextEvents() && i < ITERATION_LMIT) {i++;} // returns false if finished
 		gen.end();
 
 		return graph;
-
 	}
+	
+	/**
+	 * Generates a Graph visualizing the initial abstraction
+	 * @return
+	 */
+	public KripkeStruct generateInitialAbstraction() {
 
-	public Variable[] cleanCopy(Variable[] tuple) {
+		// Init graph and graph generator 
+		KripkeStruct graph = new KripkeStruct(id);
+		InitialAbstractionGenerator gen = new InitialAbstractionGenerator(vars, transitionBlocks);
 
-		Variable[] copy = new Variable[tuple.length];
+		gen.addSink(graph);
+		//graph.addSink(new ConsoleSink(graph)); // Print to Console
 
-		for(int i = 0; i < tuple.length; i++) {
-			copy[i] = new Variable(tuple[i].getId(), tuple[i].getValue(), tuple[i].getMinValue(), tuple[i].getMaxValue(), tuple[i].getTransitionBlock());
-		}
+		int i = 0;
+		gen.begin();
+		while(gen.nextEvents() && i < ITERATION_LMIT) {i++;} // returns false if finished
+		gen.end();
 
-		return copy;	
+		return graph;
 	}
+	
+	
+	
 }

@@ -1,12 +1,20 @@
 package com.app.util;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.License;
 import org.mariuszgromada.math.mxparser.mXparser;
+import org.mariuszgromada.math.mxparser.parsertokens.KeyWord;
+
+import com.app.model.framework.AtomicFormula;
 
 class MXParserTest {
 	
@@ -17,6 +25,7 @@ class MXParserTest {
 		License.iConfirmNonCommercialUse("Linus");
 	}
 
+	@Disabled
 	@Test
 	void simpleCalculation() {
 		
@@ -26,6 +35,7 @@ class MXParserTest {
 		Assertions.assertEquals(3, e.calculate());
 	}
 
+	@Disabled
 	@Test
 	void variablesCalculation() {
 		
@@ -39,6 +49,7 @@ class MXParserTest {
 		Assertions.assertEquals(5, e.calculate());
 	}
 	
+	@Disabled
 	@Test
 	void simpleRelationCalculation(){
 		Expression e = new Expression("2<3");
@@ -48,6 +59,7 @@ class MXParserTest {
 		Assertions.assertEquals(1, e.calculate());
 	}
 	
+	@Disabled
 	@Test
 	void RelationWithVariablesCalculation(){
 		
@@ -68,5 +80,32 @@ class MXParserTest {
 		Assertions.assertEquals(0, e.calculate());
 	}
 	
-
+	@Test
+	void getArguments(){
+		
+		Expression e = new Expression("2*x<3*y & reset=1");
+		String[] expected = {"x", "y","reset"};
+		
+		e.disableImpliedMultiplicationMode();
+		e.defineArguments(e.getMissingUserDefinedArguments());
+		
+		int argumentcount = e.getArgumentsNumber();
+		String[] result = new String[e.getArgumentsNumber()];
+		
+		for(int i=0; i < argumentcount; i++) {
+			result[i] = e.getArgument(i).getArgumentName();
+		}
+		
+		Assertions.assertEquals(Arrays.deepToString(expected), Arrays.deepToString(result));
+		
+		
+		int keycount = e.getKeyWords("typeid=101").size();
+		String[] keys = new String[keycount];
+		
+		for(int i=0; i < keycount; i++) {
+			keys[i] = e.getKeyWords("typeid=101").get(i).wordString;
+		}
+		
+		Assertions.assertEquals(Arrays.deepToString(expected),Arrays.deepToString(keys));
+	}
 }

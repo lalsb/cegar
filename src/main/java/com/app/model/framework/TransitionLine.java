@@ -98,11 +98,9 @@ public class TransitionLine {
 			}
 
 			Expression e = new Expression(atom);
-			String[] arrayOfString = vars.toArray(new String[0]); 
-			e.defineArguments(arrayOfString);
-
+			e.defineArguments(e.getMissingUserDefinedArguments());
 			atoms.add(new AtomicFormula(e)); // Atomc formula object
-		}
+			}
 	}
 
 	/**
@@ -112,8 +110,9 @@ public class TransitionLine {
 	 */
 	public State audit(State current) {
 
-		// Create new state
+		// Create new state and copy attributes
 		State s = new State();
+		current.forEach((k,v) -> s.put(k,v));
 
 		// Calculate condition with mXParser
 		Argument[] arguments = current.genereateArguments();

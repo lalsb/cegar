@@ -36,7 +36,8 @@ implements Generator {
 	public KripkeGraphGenerator(Map<String, Variable> vars) {
 		super();
 		this.vars = vars;
-		this.addSink(new ConsoleSink());
+		// this.addSink(new ConsoleSink());
+		System.out.println("KripkeGraphGenerator:" + vars);
 
 		audited = new HashSet<State>();
 		unaudited = new HashSet<State>();
@@ -45,33 +46,48 @@ implements Generator {
 	}
 
 	public void begin() {
-
 		current = new State(Integer.toString(nodeID)); // Create state
 		vars.forEach((k,v) -> current.put(k, v.getValue())); // Add initial values
+		System.out.println("Begin = " + current.toString());
 		unaudited.add(current);
 	}
 
 	public boolean nextEvents() {
 
 		i = unaudited.iterator();
-		
+
 		if(!i.hasNext()) {
 			return false;
 		}
 
 		current = i.next();
+		System.out.println("Current = " + current.toString());
 		addNode(current); // Send node to graph
 
 		for(Variable var: vars.values()) {
 			for(State s : new TransitionBlock(var).audit(current)) {
-				found.add(s);
-				addEdge(current, s);
+
+				// State has to be created again so the node count stays intact 
+				State s2 = new State(Integer.toString(nodeID));
+				s.forEach((k,v) -> s2.put(k,v));		
+				found.add(s2);
+				System.out.println("---------------->Found: " + s2);
+				addNode(s2);
+				System.out.println("Adding Edge from " + current.id() + " to " +  s2.id());
+				addEdge(current, s2);
 			}
 		}
-		
+
 		audited.add(current); // Current audit complete
+		unaudited.remove(current);
 		found.removeAll(audited);
 		unaudited.addAll(found);
+
+		System.out.println("********************************");
+		System.out.println("Audited: " + audited);
+		System.out.println("Found: " + found);
+		System.out.println("Unaudited: " + unaudited);
+		System.out.println("********************************");
 
 		return true;
 	}
@@ -85,26 +101,40 @@ implements Generator {
 	 * @param state
 	 */
 	protected void addNode(State state) {
-		sendNodeAdded(sourceId, Integer.toString(nodeID));
 
-		for (var entry : state.entrySet()) {
-			this.sendNodeAttributeAdded(sourceId, Integer.toString(nodeID), entry.getKey(), entry.getValue());
+		if(!added.contains(state)) {
+			//state.setId(Integer.toString(nodeID)); // set ID because nodes from founds have id: ""
+			sendNodeAdded(sourceId, state.id());
+
+			for (var entry : state.entrySet()) {
+				this.sendNodeAttributeAdded(sourceId, state.id(), entry.getKey(), entry.getValue());
+			}
+
+			nodeID++;
+			added.add(state);
+			System.out.println("Adding node " + state.toString());
 		}
-
-		nodeID++;
 	}
 
-	
+
 	/**
 	 * Sends an edge to the generator sink (graph)
 	 * @param from
 	 * @param to
 	 */
 	private void addEdge(State from, State to) {
-		this.sendEdgeAdded(sourceId,  Integer.toString(edgeID), from.id(), to.id(), true);
-		
-		edgeID++;
 
+		for(State s: added) {
+			if(s.equals(to)) {
+				to = s;
+			}
+		}
+		
+		if(added.contains(from) && added.contains(to) && !from.equals(to)) {
+			this.sendEdgeAdded(sourceId, Integer.toString(edgeID), from.id(), to.id(), true);
+
+			edgeID++;
+		}
 	}
 
 }

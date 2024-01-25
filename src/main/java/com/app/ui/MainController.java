@@ -78,7 +78,7 @@ public class MainController {
 		// Init ModelManager()
 		manager = new ModelManager("m");
 		// Set up the columns in the TableView
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
 
 		// Add a listener to the selected item property
 		variableTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Variable>() {
