@@ -16,8 +16,25 @@ public class AtomicFormula {
 		this(null);
 	}
 	
+	@Override
 	public String toString() {
 		return e.getCanonicalExpressionString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		
+		if (o == this) {
+            return true;
+        }
+		
+		if (!(o instanceof AtomicFormula)) {
+            return false;
+        }
+		
+		AtomicFormula a = (AtomicFormula) o;
+		
+		return this.toString().equals(a.toString());
 	}
 	
 	public AtomicFormula(Expression e) {
@@ -45,7 +62,14 @@ public class AtomicFormula {
 	}
 
 	public boolean audit(Tuple current) {
-		return true;
+		
+		e.removeAllArguments();
+		e.addArguments(current.genereateArguments());
+		
+		if(e.calculate() == 1.0) {
+			return true;
+		} else
+			return false;
 		
 	}
 		

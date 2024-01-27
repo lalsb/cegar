@@ -90,6 +90,7 @@ public class Variable implements Serializable {
 		
 		while(current <= maxValue) {
 			result.add(current);
+			current++;
 		}
 		
 		return result;

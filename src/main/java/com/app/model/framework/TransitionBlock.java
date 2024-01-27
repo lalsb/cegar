@@ -82,17 +82,15 @@ public class TransitionBlock {
 	 * @param current
 	 * @return found states
 	 */
-	public Set<Tuple> audit(Tuple current) {
-		
-		Set<Tuple> found = new HashSet<Tuple>();
-		
+	public double audit(Tuple current) {
+	
 		for(TransitionLine transition: transitions) {
-			Tuple s = transition.audit(current);
+			double result = transition.audit(current);
 			
-			if(s != null) {
-				found.add(s);
+			if(result != Double.NaN) {
+				return result;
 			}
 		}
-		return found;
+		return Double.NaN;
 	}
 }

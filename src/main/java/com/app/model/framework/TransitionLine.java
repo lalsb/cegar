@@ -106,7 +106,7 @@ public class TransitionLine {
 	 * @param current
 	 * @return
 	 */
-	public Tuple audit(Tuple current) {
+	public double audit(Tuple current) {
 
 		// Create new state and copy attributes
 		Tuple s = new Tuple();
@@ -123,14 +123,12 @@ public class TransitionLine {
 			Expression a = new Expression(action,arguments);	
 			double result = a.calculate();
 			if(var.isInBounds(result)) {
-				s.put(this.var.getId(), result);
-				return s;
+				return result;
 			}
 
 		} 
 
 		// Conditions false or new value not new or not in bounds
-		return null;
-
+		return Double.NaN;
 	}
 }

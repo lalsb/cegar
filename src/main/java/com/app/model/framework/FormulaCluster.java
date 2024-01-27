@@ -22,40 +22,49 @@ public class FormulaCluster {
 		variableIds = new ArrayList<String>();
 	}
 	
-	public boolean addFormula(AtomicFormula formula) {	
-		variableIds.addAll(formula.getAllVariableIds());	
-		return atomicFormulas.add(formula);
+	public boolean addFormula(AtomicFormula formula) {
+		
+		if(!atomicFormulas.contains(formula)) {
+			atomicFormulas.add(formula);
+		}
+		
+		for(String id: formula.getAllVariableIds()) {
+			if(!variableIds.contains(id)) {
+				variableIds.add(id);
+			}
+		}
+		
+		return true;
 	}
 	
 	public List<String> getAllVariableIds(){
 		return variableIds;
 	}
+	
+	public List<AtomicFormula> getAtomicFormulas(){
+		return atomicFormulas;
+	}
 
 	public Set<Set<Tuple>> generatePartition() {
+		System.out.println("\nGenerating partition for cluster: " + variableIds + " with formulas: " + atomicFormulas);
 		
 		// Generate Map
 		variableValues = new HashMap<>();
-		System.out.println(variableIds);
 		
 		for(String id: variableIds) {
 			variableValues.put(id, ModelManager.getVariable(id).getDomain());
 		}
-
+		
 		// Generate all tuples
 		Set<Tuple> allTuples = generateTuples();
 		
-		System.out.println("All Tuples:");
-		for(Tuple t: allTuples) {
-			System.out.println(t);
-		}
-		
-		
 		// Partition all tuples
-		Map<Boolean[], Set<Tuple>> partitionMap = new HashMap<Boolean[], Set<Tuple>>();
+		Map<List<Boolean>, Set<Tuple>> partitionMap = new HashMap<List<Boolean>, Set<Tuple>>();
 		
 		for(Tuple current: allTuples) {
 			
-			Boolean[] result = Arrays.stream(atomicFormulas.toArray()).map(formula -> ((AtomicFormula) formula).audit(current)).toArray(Boolean[]::new);
+			List<Boolean> result = new ArrayList<Boolean>();
+			atomicFormulas.forEach(x -> result.add(x.audit(current)));
 			
 			if (partitionMap.containsKey(result)) {
 				partitionMap.get(result).add(current);
@@ -63,7 +72,7 @@ public class FormulaCluster {
 				partitionMap.put(result, new HashSet<Tuple>(Arrays.asList(current)));
 			}
 		}
-
+		
 		return new HashSet<Set<Tuple>>(partitionMap.values());
 		
 	}
@@ -73,6 +82,7 @@ public class FormulaCluster {
 	 * @return a set of tuples, where each tuple represents a combination of double values for the variables.
 	 */
 	private Set<Tuple> generateTuples() {
+		
         Set<Tuple> tuples = new HashSet<>();
 
         if (variableIds.isEmpty()) {
@@ -98,6 +108,16 @@ public class FormulaCluster {
 
         return tuples;
     }
+	
+	public String toString() {
+		
+		String result = "[ ";
+		for(AtomicFormula a: atomicFormulas) {
+			result += a.toString() + ", ";
+		}
+		result += "]";
+		return result;
+	}
 
 	/**
     * Increments the indices array, simulating counting with carry for variable value combinations.

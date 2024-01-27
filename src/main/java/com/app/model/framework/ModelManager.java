@@ -41,9 +41,6 @@ public class ModelManager{
 			variablesMap.put(x.getId(), x); // fill map
 			transitionBlockMap.put(x.getId(), new TransitionBlock(x));
 		});
-		
-		System.out.println(variablesMap);
-		System.out.println(transitionBlockMap);
 	}
 	
 	public static Map<String, TransitionBlock> getTransitionBlockMap(){
