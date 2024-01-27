@@ -1,4 +1,4 @@
-package com.app.model.graph;
+package com.app.model.framework;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -6,29 +6,15 @@ import java.util.stream.Collectors;
 import org.mariuszgromada.math.mxparser.Argument;
 
 @SuppressWarnings("serial")
-public class State extends HashMap<String, Double> {;
-
-	private String id;
-
-	public State() {
-		this("PLACEHOLDER ID");
-	}
-
-	public State(String id) {
-		super();
-		this.id = id;
-	}
-
-	public String id() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public boolean equals(State other) {
-		return super.equals(other);
+public class Tuple extends HashMap<String, Double> {
+	
+	
+	public Tuple() {
+        super();
+    }
+	
+	public Tuple(Tuple tuple) {
+		super(tuple);
 	}
 
 	/**
@@ -52,7 +38,7 @@ public class State extends HashMap<String, Double> {;
 
 	@Override
 	public String toString() {
-		String mapAsString = id + ":" + this.keySet().stream()
+		String mapAsString = this.keySet().stream()
 				.map(key -> key + "=" + this.get(key))
 				.collect(Collectors.joining(", ", "[", "]"));
 		return mapAsString;

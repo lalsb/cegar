@@ -1,6 +1,9 @@
 package com.app.model.framework;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -78,6 +81,18 @@ public class Variable implements Serializable {
 		} else {
 			return false;
 		}
+	}
+
+	public List<Double> getDomain() {
+		
+		List<Double> result = new ArrayList<Double>();
+		double current = minValue;
+		
+		while(current <= maxValue) {
+			result.add(current);
+		}
+		
+		return result;
 	}
 }
 

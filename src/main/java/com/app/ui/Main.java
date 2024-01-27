@@ -22,7 +22,7 @@ public class Main extends Application {
     	Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
     	
         // Load the FXML file
-    	 Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+    	Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
     	 
         // Create the scene
         Scene scene = new Scene(root, 700, 600);

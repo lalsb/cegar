@@ -32,7 +32,7 @@ public class AtomicFormula {
 		return e;
 	}
 	
-	public Set<String> getVars(){
+	public Set<String> getAllVariableIds(){
 		
 		int keycount = e.getKeyWords("typeid=101").size();
 		String[] var_names = new String[keycount];
@@ -40,7 +40,12 @@ public class AtomicFormula {
 		for(int i=0; i < keycount; i++) {
 			var_names[i] = e.getKeyWords("typeid=101").get(i).wordString;
 		}
-		return new HashSet<>(Arrays.asList(var_names));
+		
+		return new HashSet<>(Arrays.asList(var_names));	
+	}
+
+	public boolean audit(Tuple current) {
+		return true;
 		
 	}
 		

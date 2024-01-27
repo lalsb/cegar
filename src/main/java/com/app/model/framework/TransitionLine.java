@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import com.app.model.graph.State;
-
 /**
  * Transition line implementation that parses one transition line.
  * @author linus
@@ -108,10 +106,10 @@ public class TransitionLine {
 	 * @param current
 	 * @return
 	 */
-	public State audit(State current) {
+	public Tuple audit(Tuple current) {
 
 		// Create new state and copy attributes
-		State s = new State();
+		Tuple s = new Tuple();
 		current.forEach((k,v) -> s.put(k,v));
 
 		// Calculate condition with mXParser

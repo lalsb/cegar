@@ -1,58 +1,57 @@
 package com.app.model.framework;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.stream.SourceBase;
-import com.app.model.framework.TransitionLine;
 
-import com.app.model.graph.State;
+import com.app.util.SetUtils;
 
 public class InitialAbstractionGenerator extends SourceBase
 implements Generator {
 
 	/**
-	 * Map of variable id and variable e.g. look-up-table for variables by id
+	 * List of formula clusters
 	 */
-	public Map<String, Variable> vars;
-	public Map<String, TransitionBlock> transitionBlocks;
-	public List<FormulaCluster> formulaClusters;
+	private List<FormulaCluster> formulaClusters;
 
-	public InitialAbstractionGenerator(Map<String, Variable> vars, Map<String, TransitionBlock> transitionBlocks) {
+	public InitialAbstractionGenerator() {
 		super();
-		this.vars = vars;
-		this.transitionBlocks = transitionBlocks;
 		formulaClusters = new LinkedList<FormulaCluster>();
 	}
 
 	public void begin() {
-
-		List<AtomicFormula> atoms = new LinkedList<AtomicFormula>();
-
+		
+		Map<String, TransitionBlock> transitionBlocks = ModelManager.getTransitionBlockMap();
+		List<AtomicFormula> atomicFormulas = new LinkedList<AtomicFormula>();
+		
 		transitionBlocks.forEach((k,v)->{
 			v.transitions().forEach(x-> {
-				atoms.addAll(x.atoms());
+				atomicFormulas.addAll(x.atoms());
 			});
 		});
 
-		ListIterator<AtomicFormula> iterator = atoms.listIterator();
+		ListIterator<AtomicFormula> iterator = atomicFormulas.listIterator();
 
 		while(iterator.hasNext()) {
 
 			// Take a new atomic formula
-			AtomicFormula a = (AtomicFormula) iterator.next();
+			AtomicFormula formula = (AtomicFormula) iterator.next();
 			boolean found = false;
 
 			for(FormulaCluster cluster: formulaClusters) {
 
 				// Check if the variables of the atomic formula and an existing cluster intersect
-				if(!Collections.disjoint(cluster.getVariableCluster(), a.getVars())) {
+				if(!Collections.disjoint(cluster.getAllVariableIds(), formula.getAllVariableIds())) {
 					found = true;
-					cluster.addFormula(a);
+					cluster.addFormula(formula);
 					break;
 				}
 			}
@@ -60,20 +59,42 @@ implements Generator {
 			// If there is no intersection create a new formula cluster
 			if(!found) {
 				FormulaCluster f = new FormulaCluster();
-				f.addFormula(a);
+				f.addFormula(formula);
 				formulaClusters.add(f);
-			}
-			
-			for(FormulaCluster cluster: formulaClusters) {
-				
-				cluster.getVariableCluster();
 			}
 		}
 	}
 
 	public boolean nextEvents() {
 		
-		return true;
+		// Entire partition 
+		List<Set<Set<Tuple>>> partition = new ArrayList<Set<Set<Tuple>>>();
+		
+		// Generate equivalence Classed for each formula Cluster 
+		for(FormulaCluster currentCluster: formulaClusters) {
+			Set<Set<Tuple>> equivalenceClass = currentCluster.generatePartition();
+			partition.add(equivalenceClass);
+		}
+		
+		// Cartesian product of all equivalence classes from each formula Cluster
+		Set<Set<Set<Tuple>>> equivalenceCombinations = SetUtils.cartesianProduct(partition);
+		
+		int i = 0;
+		for(Set<Set<Tuple>> combination: equivalenceCombinations) {
+			
+			State s = new State(Integer.toString(i));
+			addNode(s);
+			i++;
+			
+			for(Set<Tuple> set : combination) {
+				for(Tuple tuple: set) {
+					System.out.print(tuple);
+				}
+			}
+		}
+		
+	
+		return false;
 	}
 
 	public void end() {
@@ -85,6 +106,8 @@ implements Generator {
 	 * @param state
 	 */
 	protected void addNode(State state) {
+		System.out.print("State added: " + state.getId());
+		sendNodeAdded(sourceId, state.getId());
 	}
 
 	/**
@@ -92,7 +115,7 @@ implements Generator {
 	 * @param from
 	 * @param to
 	 */
-	protected void addEdge(State from, State to) {
+	protected void addEdge(Tuple from, Tuple to) {
 	}
 
 }

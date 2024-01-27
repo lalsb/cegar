@@ -76,7 +76,7 @@ public class MainController {
 	private void initialize() {
 		
 		// Init ModelManager()
-		manager = new ModelManager("m");
+		manager = new ModelManager();
 		// Set up the columns in the TableView
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
 
@@ -202,7 +202,11 @@ public class MainController {
 
 		// Call ModelManager
 		manager.load(variableList.toArray(new Variable[0]));
-		SmartGraphPanel<String, String> panel = manager.generateGraph().generateVisuals();
+		manager.generateInitialAbstraction();
+		return;
+		
+		/**
+		SmartGraphPanel<String, String> panel = manager.generateOriginalGraph().generateVisuals();
 
 		Stage graphStage = new Stage();
 		graphStage.initModality(Modality.APPLICATION_MODAL);
@@ -220,6 +224,7 @@ public class MainController {
 		// Show the graph window
 		graphStage.show();
 
+		**/
 	}
 
 	// Helper method to clear input fields

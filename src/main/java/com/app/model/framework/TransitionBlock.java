@@ -13,7 +13,6 @@ import org.graphstream.graph.Node;
 
 import com.app.model.exceptions.TransitionBlockInvalidException;
 import com.app.model.graph.KripkeStruct;
-import com.app.model.graph.State;
 import com.app.util.StringUtils;
 
 /**
@@ -83,12 +82,12 @@ public class TransitionBlock {
 	 * @param current
 	 * @return found states
 	 */
-	public Set<State> audit(State current) {
+	public Set<Tuple> audit(Tuple current) {
 		
-		Set<State> found = new HashSet<State>();
+		Set<Tuple> found = new HashSet<Tuple>();
 		
 		for(TransitionLine transition: transitions) {
-			State s = transition.audit(current);
+			Tuple s = transition.audit(current);
 			
 			if(s != null) {
 				found.add(s);
