@@ -1,6 +1,7 @@
 package com.app.model.framework;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -13,7 +14,7 @@ import org.graphstream.graph.Node;
 
 import com.app.model.exceptions.TransitionBlockInvalidException;
 import com.app.model.graph.KripkeStruct;
-import com.app.util.StringUtils;
+
 
 /**
  * Transition block implementation that splits transition blocks by line and passes them on.
@@ -80,17 +81,41 @@ public class TransitionBlock {
 	/**
 	 * Audits a transition block (e.g. all transition lines)
 	 * @param current
-	 * @return found states
+	 * @return first found states
 	 */
 	public double audit(Tuple current) {
 	
 		for(TransitionLine transition: transitions) {
 			double result = transition.audit(current);
 			
-			if(result != Double.NaN) {
+			if(!Double.isNaN(result)) {
 				return result;
 			}
 		}
 		return Double.NaN;
+	}
+	
+	
+	/**
+	 * Audits a transition block (e.g. all transition lines)
+	 * @param current
+	 * @return all found states
+	 */
+	public Set<Double> auditAll(Tuple current) {
+		
+		Set<Double> ret = new HashSet<Double>();
+	
+		for(TransitionLine transition: transitions) {
+			double result = transition.audit(current);
+			
+			if(!Double.isNaN(result)) {
+				ret.add(result);
+			}
+		}
+		
+		ret.add(current.get(var.getId()));
+		// System.out.println("-- found (" + var.getId() + "): " + ret);
+		
+		return ret;
 	}
 }

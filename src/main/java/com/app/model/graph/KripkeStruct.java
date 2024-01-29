@@ -1,13 +1,18 @@
 package com.app.model.graph;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
 
 import com.app.model.exceptions.KripkeStructureInvalidException;
+import com.app.model.framework.ModelManager;
+import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
@@ -94,4 +99,15 @@ public class KripkeStruct extends MultiGraph{
 				}
 		}
     }
+
+	public Set<Tuple> getInitialTuples() {
+		
+		Set<Tuple> ret = new HashSet<Tuple>();
+		Tuple t = new Tuple();
+		
+		ModelManager.getvariablesMap().forEach((k,v) -> t.put(k, v.getValue()));
+		ret.add(t);
+		
+		return ret;
+	}
 }

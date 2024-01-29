@@ -1,37 +1,13 @@
 package com.app.util;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import com.app.model.framework.Tuple;
 
 public class SetUtils {
-	
-	public static Set<Set<Set<Tuple>>> cartesianProduct(List<Set<Set<Tuple>>> sets) {
-	    if (sets.size() < 2)
-	        throw new IllegalArgumentException(
-	                "Can't have a product of fewer than two sets (got " +
-	                sets.size() + ")");
 
-	    return _cartesianProduct(0, sets);
-	}
-
-	private static Set<Set<Set<Tuple>>> _cartesianProduct(int index, List<Set<Set<Tuple>>> sets) {
-	    Set<Set<Set<Tuple>>> ret = new HashSet<Set<Set<Tuple>>>();
-	    if (index == sets.size()) {
-	        ret.add(new HashSet<Set<Tuple>>());
-	    } else {
-	        for (Set<Tuple> obj : sets.get(index)) {
-	            for (Set<Set<Tuple>> set : _cartesianProduct(index+1, sets)) {
-	                set.add(obj);
-	                ret.add(set);
-	            }
-	        }
-	    }
-	    return ret;
-	}
-
+	// By https://stackoverflow.com/a/714256
 	public static Set<Set<Object>> cartesianProduct(Set<?>... sets) {
 	    if (sets.length < 2)
 	        throw new IllegalArgumentException(
@@ -41,6 +17,7 @@ public class SetUtils {
 	    return _cartesianProduct(0, sets);
 	}
 	
+	// By https://stackoverflow.com/a/714256
 	private static Set<Set<Object>> _cartesianProduct(int index, Set<?>... sets) {
 	    Set<Set<Object>> ret = new HashSet<Set<Object>>();
 	    if (index == sets.length) {
@@ -55,5 +32,19 @@ public class SetUtils {
 	    }
 	    return ret;
 	}
+	
+	// Utility method to convert Set to String
+    public static <T> String setToString(Set<T[]> set) {
+    	
+        StringBuilder result = new StringBuilder("[");
+        for (T[] element : set) {
+            result.append(Arrays.deepToString(element)).append(", ");
+        }
+        if (!set.isEmpty()) {
+            result.setLength(result.length() - 2); // Remove the trailing comma and space
+        }
+        result.append("]");
+        return result.toString();
+    }
 
 }

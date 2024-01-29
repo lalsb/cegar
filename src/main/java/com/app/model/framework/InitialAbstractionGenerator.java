@@ -119,15 +119,15 @@ implements Generator {
 		}
 
 		// Cartesian product of all equivalence classes from each formula Cluster
-		Set<Set<Set<Tuple>>> equivalenceCombinations = SetUtils.cartesianProduct(partition);
+		Set<Set<Object>> equivalenceCombinations = SetUtils.cartesianProduct(partition.toArray(new Set<?>[0]));
 
 		System.out.println("\nGenerating states:");
 
-		for(Set<Set<Tuple>> combination: equivalenceCombinations) {
+		for(Set<Object> combination: equivalenceCombinations) {
 
 			Set<Set<Object>> fullTuples = SetUtils.cartesianProduct(combination.toArray(new Set<?>[0]));
 
-			State s = new State(Integer.toString(nodeId));
+			State s = new State(Integer.toString(nodeId++));
 
 			for(Set<Object> full: fullTuples) {
 
@@ -143,13 +143,8 @@ implements Generator {
 			}
 
 			addNode(s);
-			nodeId++;
 		}
-		return false;
-	}
-
-	public void end() {
-
+		
 		System.out.println("\nGenerating edges: ");
 
 		ListIterator<State> iterator = states.listIterator();
@@ -177,7 +172,6 @@ implements Generator {
 				});
 
 
-
 				// Collect image
 				if(!image.contains(result)) {
 					image.add(result);
@@ -190,8 +184,12 @@ implements Generator {
 				addEdge(from, to);
 			}
 		}
+		
+		return false; // finished
+	}
 
-
+	public void end() {
+		return;
 
 	}
 
@@ -200,10 +198,10 @@ implements Generator {
 	 * @param state
 	 */
 	protected void addNode(State state) {
-		System.out.println("#" + state.getId() + " = " + state.getInverseImage());
 
 		states.add(state);
 		sendNodeAdded(sourceId, state.getId());
+		sendNodeAttributeAdded(sourceId,  state.getId(), "inverseImage", state.getInverseImage());
 	}
 
 	/**
@@ -217,11 +215,8 @@ implements Generator {
 
 		if(!edges.contains(edge)){
 			
-			System.out.println("#" + edgeId + " = #" + from.getId() + " > #" +  to.getId());
-			
-			sendEdgeAdded(sourceId, Integer.toString(edgeId) , from.getId(), to.getId(), true);
+			sendEdgeAdded(sourceId, Integer.toString(edgeId++) , from.getId(), to.getId(), true);
 			edges.add(edge);
-			edgeId++;
 		}
 	}
 
