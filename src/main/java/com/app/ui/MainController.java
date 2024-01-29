@@ -13,20 +13,15 @@ import java.util.List;
 import com.app.model.exceptions.VariableInvalidExpection;
 import com.app.model.framework.ModelManager;
 import com.app.model.framework.Variable;
-import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 
 public class MainController {
@@ -168,6 +163,7 @@ public class MainController {
         }
 	}
 	
+	@SuppressWarnings("unchecked")
 	@FXML
     private void handleLoadVariables() {
         try {
