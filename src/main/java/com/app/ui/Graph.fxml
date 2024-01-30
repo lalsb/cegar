@@ -43,13 +43,12 @@
 						</Tab>
 					</tabs>
 				</TabPane>
-            <Separator prefHeight="45.0" prefWidth="837.0" />
 				<Label prefHeight="0.0" prefWidth="82.0" text="Console:" />
-				<ScrollPane prefHeight="200.0" prefWidth="200.0">
+				<ScrollPane prefHeight="202.0" prefWidth="913.0">
 					<content>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="202.0" prefWidth="687.0">
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="202.0" prefWidth="911.0">
 							<children>
-								<TextArea prefHeight="218.0" prefWidth="900.0" />
+								<TextArea fx:id="consoleTextArea" opacity="0.7" prefHeight="202.0" prefWidth="913.0" promptText="Nothing to show." />
 							</children>
 						</AnchorPane>
 					</content>
@@ -72,8 +71,8 @@
                <children>
                   <Label text="Original Graph" />
                   <Separator prefWidth="200.0" />
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Generate" />
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Validate" />
+                  <Button fx:id="genOriginalButton" mnemonicParsing="false" onAction="#handleGenerateOriginalGraph" prefHeight="25.0" prefWidth="307.0" text="Generate Original Graph" />
+                  <Button fx:id="validateButton" mnemonicParsing="false" onAction="#handleValidateOriginalGraph" prefHeight="25.0" prefWidth="307.0" text="Validate" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>
@@ -81,6 +80,7 @@
                <children>
                   <Label text="Abstraction Refinement" />
                   <Separator prefWidth="200.0" />
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Generate Initial Abstraction" />
                   <TextField promptText="Enter a Counterexample" />
                   <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Verify" />
                   <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Refine" />

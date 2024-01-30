@@ -21,6 +21,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 
@@ -42,16 +45,10 @@ public class MainController {
 	private TextField nameField;
 
 	@FXML
-	private TextField valueField;
+	private TextField initialValuesField;
 
 	@FXML
-	private TextField minValueField;
-
-	@FXML
-	private TextField maxValueField;
-
-	@FXML
-	private TextArea transitionBlockField;
+	private TextField DomainField;
 
 	// Buttons
 	@FXML
@@ -65,6 +62,13 @@ public class MainController {
 
     @FXML
     private Button loadButton;
+    
+    @FXML
+    private VBox TransitionPane;
+    
+    @FXML
+    private Button AddTransitionButton;
+    
 
 	// Initialize method is called after the FXML file is loaded
 	@FXML
@@ -82,10 +86,8 @@ public class MainController {
 				if (newValue != null) {
 					// Fill the fields with the values from the selected item
 					nameField.setText(newValue.getId());
-					valueField.setText(String.valueOf(newValue.getValue()));
-					minValueField.setText(String.valueOf(newValue.getMinValue()));
-					maxValueField.setText(String.valueOf(newValue.getMaxValue()));
-					transitionBlockField.setText(newValue.getTransitionBlock());
+					initialValuesField.setText(String.valueOf(newValue.getValue()));
+					DomainField.setText(String.valueOf(newValue.getMinValue()));
 				}
 			}
 		});
@@ -95,7 +97,6 @@ public class MainController {
 		
 		// Set the items in the TableView
 		variableTableView.setItems(tempVariableList);
-
 
 		// Set up selection model for TableView
 		variableTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -114,13 +115,10 @@ public class MainController {
 
 		// Get data from fields
 		String name = nameField.getText();
-		Double value = parseDouble(valueField.getText());
-		Double minValue = parseDouble(minValueField.getText());
-		Double maxValue = parseDouble(maxValueField.getText());
-		String transitionBlock = transitionBlockField.getText();
-
+		Double value = parseDouble(initialValuesField.getText());
+		
 		// Create a new Variable object (you should have a Variable class)
-		Variable variable = new Variable(name, value, minValue, maxValue, transitionBlock);
+		Variable variable = new Variable(name, value, 0, 0, "");
 
 		// Add the variable to the TableView
 		tempVariableList.add(variable);
@@ -186,6 +184,27 @@ public class MainController {
             e.printStackTrace();  // Handle or log the exception as needed
         }
     }
+	
+	@FXML
+    private void handleDeleteTransition() {
+		System.out.println("Delete");
+	}
+	
+	@FXML
+    private void handleAddTransition() {
+		
+		TextField inputfield = new TextField();
+		inputfield.setPrefSize(248.0, 32.0);
+		inputfield.setPromptText("Enter a transition.");
+		Button rmbutton = new Button();	
+		HBox hbox = new HBox(inputfield, rmbutton);
+		hbox.setSpacing(3.0);
+		rmbutton.setText("-");
+		rmbutton.setOnAction((e)-> {TransitionPane.getChildren().remove(hbox);});
+		TransitionPane.getChildren().add(hbox);
+		
+		System.out.println("Add");
+	}
     
 
 	// Handle the "Create Graph" button action
@@ -226,15 +245,13 @@ public class MainController {
 	// Helper method to clear input fields
 	private void clearFields() {
 		nameField.clear();
-		valueField.clear();
-		minValueField.clear();
-		maxValueField.clear();
-		transitionBlockField.clear();
+		initialValuesField.clear();
+		DomainField.clear();
 	}
 
 	// Helper method to validate input data, handling possible exceptions
 	private void validate() {
-		for (TextField field : Arrays.asList(nameField, valueField, minValueField, maxValueField)) {
+		for (TextField field : Arrays.asList(nameField, initialValuesField, DomainField)) {
 			if(field.getText().isBlank()) {
 				throw new VariableInvalidExpection(String.format("Field %s is required.", field.getId()));
 			}

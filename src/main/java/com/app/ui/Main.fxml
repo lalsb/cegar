@@ -8,7 +8,6 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
@@ -29,87 +28,98 @@
 			<!-- Add other columns as needed -->
 		</columns>
 	</TableView>
-   <Separator prefHeight="26.0" prefWidth="574.0" />
-   <HBox>
-      <children>
-      
-      	<!-- Fields for editing variable attributes -->
-      	<GridPane hgap="20" prefHeight="313.0" prefWidth="369.0" vgap="3">
-      
-      		<padding>
-      			<Insets bottom="10" left="10" right="10" top="10" />
-      		</padding>
-      
-      		<Label text="Variable" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-      		<TextField fx:id="nameField" prefHeight="25.0" prefWidth="212.0" promptText="Enter a name." GridPane.columnIndex="1" />
-      
-      		<Label text="Value" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-      		<TextField fx:id="valueField" promptText="Enter a value." GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      
-      		<Label text="Min" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-      		<TextField fx:id="minValueField" promptText="Enter a minimum value." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      
-      		<Label text="Max" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-      		<TextField fx:id="maxValueField" prefHeight="25.0" prefWidth="154.0" promptText="Enter a maximum value." GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      
-      		<Label alignment="TOP_LEFT" text="Transition" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-      		<TextArea fx:id="transitionBlockField" prefHeight="181.0" prefWidth="227.0" promptText="Enter a transition block." GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      		<columnConstraints>
-      			<ColumnConstraints maxWidth="226.0" minWidth="60.0" prefWidth="58.0" />
-      			<ColumnConstraints maxWidth="300.0" minWidth="31.0" prefWidth="271.0" />
-      		</columnConstraints>
-      		<rowConstraints>
-      			<RowConstraints />
-      			<RowConstraints />
-      			<RowConstraints />
-      			<RowConstraints />
-      			<RowConstraints />
-      		</rowConstraints>
-      
-      	</GridPane>
-         <Separator orientation="VERTICAL" prefHeight="313.0" prefWidth="24.0" />
-         <VBox prefHeight="313.0" prefWidth="235.0" spacing="2.0">
-            <children>
-               <Label text="Boolean Operators:" />
-               <HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
-                  <children>
-                     <Button mnemonicParsing="false" text="and" />
-                     <Button mnemonicParsing="false" text="or" />
-                     <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="not" />
-                  </children>
-               </HBox>
-               <Label text="Relations:" />
-               <HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
-                  <children>
-                     <Button mnemonicParsing="false" text="&lt;" />
-                     <Button mnemonicParsing="false" text="&gt;" />
-                     <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="=" />
-                     <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="!" />
-                  </children>
-               </HBox>
-               <Label text="Separator:" />
-               <HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
-                  <children>
-                     <Button mnemonicParsing="false" text=":" />
-                  </children>
-               </HBox>
-               <Label text="ACTL Operators:" />
-               <HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
-                  <children>
-                     <Button mnemonicParsing="false" text="AF" />
-                     <Button mnemonicParsing="false" text="AX" />
-                     <Button mnemonicParsing="false" text="AG" />
-                     <Button mnemonicParsing="false" text="AU" />
-                  </children>
-               </HBox>
-            </children>
-            <padding>
-               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
-         </VBox>
-      </children>
-   </HBox>
-   <Separator prefHeight="20.0" prefWidth="565.0" />
+	<Separator prefHeight="26.0" prefWidth="574.0" />
+	<HBox>
+		<children>
+
+			<!-- Fields for editing variable attributes -->
+			<GridPane hgap="20" prefHeight="313.0" prefWidth="369.0" vgap="3">
+
+				<padding>
+					<Insets bottom="10" left="10" right="10" top="10" />
+				</padding>
+
+				<Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+				<TextField fx:id="nameField" prefHeight="25.0" prefWidth="212.0" promptText="Enter a name." GridPane.columnIndex="1" />
+
+				<Label text="Initials" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+				<TextField fx:id="initialValuesField" promptText="Enter a number initial values." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+				<Label text="Domain" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+				<TextField fx:id="DomainField" promptText="Enter a domain." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+				<Label alignment="TOP_LEFT" text="Transition" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+				<VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+					<children>
+						<VBox fx:id="TransitionPane" prefHeight="0.0" prefWidth="269.0" spacing="2.0">
+							<children>
+								<HBox prefHeight="100.0" prefWidth="200.0" spacing="3.0">
+									<children>
+										<TextField prefHeight="32.0" prefWidth="248.0" promptText="Enter a transition." />
+										<Button mnemonicParsing="false" onAction="#handleDeleteTransition" text="-" />
+									</children>
+								</HBox>
+							</children>
+						</VBox>
+						<Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleAddTransition" prefHeight="25.0" prefWidth="54.0" text="+" />
+					</children>
+				</VBox>
+				<columnConstraints>
+					<ColumnConstraints maxWidth="226.0" minWidth="60.0" prefWidth="58.0" />
+					<ColumnConstraints maxWidth="300.0" minWidth="31.0" prefWidth="271.0" />
+				</columnConstraints>
+				<rowConstraints>
+					<RowConstraints />
+					<RowConstraints />
+					<RowConstraints />
+					<RowConstraints />
+					<RowConstraints valignment="TOP" />
+				</rowConstraints>
+
+			</GridPane>
+			<Separator orientation="VERTICAL" prefHeight="313.0" prefWidth="24.0" />
+			<VBox prefHeight="313.0" prefWidth="235.0" spacing="2.0">
+				<children>
+					<Label text="Boolean Operators:" />
+					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+						<children>
+							<Button mnemonicParsing="false" text="and" />
+							<Button mnemonicParsing="false" text="or" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="not" />
+						</children>
+					</HBox>
+					<Label text="Relations:" />
+					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+						<children>
+							<Button mnemonicParsing="false" text="&lt;" />
+							<Button mnemonicParsing="false" text="&gt;" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="=" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="!" />
+						</children>
+					</HBox>
+					<Label text="Separator:" />
+					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+						<children>
+							<Button mnemonicParsing="false" text=":" />
+						</children>
+					</HBox>
+					<Label text="ACTL Operators:" />
+					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+						<children>
+							<Button mnemonicParsing="false" text="AF" />
+							<Button mnemonicParsing="false" text="AX" />
+							<Button mnemonicParsing="false" text="AG" />
+							<Button mnemonicParsing="false" text="AU" />
+						</children>
+					</HBox>
+				</children>
+				<padding>
+					<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+				</padding>
+			</VBox>
+		</children>
+	</HBox>
+	<Separator prefHeight="20.0" prefWidth="565.0" />
 	<FlowPane hgap="3.0" prefHeight="0.0" prefWidth="574.0">
 		<children>
 
