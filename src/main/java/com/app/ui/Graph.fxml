@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -20,35 +21,31 @@
 	<children>
 		<VBox prefHeight="888.0" prefWidth="913.0" spacing="3.0">
 			<children>
-				<TabPane prefHeight="583.0" prefWidth="722.0" tabClosingPolicy="UNAVAILABLE">
+				<TabPane fx:id="tabPane" prefHeight="649.0" prefWidth="913.0" tabClosingPolicy="UNAVAILABLE">
 					<tabs>
-						<Tab closable="false" text="Transitions">
+						<Tab fx:id="transitionsTab" closable="false" text="Transitions">
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 							</content>
-							<VBox prefHeight="578.0" prefWidth="861.0">
+							<VBox prefHeight="724.0" prefWidth="913.0">
 								<children>
-									<fx:include source="Main.fxml" />
+									<fx:include fx:id="Main" source="Main.fxml" />
 								</children>
 							</VBox>
 						</Tab>
-						<Tab closable="false" text="Graph">
+						<Tab fx:id="graphTab" closable="false" text="Graph">
 							<content>
-								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-									<children>
-										<ScrollPane prefHeight="552.0" prefWidth="845.0" />
-									</children>
-								</AnchorPane>
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
 							</content>
 						</Tab>
 					</tabs>
 				</TabPane>
 				<Label prefHeight="0.0" prefWidth="82.0" text="Console:" />
-				<ScrollPane prefHeight="202.0" prefWidth="913.0">
+				<ScrollPane prefHeight="205.0" prefWidth="903.0">
 					<content>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="202.0" prefWidth="911.0">
+						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="899.0">
 							<children>
-								<TextArea fx:id="consoleTextArea" opacity="0.7" prefHeight="202.0" prefWidth="913.0" promptText="Nothing to show." />
+								<TextArea fx:id="consoleTextArea" opacity="0.7" prefHeight="205.0" prefWidth="913.0" promptText="Nothing to show." />
 							</children>
 						</AnchorPane>
 					</content>
@@ -80,11 +77,16 @@
                <children>
                   <Label text="Abstraction Refinement" />
                   <Separator prefWidth="200.0" />
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Generate Initial Abstraction" />
-                  <TextField promptText="Enter a Counterexample" />
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Verify" />
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" text="Refine" />
+                  <Button mnemonicParsing="false" onAction="#handleGenerateInitialAbstraction" prefHeight="25.0" prefWidth="307.0" text="Generate Initial Abstraction" />
+                  <TextField fx:id="counterExampleField" promptText="Enter a Counterexample" />
+                  <Button fx:id="checkPathButton" mnemonicParsing="false" onAction="#handleCheckPath" prefHeight="25.0" prefWidth="307.0" text="CheckPath" />
                   <Separator prefWidth="200.0" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Zoom:" />
+                  <Slider fx:id="zoomSlider" blockIncrement="0.01" majorTickUnit="0.25" max="1.25" showTickMarks="true" value="0.8" />
                </children>
             </VBox>
 			</children>

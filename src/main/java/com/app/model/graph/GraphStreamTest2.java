@@ -93,7 +93,7 @@ public class GraphStreamTest2 extends Application{
 		
 		
 		//SmartGraphPanel<String, String> panel = SmartGraphWrapper.getInstance().generateJavaFXView(g); // Für Wrapper-Test!!
-		SmartGraphPanel<String, String> panel = g.generateVisuals();
+		SmartGraphPanel<String, String> panel = g.getSmartGraphView();
 		
 		Button nodes = new Button("Nodes");
 		nodes.setOnAction((event)-> {

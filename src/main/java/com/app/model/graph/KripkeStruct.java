@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.fx_viewer.FxViewPanel;
+import org.graphstream.ui.fx_viewer.FxViewer;
 
 import com.app.model.exceptions.KripkeStructureInvalidException;
 import com.app.model.framework.ModelManager;
@@ -16,6 +18,8 @@ import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+
+import org.graphstream.ui.javafx.FxGraphRenderer;
 
 /**
  * An implementation of a Kripke structures which is a directed graph whose vertices are labeled by a set of atomic propositions.
@@ -44,8 +48,25 @@ public class KripkeStruct extends MultiGraph{
 	 * Generate a JavaFX viewable graph using SmartGraphWrapper.
 	 * @return
 	 */
-	public SmartGraphPanel<String, String> generateVisuals() {
+	public SmartGraphPanel<String, String> getSmartGraphView() {
 		return SmartGraphWrapper.getInstance().generateJavaFXView(this);
+		
+	}
+	
+	public FxViewPanel getGraphStreamView() {
+
+		setAttribute("ui.quality");
+		nodes().forEach(node -> node.setAttribute("ui.label", node.getId()));
+		nodes().forEach(node -> node.setAttribute("ui.style", "text-alignment: at-right; text-size: 20; text-mode: normal;"));
+		FxViewer v = new FxViewer(this, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+		
+		v.enableAutoLayout();
+		FxViewPanel panel = (FxViewPanel)v.addDefaultView(false, new FxGraphRenderer());
+	
+		
+		setAttribute("ui.antialias");
+		setAttribute("ui.quality");
+		return panel;
 		
 	}
 

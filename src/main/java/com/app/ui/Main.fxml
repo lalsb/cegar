@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="547.0" prefWidth="716.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.ui.MainController">
+<VBox fx:id="Main" prefHeight="547.0" prefWidth="924.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.ui.MainController">
 
 	<!-- TableView to display variables -->
 	<TableView fx:id="variableTableView" prefHeight="143.0" prefWidth="574.0">
@@ -24,8 +24,10 @@
 			<Label text="" />
 		</placeholder>
 		<columns>
-			<TableColumn fx:id="nameColumn" text="Name" />
-			<!-- Add other columns as needed -->
+			<TableColumn fx:id="nameColumn" prefWidth="102.0" text="Name" />
+			<TableColumn fx:id="initialsColumn" prefWidth="172.0" text="Initials" />
+			<TableColumn fx:id="domainColumn" prefWidth="248.0" text="Domain" />
+			<TableColumn fx:id="transitionsColumn" prefWidth="381.0" text="Transitions" />
 		</columns>
 	</TableView>
 	<Separator prefHeight="26.0" prefWidth="574.0" />
@@ -46,21 +48,12 @@
 				<TextField fx:id="initialValuesField" promptText="Enter a number initial values." GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
 				<Label text="Domain" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-				<TextField fx:id="DomainField" promptText="Enter a domain." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<TextField fx:id="domainField" promptText="Enter a domain." GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-				<Label alignment="TOP_LEFT" text="Transition" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-				<VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+				<Label alignment="TOP_LEFT" text="Transition" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+				<VBox prefHeight="227.0" prefWidth="269.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
 					<children>
-						<VBox fx:id="TransitionPane" prefHeight="0.0" prefWidth="269.0" spacing="2.0">
-							<children>
-								<HBox prefHeight="100.0" prefWidth="200.0" spacing="3.0">
-									<children>
-										<TextField prefHeight="32.0" prefWidth="248.0" promptText="Enter a transition." />
-										<Button mnemonicParsing="false" onAction="#handleDeleteTransition" text="-" />
-									</children>
-								</HBox>
-							</children>
-						</VBox>
+						<VBox fx:id="TransitionPane" prefHeight="0.0" prefWidth="269.0" spacing="2.0" />
 						<Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleAddTransition" prefHeight="25.0" prefWidth="54.0" text="+" />
 					</children>
 				</VBox>
@@ -72,44 +65,39 @@
 					<RowConstraints />
 					<RowConstraints />
 					<RowConstraints />
-					<RowConstraints />
+					<RowConstraints valignment="TOP" />
 					<RowConstraints valignment="TOP" />
 				</rowConstraints>
 
 			</GridPane>
 			<Separator orientation="VERTICAL" prefHeight="313.0" prefWidth="24.0" />
-			<VBox prefHeight="313.0" prefWidth="235.0" spacing="2.0">
+			<VBox prefHeight="313.0" prefWidth="337.0" spacing="2.0">
 				<children>
 					<Label text="Boolean Operators:" />
-					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+					<HBox prefHeight="25.0" prefWidth="389.0" spacing="2.0">
 						<children>
-							<Button mnemonicParsing="false" text="and" />
-							<Button mnemonicParsing="false" text="or" />
-							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="not" />
+							<Button mnemonicParsing="false" onAction="#addAnd" prefHeight="25.0" prefWidth="49.0" text="and" />
+							<Button mnemonicParsing="false" onAction="#addOr" prefHeight="25.0" prefWidth="44.0" text="or" />
+							<Button mnemonicParsing="false" onAction="#addNot" prefHeight="25.0" prefWidth="57.0" text="not" />
+							<Button mnemonicParsing="false" onAction="#addTrue" prefHeight="25.0" prefWidth="56.0" text="true" />
+							<Button mnemonicParsing="false" onAction="#addFalse" prefHeight="25.0" prefWidth="77.0" text="false" />
 						</children>
 					</HBox>
 					<Label text="Relations:" />
-					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+					<HBox prefHeight="25.0" prefWidth="433.0" spacing="2.0">
 						<children>
-							<Button mnemonicParsing="false" text="&lt;" />
-							<Button mnemonicParsing="false" text="&gt;" />
-							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="=" />
-							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="!" />
-						</children>
-					</HBox>
-					<Label text="Separator:" />
-					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
-						<children>
-							<Button mnemonicParsing="false" text=":" />
+							<Button mnemonicParsing="false" onAction="#addLessThan" prefHeight="25.0" prefWidth="37.0" text="&lt;" />
+							<Button mnemonicParsing="false" onAction="#addGreaterThan" prefHeight="25.0" prefWidth="38.0" text="&gt;" />
+							<Button mnemonicParsing="false" onAction="#addEquals" prefHeight="25.0" prefWidth="97.0" text="=" />
 						</children>
 					</HBox>
 					<Label text="ACTL Operators:" />
-					<HBox prefHeight="25.0" prefWidth="245.0" spacing="2.0">
+					<HBox prefHeight="25.0" prefWidth="404.0" spacing="2.0">
 						<children>
-							<Button mnemonicParsing="false" text="AF" />
-							<Button mnemonicParsing="false" text="AX" />
-							<Button mnemonicParsing="false" text="AG" />
-							<Button mnemonicParsing="false" text="AU" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="45.0" text="AF" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="52.0" text="AX" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="AG" />
+							<Button mnemonicParsing="false" prefHeight="25.0" prefWidth="54.0" text="AU" />
 						</children>
 					</HBox>
 				</children>
@@ -126,9 +114,9 @@
 			<!-- Buttons for adding and deleting variables -->
 			<Button onAction="#handleAddVariable" prefHeight="25.0" prefWidth="93.0" text="Add" />
 			<Button onAction="#handleDeleteVariable" prefHeight="25.0" prefWidth="91.0" text="Delete" />
+			<Button onAction="#handleClear" prefHeight="25.0" prefWidth="92.0" text="Clear" />
 			<Button onAction="#handleLoadVariables" prefHeight="25.0" prefWidth="90.0" text="Load" />
 			<Button onAction="#handleSaveVariables" prefHeight="25.0" prefWidth="93.0" text="Save" />
-			<Button onAction="#handleGenerateGraph" prefHeight="25.0" prefWidth="184.0" text="Create Graph" />
 		</children>
 	</FlowPane>
 	<padding>

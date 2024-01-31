@@ -1,5 +1,8 @@
 package com.app.util;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -14,27 +17,12 @@ class ParserTest {
 	@Test
 	void simpleTransitionTest() {
 		
-		StringBuilder sb = new StringBuilder();
-        sb.append("y!=x");
-        sb.append("|");
-        sb.append("y=5");
-        sb.append("&");
-        sb.append("  "); // whitespace
-        sb.append("x=5");
-        sb.append(":");
-        sb.append("0");
-        
-        String transition = sb.toString();
-		
-		TransitionLine p = new TransitionLine(transition, new Variable("", 0, 0, 0, ""));
+		TransitionLine p = new TransitionLine("x", "y!=x|y=5&x=5", "0");
+		String condition = p.conditionSubstring();
 		String action = p.actionSubstring();
 		
+		Assertions.assertEquals("y!=x|y=5&x=5", condition);
 		Assertions.assertEquals("0", action);
-		
-		for(AtomicFormula a: p.atoms()) {
-			//System.out.println(a);
-		}
-		
 		Assertions.assertTrue(p.atoms().toString().contains("y!=x"));
 
 	}
@@ -42,14 +30,22 @@ class ParserTest {
 	@Test
 	void simpleBlockTest() {
 		
-		StringBuilder sb = new StringBuilder();
-        sb.append("y!=x|y=5&   x=5:0\n");
-        sb.append("\n"); // newline
-        sb.append("y=0&x=0:x+3");
-
-        String block = sb.toString();
-        Variable var = new Variable("x", 0, 0, 0, block);
-        
-        TransitionBlock b = new TransitionBlock(var);
+		TransitionLine lx1 = new TransitionLine("x", "r=0&x<y", "x+1");
+		TransitionLine lx2 = new TransitionLine("x", "r=1", "x-1");	
+		TransitionLine ly1 = new TransitionLine("y", "x=y|x<y", "y+1");
+		TransitionLine lr1 = new TransitionLine("r", "x=y", "1");
+		TransitionLine lr2 = new TransitionLine("r", "y=2", "0");
+		
+		TransitionBlock bx = new TransitionBlock("x", lx1, lx2);
+		TransitionBlock by = new TransitionBlock("y", ly1);
+		TransitionBlock br = new TransitionBlock("r", lr1, lr2);
+		
+		Variable x = new Variable("x", new HashSet<Double>(Arrays.asList(0d)), new HashSet<Double>(Arrays.asList(0d, 1d, 2d)), bx);
+		Variable y = new Variable("y", new HashSet<Double>(Arrays.asList(1d)), new HashSet<Double>(Arrays.asList(0d, 1d, 2d)), by);
+		Variable r = new Variable("r", new HashSet<Double>(Arrays.asList(0d)), new HashSet<Double>(Arrays.asList(0d, 1d)), br);
+		
+		Assertions.assertEquals(bx, x.getTransitionBlock());
+		Assertions.assertEquals(by, y.getTransitionBlock());
+		Assertions.assertEquals(br, r.getTransitionBlock());
 	}
 }

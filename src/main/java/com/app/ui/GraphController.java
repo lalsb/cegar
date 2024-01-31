@@ -3,72 +3,174 @@ package com.app.ui;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
+
+import org.graphstream.ui.fx_viewer.FxDefaultView;
+import org.graphstream.ui.fx_viewer.FxViewPanel;
+
+import com.app.model.framework.ModelManager;
+import com.app.model.framework.Variable;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Pane;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 public class GraphController {
 
-    @FXML
-    private TextArea consoleTextArea;
-    private PrintStream ps ;
+	private ModelManager manager;
 
-    @FXML
-    private Button genOriginalButton;
+	private PrintStream ps;
 
-    @FXML
-    private Button validateButton;
+	FxViewPanel panel;
 
-    // Add any additional code/logic for the Graph scene...
+	@FXML
+	private TextArea consoleTextArea;
 
-    @FXML
-    private void initialize() {
-    	
-    	ps = new PrintStream(new Console(consoleTextArea)) ;
-    	
-    	System.setOut(ps);
-    	System.setErr(ps);
-    	
-        try {
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("Main.fxml"));
-            VBox childNode = childLoader.load();
-            MainController childController = childLoader.getController();
-            // Do something with the child node and controller
-            //childContainer.getChildren().add(childNode);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	@FXML
+	private Button genOriginalButton;
 
- 	@FXML
- 	private void handleGenerateOriginalGraph() {
- 		System.out.println("handleGenerateOriginalGraph");
- 	}
- 	
- 	@FXML
- 	private void handleValidateOriginalGraph() {
- 		System.out.println("handleValidateOriginalGraph");
- 	}
- 	
- 	 public class Console extends OutputStream {
-         private TextArea console;
+	@FXML
+	private Button validateButton;
 
-         public Console(TextArea console) {
-             this.console = console;
-         }
+	@FXML
+	private Button checkPathButton;
 
-         public void appendText(String valueOf) {
-        	 
-             Platform.runLater(() -> console.appendText(valueOf));
-         }
+	@FXML
+	private TabPane tabPane;
 
-         public void write(int b) throws IOException {
-             appendText(String.valueOf((char)b));
-         }
-     }
+	@FXML
+	private Tab graphTab;
+
+	@FXML
+	private Tab transitionsTab;
+
+	@FXML
+	MainController MainController;
+
+	@FXML
+	private TextField counterExampleField;
+
+	@FXML
+	private Slider zoomSlider;
+
+	// Initialize method is called after the FXML file is loaded in Main
+	@FXML
+	private void initialize() {
+
+		// Set up Console Output
+		ps = new PrintStream(new Console(consoleTextArea));
+		System.setOut(ps);
+
+		// Disable functionality that is not yet usable
+		validateButton.setDisable(true);
+		checkPathButton.setDisable(true);
+		counterExampleField.setDisable(true);
+		zoomSlider.setDisable(true);
+
+		// Set up ModelManager
+		manager = new ModelManager();
+
+		// Set up Zoom Slider
+		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(
+					ObservableValue<? extends Number> observableValue, 
+					Number oldValue, 
+					Number newValue) { 
+				panel.getCamera().setViewPercent(newValue.doubleValue());
+			}
+		});
+	}
+
+
+	/**
+	 * Handles the "GenerateOriginalGraph" button action.
+	 */
+	@FXML
+	private void handleGenerateOriginalGraph() {
+
+		List<Variable> variableList = MainController.getVariables();
+		manager.load(variableList.toArray(new Variable[0]));
+
+		// For SmartGraph use: manager.generateOriginalGraph().getSmartGraphView();
+		panel = manager.generateOriginalGraph().getGraphStreamView();
+		graphTab.setContent(panel);
+		tabPane.getSelectionModel().select(graphTab);
+
+		validateButton.setDisable(false);
+		activateZoomSlider();
+	}
+
+	/**
+	 * Handles the "Validate" button action.
+	 */
+	@FXML
+	private void handleValidateOriginalGraph() {	
+		manager.originalGraph.isValid();
+	}
+
+	/**
+	 * Handles the "Generate Initial Abstraction" button action.
+	 */
+	@FXML
+	private void handleGenerateInitialAbstraction() {
+
+		List<Variable> variableList = MainController.getVariables();
+		manager.load(variableList.toArray(new Variable[0]));
+
+		panel = manager.generateInitialAbstraction().getGraphStreamView();
+		graphTab.setContent(panel);
+		tabPane.getSelectionModel().select(graphTab);
+
+		checkPathButton.setDisable(false);
+		counterExampleField.setDisable(false);
+		activateZoomSlider();
+	}
+
+	/**
+	 * Handles the "Refine Abstraction" button action.
+	 */
+	@FXML
+	private void handleCheckPath() {
+
+		List<String> finitePath = Arrays.asList(counterExampleField.getText().split(","));	
+		manager.splitPATH(finitePath);
+	}
+
+	public class Console extends OutputStream {
+		private TextArea console;
+
+		public Console(TextArea console) {
+			this.console = console;
+		}
+
+		public void appendText(String valueOf) {
+
+			Platform.runLater(() -> console.appendText(valueOf));
+		}
+
+		public void write(int b) throws IOException {
+			appendText(String.valueOf((char)b));
+		}
+	}
+	
+	private void activateZoomSlider() {+
+		
+		zoomSlider.setDisable(false);
+		panel.setOnScroll((ScrollEvent event) -> {
+            zoomSlider.setValue(zoomSlider.getValue() + event.getDeltaY()/1000);
+        });
+	}
 
 }

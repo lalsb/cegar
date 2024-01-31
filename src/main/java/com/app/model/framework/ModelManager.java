@@ -36,7 +36,9 @@ public class ModelManager{
 	 */
 	public static final int ITERATION_LMIT = 1000;
 
-	public KripkeStruct graph;
+	public KripkeStruct abstractionGraph;
+	
+	public KripkeStruct originalGraph;
 
 	public ModelManager() {
 		// Init
@@ -54,7 +56,7 @@ public class ModelManager{
 		Arrays.asList(variables).forEach(x -> {
 
 			variablesMap.put(x.getId(), x); // fill map
-			transitionBlockMap.put(x.getId(), new TransitionBlock(x));
+			transitionBlockMap.put(x.getId(), x.getTransitionBlock());
 		});
 	}
 
@@ -83,18 +85,18 @@ public class ModelManager{
 	public KripkeStruct generateOriginalGraph() {
 
 		// Init graph and graph generator 
-		KripkeStruct graph = new KripkeStruct("Original Graph");
+		originalGraph = new KripkeStruct("Original Graph");
 		OriginalGraphGenerator gen = new OriginalGraphGenerator();
 
-		gen.addSink(graph);
-		graph.addSink(new ConsoleSink(graph)); // Print to Console
+		gen.addSink(originalGraph);
+		originalGraph.addSink(new ConsoleSink(originalGraph)); // Print to Console
 
 		int i = 0;
 		gen.begin();
 		while(gen.nextEvents() && i < ITERATION_LMIT) {i++;} // returns false if finished
 		gen.end();
 
-		return graph;
+		return originalGraph;
 	}
 
 	/**
@@ -104,19 +106,18 @@ public class ModelManager{
 	public KripkeStruct generateInitialAbstraction() {
 
 		// Init graph and graph generator 
-		KripkeStruct graph = new KripkeStruct("Initial Abstraction");
+		abstractionGraph = new KripkeStruct("Initial Abstraction");
 		InitialAbstractionGenerator gen = new InitialAbstractionGenerator();
 
-		gen.addSink(graph);
-		graph.addSink(new ConsoleSink(graph)); // Print to Console
+		gen.addSink(abstractionGraph);
+		abstractionGraph.addSink(new ConsoleSink(abstractionGraph)); // Print to Console
 
 		int i = 0;
 		gen.begin();
 		while(gen.nextEvents() && i < ITERATION_LMIT) {i++;} // returns false if finished
 		gen.end();
 
-		this.graph = graph;
-		return graph;
+		return abstractionGraph;
 	}
 
 	/**
@@ -125,7 +126,7 @@ public class ModelManager{
 	 * @return Failure state s and S
 	 */
 	public Pair<String, Set<Tuple>> splitPATH(List<String> finitePath) {
-		return splitPATH(finitePath,graph);
+		return splitPATH(finitePath,abstractionGraph);
 	}
 
 	/**
@@ -251,23 +252,23 @@ public class ModelManager{
 	public void refine(String failureState, Set<Tuple> deadEnds) {
 		
 		// Partition
-		Set<Tuple> bads = (Set<Tuple>) graph.getNode(failureState).getAttribute("inverseImage");	
+		Set<Tuple> bads = (Set<Tuple>) abstractionGraph.getNode(failureState).getAttribute("inverseImage");	
 		bads.removeAll(deadEnds);
 		
 		// New Node
-		Node n = graph.addNode(failureState + nodeId++);
+		Node n = abstractionGraph.addNode(failureState + nodeId++);
 		n.setAttribute("inverseImage", bads);
 
 		
 		// Remvoe all edges
-		graph.edges().forEach(graph::removeEdge);
+		abstractionGraph.edges().forEach(abstractionGraph::removeEdge);
 		
 		// Edges for new Node
 		edgeId = 0;
-		for(Node i: graph) {
-			for(Node j: graph) {
+		for(Node i: abstractionGraph) {
+			for(Node j: abstractionGraph) {
 				if(!Collections.disjoint(getImage((Set<Tuple>) i.getAttribute("inverseImage")), (Set<Tuple>) j.getAttribute("inverseImage")));
-				graph.addEdge(edgeId++ + "", i.getId(),j.getId());
+				abstractionGraph.addEdge(edgeId++ + "", i.getId(),j.getId());
 			}
 		}
 	}

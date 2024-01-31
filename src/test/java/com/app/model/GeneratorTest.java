@@ -20,6 +20,8 @@ import com.app.model.framework.AtomicFormula;
 import com.app.model.framework.FormulaCluster;
 import com.app.model.framework.InitialAbstractionGenerator;
 import com.app.model.framework.OriginalGraphGenerator;
+import com.app.model.framework.TransitionBlock;
+import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.ModelManager;
 import com.app.model.framework.Variable;
@@ -42,10 +44,24 @@ class GeneratorTest {
 
 	@BeforeEach
 	void generateVariableList() {
-		variableList = new ArrayList<>();	
-		x = new Variable("x", 0, 0, 2, "r=0&x<y:x+1\n" + "r=1:x-1");
-		y = new Variable("y", 1, 0, 2, "x=y|x<y:y+1");
-		r = new Variable("r", 0, 0, 1, "x=y:1\n" + "y=2:0");
+		
+		TransitionLine lx1 = new TransitionLine("x", "r=0&x<y", "x+1");
+		TransitionLine lx2 = new TransitionLine("x", "r=1", "x-1");	
+		TransitionLine ly1 = new TransitionLine("y", "x=y|x<y", "y+1");
+		TransitionLine lr1 = new TransitionLine("r", "x=y", "1");
+		TransitionLine lr2 = new TransitionLine("r", "y=2", "0");
+		
+		TransitionBlock bx = new TransitionBlock("x", lx1, lx2);
+		TransitionBlock by = new TransitionBlock("y", ly1);
+		TransitionBlock br = new TransitionBlock("r", lr1, lr2);
+		
+		x = new Variable("x", new HashSet<Double>(Arrays.asList(0d)), new HashSet<Double>(Arrays.asList(0d, 1d, 2d)), bx);
+		y = new Variable("y", new HashSet<Double>(Arrays.asList(1d)), new HashSet<Double>(Arrays.asList(0d, 1d, 2d)), by);
+		r = new Variable("r", new HashSet<Double>(Arrays.asList(0d)), new HashSet<Double>(Arrays.asList(0d, 1d)), br);
+		
+		Arrays.asList(0d, 1d, 2d);
+		
+		variableList = new ArrayList<>();
 
 		variableList.add(x);
 		variableList.add(y);
@@ -55,7 +71,6 @@ class GeneratorTest {
 		manager.load(variableList.toArray(new Variable[0]));	
 	}
 	
-	@Disabled
 	@Test
 	void testKripkeGraphGenerator() {
 

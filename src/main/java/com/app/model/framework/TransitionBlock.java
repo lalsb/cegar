@@ -1,6 +1,7 @@
 package com.app.model.framework;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,19 +21,22 @@ import com.app.model.graph.KripkeStruct;
  * Transition block implementation that splits transition blocks by line and passes them on.
  * @author Linus Alsbach
  */
-public class TransitionBlock {
+public class TransitionBlock implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String ALLOWED = "[^a-zA-Z0-9+\\-|&!]";
-	private String block;
-	private Variable var;
+	private String var;
 	private List<TransitionLine> transitions;
 
-	public TransitionBlock(Variable var) {
-		this.block = var.getTransitionBlock();
+	public TransitionBlock(String var, TransitionLine ... transitions) {
+		this.transitions = new ArrayList<TransitionLine>();
+		this.transitions.addAll(Arrays.asList(transitions));
 		this.var = var;
 		try {
             validate();
-            parse();
         } catch (RuntimeException e) {
         	e.printStackTrace();
         }
@@ -42,7 +46,7 @@ public class TransitionBlock {
 	 * Returns corresponding variable
 	 * @return
 	 */
-	public Variable getVariable() {
+	public String getVariable() {
 		return this.var;
 	}
 	
@@ -59,23 +63,7 @@ public class TransitionBlock {
 	 * @throws TransitionBlockInvalidException
 	 */
 	private void validate() {
-		if(!Pattern.compile(ALLOWED).matcher(block).find()) {
-			throw new TransitionBlockInvalidException("Invalid symbol in transition block.");
-		}
-	}
-
-	private void parse() {
-
-		List<String> lines = Arrays.stream(block.split("\\r?\\n")) // split by new line, trim and filter empty line
-				.map(x -> x.trim())
-				.filter(x -> x.length() > 0)
-				.collect(Collectors.toList());
-		
-		this.transitions = new LinkedList<TransitionLine>();
-		
-		for(String line: lines) {
-			transitions.add(new TransitionLine(line, var));
-		}
+		transitions.forEach(l -> l.validate());
 	}
 
 	/**
@@ -113,9 +101,23 @@ public class TransitionBlock {
 			}
 		}
 		
-		ret.add(current.get(var.getId()));
+		ret.add(current.get(var));
 		// System.out.println("-- found (" + var.getId() + "): " + ret);
 		
 		return ret;
+	}
+	
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		transitions.forEach(t -> sb.append(t + ","));
+		
+		if(!transitions.isEmpty()) {
+			return sb.substring(0, sb.length() - 1);
+		}
+		
+		return sb.toString();
 	}
 }

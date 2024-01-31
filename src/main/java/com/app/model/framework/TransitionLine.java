@@ -1,5 +1,6 @@
 package com.app.model.framework;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,23 +17,24 @@ import org.mariuszgromada.math.mxparser.Expression;
  * @author linus
  *
  */
-public class TransitionLine {
-
+public class TransitionLine implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	public static final String LITERALS = "[A-Za-z]+";
 	public static final String JUNCTIONS = "[&|]";
 	public static final String TRANSITION_SEPERATOR = ":";
 
-	private String transition;
-	private Variable var;
-	private String conditions;
+	private String varId;
+	private String condition;
 	private String action;
 	private List<AtomicFormula> atoms;
 
-	public TransitionLine(String transition, Variable var) {
-		this.transition = transition;
-		this.var = var;
-		this.isValid();
-		this.parse();
+	public TransitionLine(String varId, String condition, String action) {
+		this.varId = varId;
+		this.condition = condition;
+		this.action = action;
+		isValid();
+		parse();
 	}
 
 	public String actionSubstring() {
@@ -40,7 +42,7 @@ public class TransitionLine {
 	}
 
 	public String conditionSubstring() {
-		return conditions;
+		return condition;
 	}
 
 	public List<AtomicFormula> atoms(){
@@ -53,20 +55,14 @@ public class TransitionLine {
 	 */
 	private void isValid() throws IllegalArgumentException{
 
-		if(transition.isBlank()) {
+		if(condition.isBlank()) {
 			throw new IllegalArgumentException();
 		}
-		if(!transition.contains(TRANSITION_SEPERATOR)) {
-			throw new IllegalArgumentException();
-		}
-
-		if(transition.length() < 3) {
+		
+		if(action.isBlank()) {
 			throw new IllegalArgumentException();
 		}
 
-		if (transition.indexOf(TRANSITION_SEPERATOR) != transition.lastIndexOf(TRANSITION_SEPERATOR)) {
-			throw new IllegalArgumentException();
-		}
 	}
 
 	/**
@@ -77,16 +73,10 @@ public class TransitionLine {
 	 */
 	private void parse() {
 
-		transition.replaceAll("\\s", ""); // Remove whitespace
-
-		int i = transition.indexOf(TRANSITION_SEPERATOR);
-		action = transition.substring(i+1 , transition.length());
-		conditions = transition.substring(0 , i);
-
 		atoms = new LinkedList<AtomicFormula>();
 		Pattern p = Pattern.compile(LITERALS);
 
-		for(String atom: conditions.split(JUNCTIONS)) { // Split conditions at junctions
+		for(String atom: condition.split(JUNCTIONS)) { // Split conditions at junctions
 
 			Set<String> vars = new HashSet<String>();
 			Matcher m = p.matcher(atom);
@@ -114,7 +104,7 @@ public class TransitionLine {
 
 		// Calculate condition with mXParser
 		Argument[] arguments = current.genereateArguments();
-		Expression c = new Expression(conditions,arguments);
+		Expression c = new Expression(condition,arguments);
 
 		// Check if condition c is true
 		if(c.calculate() == (1.0)) {
@@ -122,7 +112,7 @@ public class TransitionLine {
 			// Calculate action expression with mXParser
 			Expression a = new Expression(action,arguments);	
 			double result = a.calculate();
-			if(var.isInBounds(result)) {
+			if(ModelManager.getVariable(varId).isInBounds(result)) {
 				return result;
 			}
 
@@ -130,5 +120,16 @@ public class TransitionLine {
 
 		// Conditions false or new value not new or not in bounds
 		return Double.NaN;
+	}
+
+	public boolean validate() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		
+		return "(" + condition + ":" + action + ")"; 
 	}
 }

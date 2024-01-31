@@ -25,17 +25,13 @@ class MXParserTest {
 		License.iConfirmNonCommercialUse("Linus");
 	}
 
-	@Disabled
 	@Test
 	void simpleCalculation() {
 		
 		Expression e = new Expression("2+1");
-		
-		mXparser.consolePrintln("Res: " + e.getExpressionString() + " = " + e.calculate());		
 		Assertions.assertEquals(3, e.calculate());
 	}
 
-	@Disabled
 	@Test
 	void variablesCalculation() {
 		
@@ -44,22 +40,17 @@ class MXParserTest {
 		
 		longname.setArgumentValue(1);
 		Expression e = new Expression("2longname+3y",longname,y);
-		
-		mXparser.consolePrintln("Res: " + e.getExpressionString() + " = " + e.calculate());
 		Assertions.assertEquals(5, e.calculate());
 	}
 	
-	@Disabled
 	@Test
 	void simpleRelationCalculation(){
-		Expression e = new Expression("2<3");
-		
-		mXparser.consolePrintln("Res: " + e.getExpressionString() + " = " + e.calculate());
+		Expression e = new Expression("2<3");	
 		// 1.0d equals "true"
 		Assertions.assertEquals(1, e.calculate());
 	}
+
 	
-	@Disabled
 	@Test
 	void RelationWithVariablesCalculation(){
 		
@@ -68,8 +59,6 @@ class MXParserTest {
 		
 		x.setArgumentValue(2);
 		Expression e = new Expression("2x<3y & y=1",x,y);
-		
-		mXparser.consolePrintln("Res: " + e.getExpressionString() + " = " + e.calculate());
 		// 0.0d equals "true"
 		Assertions.assertEquals(0, e.calculate());
 		// Change variable so expression becomes "false"

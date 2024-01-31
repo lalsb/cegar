@@ -2,26 +2,36 @@ package com.app.model.framework;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import java.util.stream.Collectors;
 
 public class Variable implements Serializable {
-	
 	private static final long serialVersionUID = 1L;
-	private String id;
-	private double initValue; // Use DoubleProperty for binding
-	private double minValue;
-	private double maxValue;
-	private String transitionBlock;
 
-	public Variable(String name, double value, double minValue, double maxValue, String transitionBlock) {
+	/**
+	 * Variable identifier 
+	 */
+	private String id;
+	/**
+	 * Set of initial values
+	 */
+	private Set<Double> initials;
+	/**
+	 * Set of values allowed for this variable
+	 */
+	private Set<Double> domain;
+	/**
+	 * TransitionBlock associated with this variable
+	 */
+	private TransitionBlock transitionBlock;
+
+
+	public Variable(String name, Set<Double> initials, Set<Double> domain, TransitionBlock transitionBlock) {
 		this.id = name;
-		this.initValue = value;
-		this.minValue = minValue;
-		this.maxValue = maxValue;
+		this.initials = initials;
+		this.domain = domain;
 		this.transitionBlock = transitionBlock;
 	}
 
@@ -32,51 +42,54 @@ public class Variable implements Serializable {
 	}
 
 	public double getValue() {
-		return initValue;
+		return initials.iterator().next();
 	}
 
-	public void setValue(double value) {
-		this.initValue = value;
+	public List<Double> getInitials() {
+
+		List<Double> ret = initials.stream().collect(Collectors.toList());
+		Collections.sort(ret);
+
+		return ret;	
 	}
 
-	public double getMinValue() {
-		return minValue;
-	}
-
-	public void setMinValue(double minValue) {
-		this.minValue = minValue;
-	}
-
-	public double getMaxValue() {
-		return maxValue;
-	}
-
-	public void setMaxValue(double maxValue) {
-		this.maxValue = maxValue;
-	}
-
-	public String getTransitionBlock() {
+	public TransitionBlock getTransitionBlock() {
 		return transitionBlock;
 	}
 
-	public void setTransitionBlock(String transitionBlock) {
-		this.transitionBlock = transitionBlock;
+
+	// Getters for ListView
+	public String getInitialsCell() {
+		return String.join(",",
+				initials.stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll));
 	}
+
+	public String getDomainCell() {
+		return String.join(",",
+				domain.stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll));
+	}
+
+	public String getTransitionsCell() {
+		
+		return transitionBlock.toString();
+	}
+
 
 	@Override
 	public String toString() {
 		return "\n" +
 				"Variable{" +
-				"name='" + id + '\'' +
-				", value=" + initValue +
-				", minValue=" + minValue +
-				", maxValue=" + maxValue +
+				"id='" + id + '\'' +
+				", initials=" + initials +
+				", domain=" + domain +
 				", transitionBlock=" +  transitionBlock +
 				'}';
 	}
 
 	public boolean isInBounds(double value) {
-		if(minValue  <= value && value <= maxValue ) {
+		if(domain.contains(value) ) {
 			return true;
 		} else {
 			return false;
@@ -84,16 +97,11 @@ public class Variable implements Serializable {
 	}
 
 	public List<Double> getDomain() {
-		
-		List<Double> result = new ArrayList<Double>();
-		double current = minValue;
-		
-		while(current <= maxValue) {
-			result.add(current);
-			current++;
-		}
-		
-		return result;
+
+		List<Double> ret = domain.stream().collect(Collectors.toList());
+		Collections.sort(ret);
+
+		return ret;
 	}
 }
 
