@@ -120,7 +120,7 @@ implements Generator {
 
 		// Cartesian product of all equivalence classes from each formula Cluster
 		Set<Set<Object>> equivalenceCombinations = SetUtils.cartesianProduct(partition.toArray(new Set<?>[0]));
-
+		
 		System.out.println("\nGenerating states:");
 
 		for(Set<Object> combination: equivalenceCombinations) {

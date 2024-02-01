@@ -80,6 +80,7 @@
                   <Button mnemonicParsing="false" onAction="#handleGenerateInitialAbstraction" prefHeight="25.0" prefWidth="307.0" text="Generate Initial Abstraction" />
                   <TextField fx:id="counterExampleField" promptText="Enter a Counterexample" />
                   <Button fx:id="checkPathButton" mnemonicParsing="false" onAction="#handleCheckPath" prefHeight="25.0" prefWidth="307.0" text="CheckPath" />
+                  <Button fx:id="refineButton" mnemonicParsing="false" onAction="#handleRefineAbstraction" prefHeight="25.0" prefWidth="307.0" text="Refine Abstraction" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>

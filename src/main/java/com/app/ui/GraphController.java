@@ -5,11 +5,13 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 
 import com.app.model.framework.ModelManager;
+import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 
 import javafx.application.Platform;
@@ -22,6 +24,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.util.Pair;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -32,6 +35,8 @@ public class GraphController {
 	private PrintStream ps;
 
 	FxViewPanel panel;
+	
+	Pair<String, Set<Tuple>> result;
 
 	@FXML
 	private TextArea consoleTextArea;
@@ -44,6 +49,9 @@ public class GraphController {
 
 	@FXML
 	private Button checkPathButton;
+
+	@FXML
+	private Button refineButton;
 
 	@FXML
 	private TabPane tabPane;
@@ -76,6 +84,7 @@ public class GraphController {
 		checkPathButton.setDisable(true);
 		counterExampleField.setDisable(true);
 		zoomSlider.setDisable(true);
+		refineButton.setDisable(true);
 
 		// Set up ModelManager
 		manager = new ModelManager();
@@ -139,13 +148,28 @@ public class GraphController {
 	}
 
 	/**
-	 * Handles the "Refine Abstraction" button action.
+	 * Handles the "Check Path" button action.
 	 */
 	@FXML
 	private void handleCheckPath() {
 
 		List<String> finitePath = Arrays.asList(counterExampleField.getText().split(","));	
-		manager.splitPATH(finitePath);
+		result = manager.splitPATH(finitePath);
+
+		if(result == null) {
+			System.out.println("Path corresponds to real counterexampe");
+		} else {
+			System.out.println("Counterexample Path spurious. Failure State:" + result.getKey() + ", S = " + result.getValue());
+			refineButton.setDisable(false);
+		}
+	}
+	
+	/**
+	 * Handles the "Refine Abstraction" button action.
+	 */
+	@FXML
+	private void handleRefineAbstraction() {
+		panel = manager.refine(result.getKey(), result.getValue()).getGraphStreamView();
 	}
 
 	public class Console extends OutputStream {
@@ -164,13 +188,13 @@ public class GraphController {
 			appendText(String.valueOf((char)b));
 		}
 	}
-	
-	private void activateZoomSlider() {+
-		
+
+	private void activateZoomSlider() {
+
 		zoomSlider.setDisable(false);
 		panel.setOnScroll((ScrollEvent event) -> {
-            zoomSlider.setValue(zoomSlider.getValue() + event.getDeltaY()/1000);
-        });
+			zoomSlider.setValue(zoomSlider.getValue() + event.getDeltaY()/1000);
+		});
 	}
 
 }

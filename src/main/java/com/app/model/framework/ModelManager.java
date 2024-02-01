@@ -249,7 +249,7 @@ public class ModelManager{
 	 * and irrelevant tuples. Edges are adjusted accordingly.
 	 */
 	@SuppressWarnings("unchecked")
-	public void refine(String failureState, Set<Tuple> deadEnds) {
+	public KripkeStruct refine(String failureState, Set<Tuple> deadEnds) {
 		
 		// Partition
 		Set<Tuple> bads = (Set<Tuple>) abstractionGraph.getNode(failureState).getAttribute("inverseImage");	
@@ -271,6 +271,7 @@ public class ModelManager{
 				abstractionGraph.addEdge(edgeId++ + "", i.getId(),j.getId());
 			}
 		}
+		return abstractionGraph;
 	}
 }
 
