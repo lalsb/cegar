@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 
@@ -30,7 +32,7 @@ import org.graphstream.ui.javafx.FxGraphRenderer;
  *
  */
 public class KripkeStruct extends MultiGraph{
-	
+
 	/**
 	 * Map of variable id and variable
 	 */
@@ -38,36 +40,47 @@ public class KripkeStruct extends MultiGraph{
 
 	public KripkeStruct(String id, Variable ...variables) {
 		super(id);
-		
+
 		// Fill map
 		vars = new HashMap<String, Variable>();	
 		Arrays.asList(variables).forEach(x -> {vars.put(x.getId(), x);});
 	}
-	
+
 	/**
 	 * Generate a JavaFX viewable graph using SmartGraphWrapper.
 	 * @return
 	 */
 	public SmartGraphPanel<String, String> getSmartGraphView() {
 		return SmartGraphWrapper.getInstance().generateJavaFXView(this);
-		
+
 	}
-	
+
 	public FxViewPanel getGraphStreamView() {
 
-		setAttribute("ui.quality");
-		nodes().forEach(node -> node.setAttribute("ui.label", node.getId()));
-		nodes().forEach(node -> node.setAttribute("ui.style", "text-alignment: at-right; text-size: 20; text-mode: normal;"));
+		Iterator<Node> i = nodes().iterator();
+
+		while(i.hasNext()) {
+
+			Node node = i.next();
+			node.setAttribute("ui.label", node.getId() + node.getAttribute("inverseImage"));
+
+			String current = (String) node.getAttribute("ui.style");
+			if (current == null || !current.contains("text-size")) {
+				String expanded = (current == null ? "" : current) + "text-size: 20;";
+				node.setAttribute("ui.style", expanded);
+			}
+		}
+
+
 		FxViewer v = new FxViewer(this, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-		
+
 		v.enableAutoLayout();
 		FxViewPanel panel = (FxViewPanel)v.addDefaultView(false, new FxGraphRenderer());
-	
-		
+
 		setAttribute("ui.antialias");
 		setAttribute("ui.quality");
 		return panel;
-		
+
 	}
 
 	/**
@@ -79,56 +92,64 @@ public class KripkeStruct extends MultiGraph{
 	public boolean isInBounds(String variable, double value) {
 		return vars.get(variable).isInBounds(value);
 	}
-	
+
 	/**
 	 * Validation method
 	 * @return
 	 */
 	public boolean isValid() {
-        try {
-            validate();
-        } catch (RuntimeException e) {
-        	e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
+		try {
+			validate();
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Validation method
 	 * @return
 	 */
-    public void validate() {
-        if (this.getNodeCount() == 0) {
-            throw new KripkeStructureInvalidException("Set of states S is empty.");
-        }
-        
-        validateLeftTotalRelation();
-        
-        System.out.println("The Kripke structure satifies all formal properties.");
-    }
+	public void validate() {
+		if (this.getNodeCount() == 0) {
+			throw new KripkeStructureInvalidException("Set of states S is empty.");
+		}
 
-    /**
+		validateLeftTotalRelation();
+
+		System.out.println("The Kripke structure satifies all formal properties.");
+	}
+
+	/**
 	 * Validation method
 	 * @return
 	 */
-    private void validateLeftTotalRelation() {
-    	
+	private void validateLeftTotalRelation() {
+
 		for(Node node: this) {
 			if(!node.leavingEdges().iterator().hasNext()) {
 				throw new KripkeStructureInvalidException(String.format("State %s does not satisfy the left total property.", node));
-				}
+			}
 		}
-    }
+	}
 
-	public Set<Tuple> getInitialTuples() {
+
+	public Node getNode(Tuple tuple) {
+
+		if(tuple == null || tuple.isEmpty()) {
+			throw new IllegalArgumentException("Invalid tuple");
+		}
+		Iterator<Node> i = nodes().iterator();
+
+		while(i.hasNext()) {
+			
+			Node node = i.next();
+			if(((Set<Tuple>) node.getAttribute("inverseImage")).contains(tuple)){
+				return node;
+			}
+		}
 		
-		Set<Tuple> ret = new HashSet<Tuple>();
-		Tuple t = new Tuple();
-		
-		ModelManager.getvariablesMap().forEach((k,v) -> t.put(k, v.getValue()));
-		ret.add(t);
-		
-		return ret;
+		return null;
 	}
 }

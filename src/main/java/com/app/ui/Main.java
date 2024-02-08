@@ -31,7 +31,7 @@ public class Main extends Application {
         primaryStage.setTitle("Cegar");
         
         try{
-        	primaryStage.getIcons().add(new Image("icon.png"));
+        	primaryStage.getIcons().add(new Image(getClass().getResource("/resources/icon.png").toURI().toString()));
         } catch (Exception e){System.out.println("Missing file \"icon.png\".");} 
        
         primaryStage.setScene(scene);

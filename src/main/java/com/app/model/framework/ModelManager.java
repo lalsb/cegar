@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,32 +19,36 @@ import com.app.util.SetUtils;
 import javafx.util.Pair;
 
 public class ModelManager{
-	
+
 	public static int nodeId = 0;
 	public static int edgeId = 0;
 
 	/**
-	 * Map of variable id and variable
+	 * Map of variable id and variable.
 	 */
 	public static Map<String, Variable> variablesMap;
 	/**
-	 * Map of variable id and transition block
+	 * Map of variable id and transition block.
 	 */
-	public static Map<String, TransitionBlock> transitionBlockMap;
-
+	public static Map<String, TransitionBlock> transitionBlockMap;	
 	/**
-	 * Iteration limit for all the generators
+	 * Set of initial tuples.
+	 */
+	public static Set<Tuple> initialTuples;	
+	/**
+	 * Iteration limit for all the generators.
 	 */
 	public static final int ITERATION_LMIT = 1000;
 
 	public KripkeStruct abstractionGraph;
-	
+
 	public KripkeStruct originalGraph;
 
 	public ModelManager() {
 		// Init
 		variablesMap = new HashMap<String, Variable>();	
 		transitionBlockMap = new HashMap<String, TransitionBlock>();
+		initialTuples = new HashSet<Tuple>();
 	}
 
 	/**
@@ -53,18 +58,36 @@ public class ModelManager{
 	 */
 	public void load(Variable ...variables) {
 
+		assert variables.length > 0;
+
+		Tuple init = new Tuple();
+
 		Arrays.asList(variables).forEach(x -> {
 
-			variablesMap.put(x.getId(), x); // fill map
-			transitionBlockMap.put(x.getId(), x.getTransitionBlock());
+			String id = x.getId();
+			TransitionBlock block = x.getTransitionBlock();
+
+			assert !id.isBlank();
+			assert block != null;
+
+			variablesMap.put(id, x); // fill map
+			transitionBlockMap.put(id, block);
+			init.put(id, x.getValue());		
 		});
+
+		initialTuples.add(init);
+
 	}
 
-	public static Map<String, TransitionBlock> getTransitionBlockMap(){
+	public static Map<String, TransitionBlock> getTransitionBlockMap(){	
+		assert !transitionBlockMap.isEmpty();
+
 		return transitionBlockMap;
 	}
 
 	public static Map<String, Variable> getvariablesMap(){
+		assert !variablesMap.isEmpty();
+
 		return variablesMap;
 	}
 
@@ -74,7 +97,9 @@ public class ModelManager{
 	 * @param variableId
 	 * @return
 	 */
-	public static Variable getVariable(String variableId) {		
+	public static Variable getVariable(String variableId) {
+		assert !variablesMap.isEmpty();
+
 		return variablesMap.get(variableId);
 	}
 
@@ -83,6 +108,11 @@ public class ModelManager{
 	 * @return
 	 */
 	public KripkeStruct generateOriginalGraph() {
+		assert !variablesMap.isEmpty();
+		assert transitionBlockMap.keySet().equals(variablesMap.keySet());
+
+		nodeId = 0;
+		edgeId = 0;
 
 		// Init graph and graph generator 
 		originalGraph = new KripkeStruct("Original Graph");
@@ -104,6 +134,11 @@ public class ModelManager{
 	 * @return KripkeStruct
 	 */
 	public KripkeStruct generateInitialAbstraction() {
+		assert !variablesMap.isEmpty();
+		assert transitionBlockMap.keySet().equals(variablesMap.keySet());
+
+		nodeId = 0;
+		edgeId = 0;
 
 		// Init graph and graph generator 
 		abstractionGraph = new KripkeStruct("Initial Abstraction");
@@ -126,6 +161,12 @@ public class ModelManager{
 	 * @return Failure state s and S
 	 */
 	public Pair<String, Set<Tuple>> splitPATH(List<String> finitePath) {
+		assert abstractionGraph != null;
+
+		if(!isValid(finitePath, abstractionGraph)) {
+			throw new IllegalArgumentException("Invalid argument 'finitePath' for method 'splitPATH'");
+		}
+
 		return splitPATH(finitePath,abstractionGraph);
 	}
 
@@ -138,26 +179,36 @@ public class ModelManager{
 	@SuppressWarnings("unchecked")
 	public Pair<String, Set<Tuple>> splitPATH(List<String> finitePath, KripkeStruct graph) {
 
+		if(!isValid(finitePath, graph) || graph == null) {
+			throw new IllegalArgumentException("Path invalid");
+		}
+
+		assert finitePath.size() > 1;
+		assert getInitialTuples().size() > 0;
+
 		System.out.println("\nComputing SplitPATH for " + finitePath);
-		
+
 		Set<Tuple> S = (Set<Tuple>) graph.getNode(finitePath.get(0)).getAttribute("inverseImage");
-		S.retainAll(graph.getInitialTuples());
-		
+
+		assert S != null;
+
+		S.retainAll(getInitialTuples());
+
 		Set<Tuple> prev = new HashSet<Tuple>();
 
 		int j = 1;
 		while(!S.isEmpty() && j < finitePath.size()) {
-			
+
 			prev = new HashSet<Tuple>(S);
 			Set<Tuple> inverseImage = (Set<Tuple>) graph.getNode(finitePath.get(j)).getAttribute("inverseImage");
-			
+
 			// System.out.print(String.format("Img^-1(%d) = %s ^ Img(S) = %s", j, inverseImage, getImage(S)));
-			
+
 			inverseImage.retainAll(getImage(S));	
 			S = inverseImage;
-			
+
 			System.out.println("S = " + S);
-			
+
 			j++;
 		}
 
@@ -167,7 +218,36 @@ public class ModelManager{
 			return new Pair<String, Set<Tuple>>(finitePath.get(j), prev);
 		}
 	}
-	
+
+	public boolean isValid(List<String> finitePath, KripkeStruct graph) {
+		
+		
+		System.out.print("Checking Path: " + finitePath + " : ");
+		
+		if(finitePath == null || finitePath.isEmpty() || graph == null) {
+			return false;
+		}
+
+		ListIterator<String> i = finitePath.listIterator();
+		
+		Node prev = graph.getNode(i.next());
+		if(!prev.hasAttribute("isInitial") || !(boolean) prev.getAttribute("isInitial")) {
+			System.out.println("First node not initial");
+			return false;
+		}
+		while(i.hasNext()) {	
+			Node next = graph.getNode(i.next());		
+			if(prev.getEdgeToward(next) == null) {
+				System.out.println("No edge from node " + prev.getId() + " to node " + next.getId());
+				return false;
+			}
+			prev = next;
+		}
+		
+		return true;
+
+	}
+
 	/**
 	 * Calculates the Image for a set of tuples
 	 * More precisely, calculates the image for each of tuples with respect to the previously defined transitions
@@ -175,18 +255,19 @@ public class ModelManager{
 	 * @param input Set of tuples
 	 * @return Image
 	 */
-	public static Set<Tuple> getImage(Set<Tuple> input){
-		
+	public static Set<Tuple> getImage(Set<Tuple> input){	
+		assert !transitionBlockMap.isEmpty();
+
 		Set<Tuple> found = new HashSet<Tuple>();
-		
+
 		for(Tuple tuple: input) {
 			found.addAll(getImage(tuple));
 		}
-		
+
 		found.removeAll(input);
-		
+
 		return found;
-		
+
 	}
 
 	/**
@@ -194,7 +275,8 @@ public class ModelManager{
 	 * @param input Tuple
 	 * @return Image
 	 */
-	public static Set<Tuple> getImage(Tuple input) {
+	public static Set<Tuple> getImage(Tuple input) {	
+		assert !transitionBlockMap.isEmpty();
 
 		// Img(input) as a set of tuples 
 		Set<Tuple> found = new HashSet<Tuple>();
@@ -238,7 +320,7 @@ public class ModelManager{
 		found.remove(input);
 		return found;
 	}
-	
+
 	/**
 	 * Refines the abstraction
 	 * More precisely, partitions a particular failure state in a way that seperates
@@ -250,19 +332,38 @@ public class ModelManager{
 	 */
 	@SuppressWarnings("unchecked")
 	public KripkeStruct refine(String failureState, Set<Tuple> deadEnds) {
-		
+
+
+		if(failureState == null || failureState.isBlank() ||
+				abstractionGraph.getNode(failureState) != null) {
+			throw new IllegalArgumentException("Invalid argument 'failure State' for method 'refine'");
+		}
+
+		if(deadEnds == null || deadEnds.isEmpty() ||
+				abstractionGraph.getNode(failureState) != null) {
+			throw new IllegalArgumentException("Invalid argument 'deadEnds' for method 'refine'");
+		}
+
+		// Old Node
+		Node old = abstractionGraph.getNode(failureState);
+
 		// Partition
-		Set<Tuple> bads = (Set<Tuple>) abstractionGraph.getNode(failureState).getAttribute("inverseImage");	
+		Set<Tuple> bads = (Set<Tuple>) old.getAttribute("inverseImage");	
+		assert bads.size() > deadEnds.size();
+
 		bads.removeAll(deadEnds);
-		
+
+		// Update Old Node
+		old.setAttribute("inverseImage", deadEnds);
+
 		// New Node
-		Node n = abstractionGraph.addNode(failureState + nodeId++);
+		Node n = abstractionGraph.addNode(Integer.toString(nodeId++));
 		n.setAttribute("inverseImage", bads);
 
-		
+
 		// Remvoe all edges
 		abstractionGraph.edges().forEach(abstractionGraph::removeEdge);
-		
+
 		// Edges for new Node
 		edgeId = 0;
 		for(Node i: abstractionGraph) {
@@ -272,6 +373,10 @@ public class ModelManager{
 			}
 		}
 		return abstractionGraph;
+	}
+
+	public static Set<Tuple> getInitialTuples() {	
+		return initialTuples;
 	}
 }
 

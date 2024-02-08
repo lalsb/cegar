@@ -35,7 +35,7 @@ public class GraphController {
 	private PrintStream ps;
 
 	FxViewPanel panel;
-	
+
 	Pair<String, Set<Tuple>> result;
 
 	@FXML
@@ -69,6 +69,9 @@ public class GraphController {
 	private TextField counterExampleField;
 
 	@FXML
+	private TextField loopField;
+
+	@FXML
 	private Slider zoomSlider;
 
 	// Initialize method is called after the FXML file is loaded in Main
@@ -83,6 +86,7 @@ public class GraphController {
 		validateButton.setDisable(true);
 		checkPathButton.setDisable(true);
 		counterExampleField.setDisable(true);
+		loopField.setDisable(true);
 		zoomSlider.setDisable(true);
 		refineButton.setDisable(true);
 
@@ -144,6 +148,7 @@ public class GraphController {
 
 		checkPathButton.setDisable(false);
 		counterExampleField.setDisable(false);
+		loopField.setDisable(false);
 		activateZoomSlider();
 	}
 
@@ -163,7 +168,7 @@ public class GraphController {
 			refineButton.setDisable(false);
 		}
 	}
-	
+
 	/**
 	 * Handles the "Refine Abstraction" button action.
 	 */
@@ -191,10 +196,12 @@ public class GraphController {
 
 	private void activateZoomSlider() {
 
-		zoomSlider.setDisable(false);
-		panel.setOnScroll((ScrollEvent event) -> {
-			zoomSlider.setValue(zoomSlider.getValue() + event.getDeltaY()/1000);
-		});
+		if(zoomSlider.isDisabled()) {
+			zoomSlider.setDisable(false);
+			panel.setOnScroll((ScrollEvent event) -> {
+				zoomSlider.setValue(zoomSlider.getValue() + event.getDeltaY()/1000);
+			});
+		}
 	}
 
 }

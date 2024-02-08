@@ -21,9 +21,6 @@ import javafx.util.Pair;
 public class InitialAbstractionGenerator extends SourceBase
 implements Generator {
 
-	private int nodeId = 0;
-	private int edgeId = 0;
-
 	/**
 	 * List of formula clusters
 	 */
@@ -120,14 +117,14 @@ implements Generator {
 
 		// Cartesian product of all equivalence classes from each formula Cluster
 		Set<Set<Object>> equivalenceCombinations = SetUtils.cartesianProduct(partition.toArray(new Set<?>[0]));
-		
+
 		System.out.println("\nGenerating states:");
 
 		for(Set<Object> combination: equivalenceCombinations) {
 
 			Set<Set<Object>> fullTuples = SetUtils.cartesianProduct(combination.toArray(new Set<?>[0]));
 
-			State s = new State(Integer.toString(nodeId++));
+			State s = new State(Integer.toString(ModelManager.nodeId++));
 
 			for(Set<Object> full: fullTuples) {
 
@@ -144,7 +141,7 @@ implements Generator {
 
 			addNode(s);
 		}
-		
+
 		System.out.println("\nGenerating edges: ");
 
 		ListIterator<State> iterator = states.listIterator();
@@ -184,7 +181,7 @@ implements Generator {
 				addEdge(from, to);
 			}
 		}
-		
+
 		return false; // finished
 	}
 
@@ -198,10 +195,15 @@ implements Generator {
 	 * @param state
 	 */
 	protected void addNode(State state) {
-
 		states.add(state);
 		sendNodeAdded(sourceId, state.getId());
 		sendNodeAttributeAdded(sourceId,  state.getId(), "inverseImage", state.getInverseImage());
+
+		if(state.isInitial()) {
+			sendNodeAttributeAdded(sourceId, state.getId(), "ui.style", "fill-color: rgb(255,0,0);");
+			sendNodeAttributeAdded(sourceId, state.getId(), "isInitial", true);
+		}
+
 	}
 
 	/**
@@ -214,8 +216,8 @@ implements Generator {
 		Pair<State, State> edge = new Pair<State, State>(from, to);
 
 		if(!edges.contains(edge)){
-			
-			sendEdgeAdded(sourceId, Integer.toString(edgeId++) , from.getId(), to.getId(), true);
+
+			sendEdgeAdded(sourceId, Integer.toString(ModelManager.edgeId++) , from.getId(), to.getId(), true);
 			edges.add(edge);
 		}
 	}

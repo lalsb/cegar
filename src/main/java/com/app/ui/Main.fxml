@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import com.app.util.TagBox?>
 
 <VBox fx:id="Main" prefHeight="547.0" prefWidth="924.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.app.ui.MainController">
 
@@ -35,7 +36,7 @@
 		<children>
 
 			<!-- Fields for editing variable attributes -->
-			<GridPane hgap="20" prefHeight="313.0" prefWidth="369.0" vgap="3">
+			<GridPane hgap="20" prefHeight="313.0" prefWidth="555.0" vgap="3">
 
 				<padding>
 					<Insets bottom="10" left="10" right="10" top="10" />
@@ -51,15 +52,16 @@
 				<TextField fx:id="domainField" promptText="Enter a domain." GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
 				<Label alignment="TOP_LEFT" text="Transition" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-				<VBox prefHeight="227.0" prefWidth="269.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+				<VBox prefHeight="206.0" prefWidth="249.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
 					<children>
 						<VBox fx:id="TransitionPane" prefHeight="0.0" prefWidth="269.0" spacing="2.0" />
 						<Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleAddTransition" prefHeight="25.0" prefWidth="54.0" text="+" />
+                  <TagBox fx:id="tagBox" />
 					</children>
 				</VBox>
 				<columnConstraints>
-					<ColumnConstraints maxWidth="226.0" minWidth="60.0" prefWidth="58.0" />
-					<ColumnConstraints maxWidth="300.0" minWidth="31.0" prefWidth="271.0" />
+					<ColumnConstraints maxWidth="226.0" minWidth="60.0" prefWidth="77.0" />
+					<ColumnConstraints maxWidth="500.0" minWidth="31.0" prefWidth="500.0" />
 				</columnConstraints>
 				<rowConstraints>
 					<RowConstraints />

@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.model.exceptions.VariableInvalidExpection;
-import com.app.model.framework.ModelManager;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Variable;
+import com.app.util.TagBox;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -88,10 +88,13 @@ public class MainController {
 
 	@FXML
 	private Button AddTransitionButton;
+	
+	@FXML
+	private TagBox tagBox;
 
 	// Initialize method is called after the FXML file is loaded
 	@FXML
-	public void initialize() {
+	public void initialize() {	
 
 		// Set up the columns in the TableView
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
@@ -298,17 +301,23 @@ public class MainController {
 	private void _handleAddTransition(TransitionLine line) {
 
 		TextField condition = createTextField();
-		condition.setPrefSize(100.0, 32.0);
+		condition.setPrefSize(400.0, 32.0);
 		condition.setPromptText("Condition.");
+		
+		
+		TagBox actionBox = new TagBox();
+		
+		
 		TextField action = createTextField();
-		action.setPrefSize(100.0, 32.0);
+		action.setPrefSize(400.0, 32.0);
 		action.setPromptText("Action.");
+		
 		Button colon = new Button(":");
 		colon.setPrefSize(32.0, 32.0);
 		colon.setDisable(true);
 		Button rmbutton = new Button();
 		rmbutton.setText("-");
-		HBox hbox = new HBox(condition, colon, action, rmbutton);
+		HBox hbox = new HBox(condition, colon, actionBox, rmbutton);
 		hbox.setSpacing(3.0);
 		rmbutton.setOnAction((e) -> {
 			TransitionPane.getChildren().remove(hbox);

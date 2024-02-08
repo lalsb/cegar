@@ -7,10 +7,12 @@ public class State {
 	
 	private String id;
 	private Set<Tuple> inverseImage;
+	private boolean isInitial;
 	
 	public State(String id) {
 		this.id = id;
 		inverseImage = new HashSet<Tuple>();
+		isInitial = false;
 	}
 	
 	public Set<Tuple> getInverseImage(){
@@ -23,10 +25,18 @@ public class State {
 	
 	public void addToInverseImage(Tuple tuple) {
 		inverseImage.add(tuple);
+		
+		if(ModelManager.getInitialTuples().contains(tuple)) {
+			isInitial = true;
+		}
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public boolean isInitial() {
+		return isInitial;
 	}
 
 }

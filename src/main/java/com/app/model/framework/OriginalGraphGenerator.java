@@ -14,18 +14,16 @@ implements Generator {
 	 * Map of variable ids as keys with corresponding values e.g. a 'state'
 	 */
 	Tuple current;
-
+	
 	Iterator<Tuple> i;
 
 	Set<Tuple> audited;
 	Set<Tuple> unaudited;
 	Set<Tuple> found;
 	Set<Tuple> added;
-
+	
 	public OriginalGraphGenerator() {
 		super();
-		// this.addSink(new ConsoleSink());
-
 		audited = new HashSet<Tuple>();
 		unaudited = new HashSet<Tuple>();
 		found = new HashSet<Tuple>();
@@ -33,16 +31,10 @@ implements Generator {
 	}
 
 	public void begin() {
-		current = new Tuple(); // Create state
 		
-		ModelManager.getvariablesMap().forEach((k,v) -> {
-			current.put(k, v.getValue());
-			});
+		unaudited.addAll(ModelManager.getInitialTuples()); // Get initial tuples
 		
-		
-		unaudited.add(current);
-		
-		System.out.println("\nGenerating original graph, starting with current: " + current + " and unaudited: " + unaudited + "\n");
+		System.out.println("\nGenerating original graph, starting with intials:" + unaudited + "\n");
 	}
 
 	public boolean nextEvents() {
@@ -54,6 +46,7 @@ implements Generator {
 		}
 		
 		current = i.next();
+		addNode(current);
 		System.out.println("Current: " + current);
 		System.out.println("Audited: " + audited);
 		
@@ -86,19 +79,21 @@ implements Generator {
 
 	/**
 	 * Sends a node to the generator sink (graph)
-	 * @param state
+	 * @param tuple
 	 */
-	protected void addNode(Tuple state) {
+	protected void addNode(Tuple tuple) {
 
-		if(!added.contains(state)) {
-			sendNodeAdded(sourceId, state + "");
+		if(!added.contains(tuple) && !tuple.isEmpty()) {
+			sendNodeAdded(sourceId, tuple + "");
 
-			for (var entry : state.entrySet()) {
-				this.sendNodeAttributeAdded(sourceId, state + "", entry.getKey(), entry.getValue());
+			sendNodeAttributeAdded(sourceId, tuple + "", "value", tuple);
+			
+			if(tuple.isInitial()) {
+			sendNodeAttributeAdded(sourceId, tuple + "", "ui.style", "fill-color: rgb(255,0,0);");
 			}
 
 			ModelManager.nodeId++;
-			added.add(state);
+			added.add(tuple);
 		}
 	}
 

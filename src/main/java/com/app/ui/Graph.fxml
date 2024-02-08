@@ -73,13 +73,19 @@
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+            <VBox prefHeight="256.0" prefWidth="296.0" spacing="3.0">
                <children>
                   <Label text="Abstraction Refinement" />
                   <Separator prefWidth="200.0" />
                   <Button mnemonicParsing="false" onAction="#handleGenerateInitialAbstraction" prefHeight="25.0" prefWidth="307.0" text="Generate Initial Abstraction" />
-                  <TextField fx:id="counterExampleField" promptText="Enter a Counterexample" />
-                  <Button fx:id="checkPathButton" mnemonicParsing="false" onAction="#handleCheckPath" prefHeight="25.0" prefWidth="307.0" text="CheckPath" />
+                  <HBox prefHeight="10.0" prefWidth="296.0" spacing="2.0">
+                     <children>
+                        <TextField fx:id="counterExampleField" promptText="Finite Part" />
+                        <Button disable="true" mnemonicParsing="false" text="⋅" />
+                        <TextField fx:id="loopField" promptText="Looping Part" />
+                     </children>
+                  </HBox>
+                  <Button fx:id="checkPathButton" mnemonicParsing="false" onAction="#handleCheckPath" prefHeight="0.0" prefWidth="296.0" text="Check Path" />
                   <Button fx:id="refineButton" mnemonicParsing="false" onAction="#handleRefineAbstraction" prefHeight="25.0" prefWidth="307.0" text="Refine Abstraction" />
                   <Separator prefWidth="200.0" />
                </children>

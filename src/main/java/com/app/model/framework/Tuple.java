@@ -1,20 +1,31 @@
 package com.app.model.framework;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.mariuszgromada.math.mxparser.Argument;
 
 @SuppressWarnings("serial")
-public class Tuple extends HashMap<String, Double> {
-	
+public class Tuple extends HashMap<String, Double> {	
 	
 	public Tuple() {
         super();
     }
 	
+	public Tuple(Map<String, Double> map) {
+        super(map);
+    }
+	
 	public Tuple(Tuple tuple) {
 		super(tuple);
+	}
+	
+	public boolean isInitial() {
+		
+		assert ModelManager.getInitialTuples() != null;	
+		return ModelManager.getInitialTuples().contains(this);
+		
 	}
 
 	/**
