@@ -1,16 +1,15 @@
 package com.app.model.framework;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
+
+import com.app.util.PredicateSplitter;
 
 /**
  * Transition line implementation that parses one transition line.
@@ -19,33 +18,29 @@ import org.mariuszgromada.math.mxparser.Expression;
  */
 public class TransitionLine implements Serializable{
 	private static final long serialVersionUID = 1L;
-	
-	public static final String LITERALS = "[A-Za-z]+";
-	public static final String JUNCTIONS = "[&|]";
-	public static final String TRANSITION_SEPERATOR = ":";
 
 	private String varId;
 	private String condition;
-	private String action;
+	private List<String> actions;
 	private List<AtomicFormula> atoms;
 
-	public TransitionLine(String varId, String condition, String action) {
+	public TransitionLine(String varId, String condition, List<String> action) {
 		this.varId = varId;
 		this.condition = condition;
-		this.action = action;
+		this.actions = action;
 		isValid();
 		parse();
 	}
 
-	public String actionSubstring() {
-		return action;
+	public List<String> getActions() {
+		return actions;
 	}
 
-	public String conditionSubstring() {
+	public String getCondition() {
 		return condition;
 	}
 
-	public List<AtomicFormula> atoms(){
+	public List<AtomicFormula> getAtoms(){
 		return atoms;
 	}
 
@@ -55,49 +50,44 @@ public class TransitionLine implements Serializable{
 	 */
 	private void isValid() throws IllegalArgumentException{
 
-		if(condition.isBlank()) {
-			throw new IllegalArgumentException();
+		if(condition == null || condition.isBlank()) {
+			throw new IllegalArgumentException("Invalid condition in Transition: " + varId);
 		}
 		
-		if(action.isBlank()) {
-			throw new IllegalArgumentException();
+		if(actions == null ||actions.isEmpty() || actions.contains("") || actions.contains(null)) {
+			throw new IllegalArgumentException("Invalid action in Transition: " + varId);
 		}
 
 	}
 
 	/**
-	 * Parses a transition, performing the following steps:
-	 * - Splits transitions into a condition C (predicate) and an action A (expression)
-	 * - 
-	 * -
+	 * Parses a transition for atomic formulas
 	 */
 	private void parse() {
 
-		atoms = new LinkedList<AtomicFormula>();
-		Pattern p = Pattern.compile(LITERALS);
+		atoms = new ArrayList<AtomicFormula>();
 
-		for(String atom: condition.split(JUNCTIONS)) { // Split conditions at junctions
-
-			Set<String> vars = new HashSet<String>();
-			Matcher m = p.matcher(atom);
-
-			while (m.find()) {
-				vars.add(m.group()); // Note variables for a particular set
-			}
+		for(String atom: PredicateSplitter.splitPredicate(condition)) { // Split conditions at junctions
 
 			Expression e = new Expression(atom);
-			e.defineArguments(e.getMissingUserDefinedArguments());
+			String[] arguments = e.getMissingUserDefinedArguments();
+			
+			assert arguments.length > 0;
+			
+			e.defineArguments(arguments);
 			atoms.add(new AtomicFormula(e)); // Atomc formula object
-			}
+		}
 	}
 
 	/**
 	 * Audits a transition line
-	 * @param current
-	 * @return
+	 * @param current Tuple thats audited
+	 * @return New values or null if there are none
 	 */
-	public double audit(Tuple current) {
+	public Set<Double> audit(Tuple current) {
 
+		Set<Double> values = new HashSet<Double>();
+		
 		// Create new state and copy attributes
 		Tuple s = new Tuple();
 		current.forEach((k,v) -> s.put(k,v));
@@ -109,27 +99,29 @@ public class TransitionLine implements Serializable{
 		// Check if condition c is true
 		if(c.calculate() == (1.0)) {
 
-			// Calculate action expression with mXParser
-			Expression a = new Expression(action,arguments);	
-			double result = a.calculate();
-			if(ModelManager.getVariable(varId).isInBounds(result)) {
-				return result;
+			for(String action: actions) {
+				
+				// Calculate action expression with mXParser
+				Expression a = new Expression(action,arguments);	
+				double result = a.calculate();
+				if(ModelManager.getVariable(varId).isInBounds(result)) {
+					values.add(result);
+				}
 			}
 
 		} 
 
-		// Conditions false or new value not new or not in bounds
-		return Double.NaN;
+		// Return all new values
+		return values;
 	}
 
 	public boolean validate() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
-		
-		return "(" + condition + ":" + action + ")"; 
+		return condition + ":" + actions; 
 	}
 }

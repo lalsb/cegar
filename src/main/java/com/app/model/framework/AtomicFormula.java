@@ -59,6 +59,8 @@ public class AtomicFormula implements Serializable {
 			var_names[i] = e.getKeyWords("typeid=101").get(i).wordString;
 		}
 		
+		//TODO:
+		
 		return new HashSet<>(Arrays.asList(var_names));	
 	}
 

@@ -34,7 +34,7 @@ implements Generator {
 		
 		unaudited.addAll(ModelManager.getInitialTuples()); // Get initial tuples
 		
-		System.out.println("\nGenerating original graph, starting with intials:" + unaudited + "\n");
+		System.out.println("\nGenerating original graph, starting with intials: " + unaudited + "\n");
 	}
 
 	public boolean nextEvents() {
@@ -64,9 +64,9 @@ implements Generator {
 		found.removeAll(audited);
 		unaudited.addAll(found);
 		
-		System.out.println("Found: " + found);
-		System.out.println("Unaudited: " + unaudited);
-		System.out.println("********************************");
+		System.out.println("> Found: " + found);
+		System.out.println("> Todo : " + unaudited);
+		System.out.println("----------------------------------------------------------------------------");
 
 		
 		found.clear();
@@ -111,9 +111,8 @@ implements Generator {
 			}
 		}
 		
-		if(added.contains(from) && added.contains(to) && !from.equals(to)) {
+		if(added.contains(from) && added.contains(to)) {
 			this.sendEdgeAdded(sourceId, Integer.toString(ModelManager.edgeId), from + "", to + "", true);
-
 			ModelManager.edgeId++;
 		}
 	}

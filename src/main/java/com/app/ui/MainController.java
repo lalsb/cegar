@@ -43,7 +43,7 @@ public class MainController {
 
 	private List<Variable> variableList;
 
-	private TextField selectedTextField;
+	public static TextField selectedTextField;
 
 	// Table, TextFields
 	@FXML
@@ -51,13 +51,13 @@ public class MainController {
 
 	@FXML
 	private TableColumn<Variable, String> nameColumn;
-	
+
 	@FXML
 	private TableColumn<Variable, String> initialsColumn;
-	
+
 	@FXML
 	private TableColumn<Variable, String> domainColumn;
-	
+
 	@FXML
 	private TableColumn<Variable, String> transitionsColumn;
 
@@ -88,13 +88,16 @@ public class MainController {
 
 	@FXML
 	private Button AddTransitionButton;
-	
+
 	@FXML
-	private TagBox tagBox;
+	private TagBox elseBox;
 
 	// Initialize method is called after the FXML file is loaded
 	@FXML
 	public void initialize() {	
+
+		// Set up else Box
+		elseBox.getField().setPromptText("Enter a compulsory else action.");
 
 		// Set up the columns in the TableView
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
@@ -107,22 +110,32 @@ public class MainController {
 			@Override
 			public void changed(ObservableValue<? extends Variable> observable, Variable oldValue, Variable newValue) {
 				if (newValue != null) {
-
+					// Clear fields
 					TransitionPane.getChildren().clear();
-					// Fill the fields with the values from the selected item
+					// Fill name field
 					nameField.setText(newValue.getId());
-
+					// Fill intiial values field
 					initialValuesField.setText(String.join(",",
 							newValue.getInitials().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
-									.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
-
+							.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
+					// Fill Domain field
 					domainField.setText(String.join(",",
 							newValue.getDomain().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
-									.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
-
-					for (TransitionLine line : newValue.getTransitionBlock().transitions()) {
+							.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
+					// Fill case block
+					List<TransitionLine> lines = newValue.getTransitionBlock().transitions();	
+					
+					System.out.println("Filling " +  lines.size() + " lines. Lines: " + lines);
+					
+					for (TransitionLine line : lines.subList(0, lines.size() - 1)) {
 						_handleAddTransition(line);
 					}
+					// Fill else case
+					System.out.println("Filling else Box with: "+ lines.get(lines.size() -1).getActions());
+					elseBox.clear();
+					elseBox.addAll(lines.get(lines.size() -1).getActions());
+
+					
 
 				}
 			}
@@ -195,14 +208,19 @@ public class MainController {
 		List<String> dsource = Arrays.asList(domainField.getText().split(","));
 		dsource.forEach(string -> domain.add(parseDouble(string)));
 
-		Set<TransitionLine> transitions = new HashSet<TransitionLine>();
+		List<TransitionLine> transitions = new ArrayList<TransitionLine>();
+		
 		for (Node hbox : TransitionPane.getChildren()) {
-			((HBox) hbox).getChildren();
+
 			String condition = ((TextField) ((HBox) hbox).getChildren().get(0)).getText();
-			String action = ((TextField) ((HBox) hbox).getChildren().get(2)).getText();
-			TransitionLine line = new TransitionLine(name, condition, action);
+			List<String> actions = ((TagBox) ((HBox) hbox).getChildren().get(2)).getTags();	
+
+			TransitionLine line = new TransitionLine(name, condition, actions);
+
 			transitions.add(line);
 		}
+
+		transitions.add(new TransitionLine(name, "1.0", elseBox.getTags())); // Add else Tag last
 
 		TransitionBlock block = new TransitionBlock(name, transitions.toArray(new TransitionLine[0]));
 
@@ -267,7 +285,7 @@ public class MainController {
 		try {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Load Variables");
-	        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+			fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 			fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Serialized Files", "*.ser"));
 			File file = fileChooser.showOpenDialog(variableTableView.getScene().getWindow());
 
@@ -301,17 +319,14 @@ public class MainController {
 	private void _handleAddTransition(TransitionLine line) {
 
 		TextField condition = createTextField();
-		condition.setPrefSize(400.0, 32.0);
+		condition.setPrefSize(200.0, 32.0);
+		condition.setMinWidth(150);
 		condition.setPromptText("Condition.");
-		
-		
+
+
 		TagBox actionBox = new TagBox();
-		
-		
-		TextField action = createTextField();
-		action.setPrefSize(400.0, 32.0);
-		action.setPromptText("Action.");
-		
+		actionBox.setPrefSize(400.0, 32.0);
+
 		Button colon = new Button(":");
 		colon.setPrefSize(32.0, 32.0);
 		colon.setDisable(true);
@@ -324,8 +339,8 @@ public class MainController {
 		});
 
 		if (line != null) {
-			action.setText(line.actionSubstring());
-			condition.setText(line.conditionSubstring());
+			actionBox.addAll(line.getActions());
+			condition.setText(line.getCondition());
 		}
 
 		TransitionPane.getChildren().add(hbox);
@@ -401,7 +416,7 @@ public class MainController {
 	 * Helper method to create textFields
 	 * @return TextField TextField instance
 	 */
-	private TextField createTextField() {
+	public static TextField createTextField() {
 		TextField textField = new TextField();
 
 		// Add an event handler to track the focus
@@ -424,6 +439,7 @@ public class MainController {
 		initialValuesField.clear();
 		domainField.clear();
 		TransitionPane.getChildren().clear();
+		elseBox.clear();
 		variableTableView.getSelectionModel().clearSelection();
 	}
 

@@ -67,7 +67,7 @@ implements Generator {
 
 		transitionBlocks.forEach((k,v)->{
 			v.transitions().forEach(x-> {
-				atomicFormulas.addAll(x.atoms());
+				atomicFormulas.addAll(x.getAtoms());
 			});
 		});
 
@@ -160,14 +160,7 @@ implements Generator {
 				result.putAll(tuple);
 
 				// Calculate image
-				result.forEach((k,v) -> {
-
-					double ret = ModelManager.getTransitionBlockMap().get(k).audit(result);
-					if(!Double.isNaN(ret)) {
-						result.replace(k, ret);
-					}	
-				});
-
+				image.addAll(ModelManager.getImage(result));
 
 				// Collect image
 				if(!image.contains(result)) {
@@ -200,6 +193,7 @@ implements Generator {
 		sendNodeAttributeAdded(sourceId,  state.getId(), "inverseImage", state.getInverseImage());
 
 		if(state.isInitial()) {
+			System.out.println("Found intial state: " + state.getId() + " (tuples: " + state.getInverseImage() + ")");
 			sendNodeAttributeAdded(sourceId, state.getId(), "ui.style", "fill-color: rgb(255,0,0);");
 			sendNodeAttributeAdded(sourceId, state.getId(), "isInitial", true);
 		}

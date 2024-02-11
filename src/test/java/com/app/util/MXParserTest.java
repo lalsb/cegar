@@ -45,9 +45,9 @@ class MXParserTest {
 	
 	@Test
 	void simpleRelationCalculation(){
-		Expression e = new Expression("2<3");	
+		Expression e = new Expression("¬(2<3)");	
 		// 1.0d equals "true"
-		Assertions.assertEquals(1, e.calculate());
+		Assertions.assertEquals(0, e.calculate());
 	}
 
 	

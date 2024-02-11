@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.app.ui.MainController;
+
 /**
  * Implements a custom HBox storing tags. 
  * @author Linus Alsbach
@@ -27,6 +29,10 @@ public class TagBox extends HBox {
 	
 	// Input field
 	private final TextField inputField;
+	
+	public TextField getField() {
+		return inputField;
+	}
 
 	public List<String> getTags() {
 		
@@ -35,12 +41,19 @@ public class TagBox extends HBox {
 		
 		return tagList; // Return all tags
 	}
+	
+	public void addAll(List<String> tags) {
+		
+		for(String tag: tags) {
+			tempTagList.add(tag);
+		}	
+	}
 
 	public TagBox() {
 		
 		// Set up list, field
 		tempTagList = FXCollections.observableArrayList();
-		inputField = new TextField();
+		inputField = MainController.createTextField(); // Selected field is monitored in MainController
 		inputField.setPromptText("Action.");
 		inputField.setOnAction(e -> {
 			
@@ -91,16 +104,21 @@ public class TagBox extends HBox {
 		public Tag(String tag) {
 			
 			// Set up layout
-			this.setSpacing(1d);
+			setSpacing(1d);
 			
 			// Set up button to remove this action later
-			Button rmbutton = new Button("-");
+			Button rmbutton = new Button("x");
 			rmbutton.setOnAction((e) -> tempTagList.remove(tag));
 			
 			// Action is Displayed in a text field
-			TextField action = new TextField(tag);
+			TextField action = MainController.createTextField(); // Selected field is monitored in MainController
+			action.setText(tag);
 			getChildren().addAll(action, rmbutton);
 		}
 	}
 
+	public void clear() {
+		tempTagList.clear();
+		inputField.clear();
+	}
 }

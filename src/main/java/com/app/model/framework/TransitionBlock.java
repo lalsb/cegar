@@ -3,18 +3,10 @@ package com.app.model.framework;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import org.graphstream.graph.Node;
-
 import com.app.model.exceptions.TransitionBlockInvalidException;
-import com.app.model.graph.KripkeStruct;
 
 
 /**
@@ -28,13 +20,15 @@ public class TransitionBlock implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	public static final String ALLOWED = "[^a-zA-Z0-9+\\-|&!]";
-	private String var;
-	private List<TransitionLine> transitions;
+	private String varId;
+	private List<TransitionLine> transitions; // Last Transition represents else
 
 	public TransitionBlock(String var, TransitionLine ... transitions) {
 		this.transitions = new ArrayList<TransitionLine>();
-		this.transitions.addAll(Arrays.asList(transitions));
-		this.var = var;
+		for(TransitionLine transition: transitions) {
+			this.transitions.add(transition);
+		}
+		this.varId = var;
 		try {
             validate();
         } catch (RuntimeException e) {
@@ -47,7 +41,7 @@ public class TransitionBlock implements Serializable{
 	 * @return
 	 */
 	public String getVariable() {
-		return this.var;
+		return this.varId;
 	}
 	
 	/**
@@ -67,44 +61,26 @@ public class TransitionBlock implements Serializable{
 	}
 
 	/**
-	 * Audits a transition block (e.g. all transition lines)
+	 * Audits a transition block (e.g. all transition lines until one condition is satisfied)
 	 * @param current
 	 * @return first found states
 	 */
-	public double audit(Tuple current) {
-	
-		for(TransitionLine transition: transitions) {
-			double result = transition.audit(current);
-			
-			if(!Double.isNaN(result)) {
-				return result;
-			}
-		}
-		return Double.NaN;
-	}
-	
-	
-	/**
-	 * Audits a transition block (e.g. all transition lines)
-	 * @param current
-	 * @return all found states
-	 */
-	public Set<Double> auditAll(Tuple current) {
+	public Set<Double> audit(Tuple current) {
 		
-		Set<Double> ret = new HashSet<Double>();
-	
-		for(TransitionLine transition: transitions) {
-			double result = transition.audit(current);
-			
-			if(!Double.isNaN(result)) {
-				ret.add(result);
-			}
+		assert !transitions.isEmpty(); // There's at least the else condition
+		
+		if(current == null || current.isEmpty()) {
+			throw new IllegalArgumentException("Invalid tuple audited in Transition block: " + varId);
 		}
 		
-		ret.add(current.get(var));
-		// System.out.println("-- found (" + var.getId() + "): " + ret);
+		ListIterator<TransitionLine> i = transitions.listIterator();
+		Set<Double> result = i.next().audit(current);
 		
-		return ret;
+		while(i.hasNext() && result.isEmpty()) {
+			result = i.next().audit(current);
+		}
+
+		return result;
 	}
 	
 	@Override
@@ -112,11 +88,16 @@ public class TransitionBlock implements Serializable{
 		
 		StringBuilder sb = new StringBuilder();
 		
-		transitions.forEach(t -> sb.append(t + ","));
-		
-		if(!transitions.isEmpty()) {
-			return sb.substring(0, sb.length() - 1);
+		for(int i = 0; i < transitions.size() - 1; i++) {
+			sb.append("if ");
+			sb.append(transitions.get(i).getCondition());
+			sb.append(" then ");
+			sb.append(transitions.get(i).getActions());
+			sb.append(" ");
 		}
+		
+		sb.append("else ");
+		sb.append(transitions.get(transitions.size() - 1).getActions());
 		
 		return sb.toString();
 	}

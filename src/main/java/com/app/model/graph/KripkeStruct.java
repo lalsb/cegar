@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -62,7 +63,7 @@ public class KripkeStruct extends MultiGraph{
 		while(i.hasNext()) {
 
 			Node node = i.next();
-			node.setAttribute("ui.label", node.getId() + node.getAttribute("inverseImage"));
+			node.setAttribute("ui.label", node.getId() + (node.getAttribute("inverseImage")));
 
 			String current = (String) node.getAttribute("ui.style");
 			if (current == null || !current.contains("text-size")) {
@@ -76,7 +77,8 @@ public class KripkeStruct extends MultiGraph{
 
 		v.enableAutoLayout();
 		FxViewPanel panel = (FxViewPanel)v.addDefaultView(false, new FxGraphRenderer());
-
+		//v.disableAutoLayout(); // Disable 
+		
 		setAttribute("ui.antialias");
 		setAttribute("ui.quality");
 		return panel;
@@ -145,7 +147,13 @@ public class KripkeStruct extends MultiGraph{
 		while(i.hasNext()) {
 			
 			Node node = i.next();
-			if(((Set<Tuple>) node.getAttribute("inverseImage")).contains(tuple)){
+			
+			if(node.hasAttribute("inverseImage") &&
+					((Set<Tuple>) node.getAttribute("inverseImage")).contains(tuple)) {
+				return node;
+			}
+			
+			if(node.hasAttribute("value") && node.getAttribute("value").equals(tuple)){
 				return node;
 			}
 		}

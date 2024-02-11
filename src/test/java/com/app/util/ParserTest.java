@@ -15,26 +15,13 @@ import com.app.model.framework.Variable;
 class ParserTest {
 
 	@Test
-	void simpleTransitionTest() {
-		
-		TransitionLine p = new TransitionLine("x", "y!=x|y=5&x=5", "0");
-		String condition = p.conditionSubstring();
-		String action = p.actionSubstring();
-		
-		Assertions.assertEquals("y!=x|y=5&x=5", condition);
-		Assertions.assertEquals("0", action);
-		Assertions.assertTrue(p.atoms().toString().contains("y!=x"));
-
-	}
-	
-	@Test
 	void simpleBlockTest() {
 		
-		TransitionLine lx1 = new TransitionLine("x", "r=0&x<y", "x+1");
-		TransitionLine lx2 = new TransitionLine("x", "r=1", "x-1");	
-		TransitionLine ly1 = new TransitionLine("y", "x=y|x<y", "y+1");
-		TransitionLine lr1 = new TransitionLine("r", "x=y", "1");
-		TransitionLine lr2 = new TransitionLine("r", "y=2", "0");
+		TransitionLine lx1 = new TransitionLine("x", "r=0&x<y", Arrays.asList("x+1"));
+		TransitionLine lx2 = new TransitionLine("x", "r=1", Arrays.asList("x-1"));	
+		TransitionLine ly1 = new TransitionLine("y", "x=y|x<y", Arrays.asList("y+1"));
+		TransitionLine lr1 = new TransitionLine("r", "x=y", Arrays.asList("1"));
+		TransitionLine lr2 = new TransitionLine("r", "y=2", Arrays.asList("0"));
 		
 		TransitionBlock bx = new TransitionBlock("x", lx1, lx2);
 		TransitionBlock by = new TransitionBlock("y", ly1);
