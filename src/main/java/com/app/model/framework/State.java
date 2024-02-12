@@ -38,5 +38,12 @@ public class State {
 	public boolean isInitial() {
 		return isInitial;
 	}
+	
+	@Override
+	public String toString() {
+		
+		return "#" + id + " = " + inverseImage;
+		
+	}
 
 }

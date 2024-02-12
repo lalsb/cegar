@@ -357,33 +357,51 @@ public class ModelManager{
 
 		// Re-evaluate incoming edges
 		for(Edge entering: old.enteringEdges().toList()) {
-			if(SetUtils.intersect(
-					getImage((Set<Tuple>) entering.getSourceNode().getAttribute("inverseImage")),
-					rest)) {
+			
+			Set<Tuple> target = getImage((Set<Tuple>) entering.getSourceNode().getAttribute("inverseImage"));
+			
+			if(SetUtils.intersect(target, rest) && SetUtils.intersect(target, deadEnds)) {
 
-				// keep edge
+				System.out.println("Entering: Keeping edge from " + entering.getSourceNode() + " to old state and adding new edge from there to new state");
+				// keep edge to old node
+				// add new entering edge for new sate
+				abstractionGraph.addEdge(Integer.toString(edgeId++), entering.getSourceNode(), n);
 
-			} else if(SetUtils.intersect(
-					getImage((Set<Tuple>) entering.getSourceNode().getAttribute("inverseImage")),
-					deadEnds)){
+			} else if(SetUtils.intersect(target, deadEnds)){
 
+				System.out.println("Entering: Changing target of edge from " + entering.getSourceNode() + " to new node.");
 				setTargetTo(abstractionGraph, entering, n); // change edge target to new node
-
+				
+			}else {
+				
+				System.out.println("Entering: Keeping edge from " + entering.getSourceNode());
+				// keep edge to old node
+				
 			}
 		}
 		// Re-evaluate outgoing egdes
 		for(Edge leaving: old.leavingEdges().toList()) {
-			if(SetUtils.intersect(
-					getImage((Set<Tuple>) leaving.getTargetNode().getAttribute("inverseImage")),
-					rest)) {
+			
+			Set<Tuple> target = (Set<Tuple>) leaving.getTargetNode().getAttribute("inverseImage");
+			
+			if(SetUtils.intersect(target, getImage(rest)) && SetUtils.intersect(target, getImage(deadEnds))) {
 
-				// keep edge
+				System.out.println("Leaving: Keeping edge to " + leaving.getTargetNode() + " from old state and adding new edge to there from new state");
+				// keep edge from old node
+				// add new leaving edge for new state
+				abstractionGraph.addEdge(Integer.toString(edgeId++), n, leaving.getTargetNode());
 
-			} else if(SetUtils.intersect(
-					getImage((Set<Tuple>) leaving.getTargetNode().getAttribute("inverseImage")),
-					deadEnds)){
+			} else if(SetUtils.intersect(target, getImage(deadEnds))){
 
-				setSourceTo(abstractionGraph, leaving, n); // change edge source to new node
+				// change edge source to new node
+				System.out.println("Leaving: Changing source form edge towards " + leaving.getTargetNode() + " to new node.");
+				setSourceTo(abstractionGraph, leaving, n);
+				
+			} else {
+				
+				System.out.println("Leaving: Keeping edge to " + leaving.getTargetNode());
+				// keep edge from old node
+				
 			}
 		}
 
@@ -394,8 +412,6 @@ public class ModelManager{
 	public static void setTargetTo(KripkeStruct graph, Edge edge, Node newTargetNode) {
 		// Remove the existing edge
 		graph.removeEdge(edge);
-
-		System.out.println("Set new target node " + newTargetNode.getId()  + " for edge " + edge.getId());
 		// Add a new edge with the same ID but different target node
 		graph.addEdge(edge.getId(), edge.getSourceNode(), newTargetNode, true);
 	}
@@ -404,8 +420,6 @@ public class ModelManager{
 	public static void setSourceTo(KripkeStruct graph, Edge edge, Node newSourceNode) {
 		// Remove the existing edge
 		graph.removeEdge(edge);
-
-		System.out.println("Set new source node " + newSourceNode.getId()  + " for edge " + edge.getId());
 		// Add a new edge with the same ID but different source node
 		graph.addEdge(edge.getId(), newSourceNode, edge.getTargetNode(), true);
 	}

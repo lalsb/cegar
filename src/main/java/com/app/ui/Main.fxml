@@ -43,24 +43,24 @@
 				</padding>
 
 				<Label text="Name" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-				<TextField fx:id="nameField" prefHeight="25.0" prefWidth="212.0" promptText="Enter a name." GridPane.columnIndex="1" />
+				<TextField id="Name" fx:id="nameField" prefHeight="25.0" prefWidth="212.0" promptText="Enter a name." GridPane.columnIndex="1" />
 
 				<Label text="Initials" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-				<TextField fx:id="initialValuesField" promptText="Enter a number initial values." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+				<TextField id="Initials" fx:id="initialValuesField" promptText="Enter a number initial values." GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
 				<Label text="Domain" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-				<TextField fx:id="domainField" promptText="Enter a domain." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+				<TextField id="Domain" fx:id="domainField" promptText="Enter a domain." GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
 				<Label text="Else" GridPane.rowIndex="5" />
 				<VBox prefHeight="206.0" prefWidth="249.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
 					<children>
-						<VBox fx:id="TransitionPane" prefHeight="0.0" prefWidth="269.0" spacing="2.0" />
+						<VBox fx:id="transitionBox" prefHeight="0.0" prefWidth="269.0" spacing="2.0" />
 						<Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleAddTransition" prefHeight="25.0" prefWidth="54.0" text="+" />
 					</children>
 				</VBox>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <children>
-                  <TagBox fx:id="elseBox" prefHeight="100.0" prefWidth="281.0" />
+                  <TagBox id="Else" fx:id="elseBox" prefHeight="100.0" prefWidth="281.0" />
                </children>
             </HBox>
             <Label text="Case" GridPane.rowIndex="3" />
@@ -74,7 +74,7 @@
 					<RowConstraints />
 					<RowConstraints valignment="CENTER" />
 					<RowConstraints valignment="TOP" />
-               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" />
+               <RowConstraints valignment="TOP" />
 				</rowConstraints>
 
 			</GridPane>

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import com.app.model.exceptions.TransitionBlockInvalidException;
 
 
 /**
@@ -14,12 +13,8 @@ import com.app.model.exceptions.TransitionBlockInvalidException;
  * @author Linus Alsbach
  */
 public class TransitionBlock implements Serializable{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	public static final String ALLOWED = "[^a-zA-Z0-9+\\-|&!]";
+	
 	private String varId;
 	private List<TransitionLine> transitions; // Last Transition represents else
 
@@ -28,12 +23,6 @@ public class TransitionBlock implements Serializable{
 		for(TransitionLine transition: transitions) {
 			this.transitions.add(transition);
 		}
-		this.varId = var;
-		try {
-            validate();
-        } catch (RuntimeException e) {
-        	e.printStackTrace();
-        }
 	}
 	
 	/**
@@ -52,14 +41,6 @@ public class TransitionBlock implements Serializable{
 		return transitions;
 	}
 	
-	/**
-	 * Checks if the entire transition block contains disallowed symbols in which case it
-	 * @throws TransitionBlockInvalidException
-	 */
-	private void validate() {
-		transitions.forEach(l -> l.validate());
-	}
-
 	/**
 	 * Audits a transition block (e.g. all transition lines until one condition is satisfied)
 	 * @param current

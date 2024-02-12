@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.app.model.exceptions.VariableInvalidExpection;
+import com.app.model.exceptions.IllegalInputException;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Variable;
@@ -84,7 +84,7 @@ public class MainController {
 	private Button loadButton;
 
 	@FXML
-	private VBox TransitionPane;
+	private VBox transitionBox;
 
 	@FXML
 	private Button AddTransitionButton;
@@ -111,7 +111,7 @@ public class MainController {
 			public void changed(ObservableValue<? extends Variable> observable, Variable oldValue, Variable newValue) {
 				if (newValue != null) {
 					// Clear fields
-					TransitionPane.getChildren().clear();
+					transitionBox.getChildren().clear();
 					// Fill name field
 					nameField.setText(newValue.getId());
 					// Fill intiial values field
@@ -125,13 +125,10 @@ public class MainController {
 					// Fill case block
 					List<TransitionLine> lines = newValue.getTransitionBlock().transitions();	
 					
-					System.out.println("Filling " +  lines.size() + " lines. Lines: " + lines);
-					
 					for (TransitionLine line : lines.subList(0, lines.size() - 1)) {
 						_handleAddTransition(line);
 					}
 					// Fill else case
-					System.out.println("Filling else Box with: "+ lines.get(lines.size() -1).getActions());
 					elseBox.clear();
 					elseBox.addAll(lines.get(lines.size() -1).getActions());
 
@@ -188,14 +185,8 @@ public class MainController {
 	 * Handles the "Add" button action.
 	 */
 	@FXML
-	private void handleAddVariable() {
-
-		try {
+	private void handleAddVariable() throws IllegalInputException {
 			validate();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
 
 		// Get data from fields
 		String name = nameField.getText();
@@ -210,7 +201,7 @@ public class MainController {
 
 		List<TransitionLine> transitions = new ArrayList<TransitionLine>();
 		
-		for (Node hbox : TransitionPane.getChildren()) {
+		for (Node hbox : transitionBox.getChildren()) {
 
 			String condition = ((TextField) ((HBox) hbox).getChildren().get(0)).getText();
 			List<String> actions = ((TagBox) ((HBox) hbox).getChildren().get(2)).getTags();	
@@ -335,7 +326,7 @@ public class MainController {
 		HBox hbox = new HBox(condition, colon, actionBox, rmbutton);
 		hbox.setSpacing(3.0);
 		rmbutton.setOnAction((e) -> {
-			TransitionPane.getChildren().remove(hbox);
+			transitionBox.getChildren().remove(hbox);
 		});
 
 		if (line != null) {
@@ -343,7 +334,7 @@ public class MainController {
 			condition.setText(line.getCondition());
 		}
 
-		TransitionPane.getChildren().add(hbox);
+		transitionBox.getChildren().add(hbox);
 	}
 
 	/**
@@ -438,19 +429,25 @@ public class MainController {
 		nameField.clear();
 		initialValuesField.clear();
 		domainField.clear();
-		TransitionPane.getChildren().clear();
+		transitionBox.getChildren().clear();
 		elseBox.clear();
 		variableTableView.getSelectionModel().clearSelection();
 	}
 
 	/**
 	 * Helper method to validate input data, handling possible exceptions
+	 * @throws IllegalInputException
 	 */
-	private void validate() {
+	private void validate() throws IllegalInputException {
+
 		for (TextField field : Arrays.asList(nameField, initialValuesField, domainField)) {
 			if (field.getText().isBlank()) {
-				throw new VariableInvalidExpection(String.format("Field %s is required.", field.getId()));
+				throw new IllegalInputException(String.format("The field \"%s\" must not be empty or blank.", field.getId()));
 			}
+		}
+		
+		if (elseBox.getTags().isEmpty() || elseBox.getTags().contains("")) {
+			throw new IllegalInputException(String.format("The field \"%s\" must not be empty or blank.", elseBox.getId()));
 		}
 	}
 
@@ -460,12 +457,7 @@ public class MainController {
 	 * @param text String
 	 * @return Double value
 	 */
-	private Double parseDouble(String text) {
-		try {
-			return Double.parseDouble(text);
-		} catch (NumberFormatException e) {
-			// Handle the exception as needed (e.g., show an error message)
-			return null; // Or another default value, depending on your requirements
-		}
+	private Double parseDouble(String text) throws NumberFormatException{
+		return Double.parseDouble(text);
 	}
 }

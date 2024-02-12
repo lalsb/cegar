@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 public class PredicateSplitter {
 
 
-    public static List<String> splitPredicate(String booleanExpression) {
+    public static List<String> splitPredicate(String predicate) {
     	// Remove all occurrences of "¬" and "~"
-        String cleanedExpression = booleanExpression.replaceAll("[¬~]", "");
+        String cleanedExpression = predicate.replaceAll("[¬~]", "");
 
         List<String> substrings = new ArrayList<>();
 

@@ -13,9 +13,12 @@ import org.graphstream.ui.fx_viewer.FxViewPanel;
 import com.app.model.framework.ModelManager;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
+import com.app.model.graph.KripkeStruct;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
@@ -24,6 +27,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -142,9 +146,18 @@ public class GraphController {
 		List<Variable> variableList = MainController.getVariables();
 		manager.load(variableList.toArray(new Variable[0]));
 
-		panel = manager.generateInitialAbstraction().getGraphStreamView();
+		KripkeStruct abstraction = manager.generateInitialAbstraction();
+		
+		panel = abstraction.getGraphStreamView();
 		graphTab.setContent(panel);
 		tabPane.getSelectionModel().select(graphTab);
+		
+		SmartGraphPanel<String, String> root = abstraction.getSmartGraphView();
+		
+		Stage stage = new Stage();
+        stage.setTitle("My New Stage Title");
+        stage.setScene(new Scene(root, 450, 450));
+        stage.show();
 
 		checkPathButton.setDisable(false);
 		counterExampleField.setDisable(false);
@@ -174,7 +187,8 @@ public class GraphController {
 	 */
 	@FXML
 	private void handleRefineAbstraction() {
-		panel = manager.refine(result.getKey(), result.getValue()).getGraphStreamView();
+		KripkeStruct refinement = manager.refine(result.getKey(), result.getValue());
+		panel = refinement.getGraphStreamView();		
 	}
 
 	public class Console extends OutputStream {

@@ -22,6 +22,9 @@ test {
 
 dependencies {
 
+	// https://mvnrepository.com/artifact/com.jfoenix/jfoenix
+	implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
+
 	// https://mvnrepository.com/artifact/com.brunomnsilva/smartgraph
     implementation group: 'com.brunomnsilva', name: 'smartgraph', version: '1.0.0'
     

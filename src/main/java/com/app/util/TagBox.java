@@ -92,7 +92,7 @@ public class TagBox extends HBox {
 				}
 			}
 			
-			inputField.setPromptText("...");
+			inputField.setPromptText("");
 			
 		});
 		

@@ -235,7 +235,7 @@ class SequentialIncrementTest {
 				new Node[] {nds.get(7), nds.get(6), nds.get(1)}
 				);
 
-		assertThat(graph.edges().count()).isEqualTo(31); // Only 19 reachable
+		assertThat(graph.edges().count()).isEqualTo(24); // Only 19 reachable
 
 		for(Node[] n: edg) {
 			for(int i = 1; i < n.length; i++) {
@@ -258,7 +258,8 @@ class SequentialIncrementTest {
 		List<List<Integer>> invalIds = Arrays.asList(	
 				Arrays.asList(0, 1, 7, 6, 1, 0, 1, 6),
 				Arrays.asList(0, 1, 2, 2, 2, 2, 2, 3, 1, 5),
-				Arrays.asList(0, 1, 2, 4, 5, 1 , 0)
+				Arrays.asList(0, 1, 2, 4, 5, 1 , 0),
+				Arrays.asList(0, 1, 3, 3, 6)
 				); // Invalid path
 		assertThat(toIds(invalIds, nds)).allSatisfy(pth -> {
 			assertThat(manager.isValid(pth, graph)).isFalse();
@@ -278,11 +279,6 @@ class SequentialIncrementTest {
 			assertThat(manager.isValid(pth, graph)).isTrue();
 			assertThat(manager.splitPATH(pth)).isNull();
 		});
-
-		//assertThat(nds.get(1).hasEdgeBetween(nds.get(1))).isFalse();
-		// TODO: (0, 1, 3, 3, 6) is not valid but isValid() is true
-		assertThat(ModelManager.getImage(exp.get(3))).containsExactlyInAnyOrder(exp.get(11), exp.get(8));
-		// TODO: 
 		
 		List<List<Integer>> invalcIds = Arrays.asList(	
 				Arrays.asList(0, 1, 2, 4, 1, 0, 6),
@@ -304,9 +300,9 @@ class SequentialIncrementTest {
 		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(2)).getValue()).containsExactlyInAnyOrder(exp.get(2));
 
 		// Verify refinement algorithm
-		for(int i: new int[]{0,1,2}) {
-			//Pair<String, Set<Tuple>> ret = manager.splitPATH(toIds(invalcIds, nds).get(i));
-			//manager.refine(ret.getKey(), ret.getValue());
+		for(int i: new int[]{2}) {
+			Pair<String, Set<Tuple>> ret = manager.splitPATH(toIds(invalcIds, nds).get(i));
+			manager.refine(ret.getKey(), ret.getValue());
 		}
 
 

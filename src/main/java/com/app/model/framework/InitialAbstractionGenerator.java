@@ -143,6 +143,9 @@ implements Generator {
 		}
 
 		System.out.println("\nGenerating edges: ");
+		ImageMap.forEach((k,v) -> {
+			System.out.println(k + "~" + v.getId());
+		});
 
 		ListIterator<State> iterator = states.listIterator();
 
@@ -160,12 +163,8 @@ implements Generator {
 				result.putAll(tuple);
 
 				// Calculate image
-				image.addAll(ModelManager.getImage(result));
-
-				// Collect image
-				if(!image.contains(result)) {
-					image.add(result);
-				}	
+				Set<Tuple> retval = ModelManager.getImage(result);
+				image.addAll(retval);
 			}
 
 			// For each image 

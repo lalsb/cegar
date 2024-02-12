@@ -28,7 +28,7 @@ public final class SmartGraphWrapper {
         return INSTANCE;
     }
 
-    public SmartGraphPanel<String, String> generateJavaFXView(org.graphstream.graph.Graph regularGraph) {
+    public SmartGraphPanel<String, String> generateJavaFXView(KripkeStruct regularGraph) {
     	
     	smartGraph = new GraphEdgeList<>();
     	this.regularGraph = regularGraph;

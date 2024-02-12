@@ -9,6 +9,7 @@ import java.util.Set;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
+import com.app.model.exceptions.IllegalInputException;
 import com.app.util.PredicateSplitter;
 
 /**
@@ -48,16 +49,15 @@ public class TransitionLine implements Serializable{
 	 * Checks Transition Block6
 	 * @throws IllegalArgumentException
 	 */
-	private void isValid() throws IllegalArgumentException{
+	private void isValid() throws IllegalInputException{
 
 		if(condition == null || condition.isBlank()) {
-			throw new IllegalArgumentException("Invalid condition in Transition: " + varId);
+			throw new IllegalInputException("The field \"condition\" must not be empty or blank.");
 		}
 		
 		if(actions == null ||actions.isEmpty() || actions.contains("") || actions.contains(null)) {
-			throw new IllegalArgumentException("Invalid action in Transition: " + varId);
+			throw new IllegalInputException("The field \"actions\" must not be empty or blank.");
 		}
-
 	}
 
 	/**
