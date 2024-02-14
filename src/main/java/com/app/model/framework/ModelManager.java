@@ -167,7 +167,7 @@ public class ModelManager{
 	 * @return Failure state s and S
 	 */
 	@SuppressWarnings("unchecked")
-	public Pair<String, Set<Tuple>> splitPATH(List<String> finitePath) {
+	public Pair<String, Set<Tuple>> splitPath(List<String> finitePath) {
 
 		// Assertions, validate parameters
 		if(!isValid(finitePath, abstractionGraph)) {
@@ -216,6 +216,51 @@ public class ModelManager{
 		} else {
 			return new Pair<String, Set<Tuple>>(finitePath.get(j-2), prevS);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Pair<String, Set<Tuple>> splitLoop(List<String> finitePath, List<String> loopingPath) {
+		
+		int min = Integer.MAX_VALUE;
+		
+		for(String id: loopingPath) {
+			Set<Tuple> inverseImage = (Set<Tuple>) abstractionGraph.getNode(id).getAttribute("inverseImage");
+			min = Math.min(min, inverseImage.size());
+		}
+		
+		List<String> unwoundPath = unwind(finitePath, loopingPath, min);
+		
+		Pair<String, Set<Tuple>> ret = splitPath(unwoundPath);
+		
+		int j = (int) Double.NaN;
+		
+		return null;
+	}
+	
+	/**
+	 * Unwinds an infinite path by copying the finite part and appending the looping part for a given number of repetitions. 
+	 * 
+	 * @param finitePath series of elements to be left untouched
+	 * @param loopingPath series of elements to be unwound
+	 * @param unwindings number of unwindings
+	 * @return unwoundPath
+	 */
+	public List<String> unwind(List<String> finitePath, List<String> loopingPath, int unwindings){
+		
+		// Copy finite part
+		List<String> unwoundPath = new ArrayList<String>(finitePath); 
+		
+		// Append looping part repeatedly
+		for(int i = 0; i <= unwindings; i++)
+			for(String element: loopingPath) {
+				unwoundPath.add(element);
+			}
+		
+		// Return composite
+		return unwoundPath;
+		
+		
+		
 	}
 
 	public boolean isValid(List<String> finitePath, KripkeStruct graph) {

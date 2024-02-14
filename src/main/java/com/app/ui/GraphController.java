@@ -6,28 +6,24 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 
 import com.app.model.framework.ModelManager;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 import com.app.model.graph.KripkeStruct;
+import com.brunomnsilva.smartgraph.containers.ContentZoomPane;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
+import javafx.scene.control.ToggleButton;
 import javafx.util.Pair;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -74,14 +70,16 @@ public class GraphController {
 
 	@FXML
 	private TextField loopField;
-
+	
 	@FXML
-	private Slider zoomSlider;
+	private ToggleButton toggleLayout;
+	
+	private SmartGraphPanel<String, String> graphView;
 
 	// Initialize method is called after the FXML file is loaded in Main
 	@FXML
 	private void initialize() {
-
+		
 		// Set up Console Output
 		ps = new PrintStream(new Console(consoleTextArea));
 		System.setOut(ps);
@@ -91,23 +89,10 @@ public class GraphController {
 		checkPathButton.setDisable(true);
 		counterExampleField.setDisable(true);
 		loopField.setDisable(true);
-		zoomSlider.setDisable(true);
 		refineButton.setDisable(true);
 
 		// Set up ModelManager
 		manager = new ModelManager();
-
-		// Set up Zoom Slider
-		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
-
-			@Override
-			public void changed(
-					ObservableValue<? extends Number> observableValue, 
-					Number oldValue, 
-					Number newValue) { 
-				panel.getCamera().setViewPercent(newValue.doubleValue());
-			}
-		});
 	}
 
 
@@ -120,13 +105,25 @@ public class GraphController {
 		List<Variable> variableList = MainController.getVariables();
 		manager.load(variableList.toArray(new Variable[0]));
 
-		// For SmartGraph use: manager.generateOriginalGraph().getSmartGraphView();
+		// For SmartGraph use:
 		panel = manager.generateOriginalGraph().getGraphStreamView();
 		graphTab.setContent(panel);
+		
 		tabPane.getSelectionModel().select(graphTab);
 
 		validateButton.setDisable(false);
-		activateZoomSlider();
+	}
+	
+	@FXML
+	private void handleToggleLayout() {
+		
+		if(toggleLayout.isSelected()){
+			graphView.setAutomaticLayout(false);
+			toggleLayout.setText("Off");
+		} else {
+			graphView.setAutomaticLayout(true);
+			toggleLayout.setText("On");
+		}
 	}
 
 	/**
@@ -148,21 +145,28 @@ public class GraphController {
 
 		KripkeStruct abstraction = manager.generateInitialAbstraction();
 		
-		panel = abstraction.getGraphStreamView();
-		graphTab.setContent(panel);
+		//panel = abstraction.getGraphStreamView();
+		
+		graphView = abstraction.getSmartGraphView();
+		ContentZoomPane zoomPane = new ContentZoomPane(graphView);
+		zoomPane.setStyle("-fx-background-color: #e8faf4");
+		
+		graphTab.setContent(zoomPane);
 		tabPane.getSelectionModel().select(graphTab);
 		
-		SmartGraphPanel<String, String> root = abstraction.getSmartGraphView();
-		
-		Stage stage = new Stage();
-        stage.setTitle("My New Stage Title");
-        stage.setScene(new Scene(root, 450, 450));
-        stage.show();
-
 		checkPathButton.setDisable(false);
 		counterExampleField.setDisable(false);
 		loopField.setDisable(false);
-		activateZoomSlider();
+		//activateZoomSlider();
+		
+		// Set up Vertex Listener
+		graphView.setVertexDoubleClickAction(graphVertex -> {
+			String updated = counterExampleField.getText() + graphVertex.getUnderlyingVertex().element() + ", ";
+			counterExampleField.setText(updated);
+		});
+		
+		
+		Platform.runLater(() -> {graphView.init();});
 	}
 
 	/**
@@ -172,7 +176,7 @@ public class GraphController {
 	private void handleCheckPath() {
 
 		List<String> finitePath = Arrays.asList(counterExampleField.getText().split(","));	
-		result = manager.splitPATH(finitePath);
+		result = manager.splitPath(finitePath);
 
 		if(result == null) {
 			System.out.println("Path corresponds to real counterexampe");
@@ -188,7 +192,10 @@ public class GraphController {
 	@FXML
 	private void handleRefineAbstraction() {
 		KripkeStruct refinement = manager.refine(result.getKey(), result.getValue());
-		panel = refinement.getGraphStreamView();		
+		graphView = refinement.getSmartGraphView();
+		ContentZoomPane zoomPane = new ContentZoomPane(graphView);
+		
+		graphTab.setContent(zoomPane);		
 	}
 
 	public class Console extends OutputStream {
@@ -207,15 +214,4 @@ public class GraphController {
 			appendText(String.valueOf((char)b));
 		}
 	}
-
-	private void activateZoomSlider() {
-
-		if(zoomSlider.isDisabled()) {
-			zoomSlider.setDisable(false);
-			panel.setOnScroll((ScrollEvent event) -> {
-				zoomSlider.setValue(zoomSlider.getValue() + event.getDeltaY()/1000);
-			});
-		}
-	}
-
 }

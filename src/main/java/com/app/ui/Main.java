@@ -39,7 +39,7 @@ public class Main extends Application {
 
 		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
 
-			throwable.printStackTrace();
+			//throwable.printStackTrace();
 			
 			Platform.runLater(() -> {
 

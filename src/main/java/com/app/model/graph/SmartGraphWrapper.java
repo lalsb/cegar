@@ -4,8 +4,10 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
 
 import com.app.model.exceptions.GraphVisualizationInvalidException;
+import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
 import com.brunomnsilva.smartgraph.graph.Graph;
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList;
+import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
@@ -30,7 +32,7 @@ public final class SmartGraphWrapper {
 
     public SmartGraphPanel<String, String> generateJavaFXView(KripkeStruct regularGraph) {
     	
-    	smartGraph = new GraphEdgeList<>();
+    	smartGraph = new DigraphEdgeList<>();
     	this.regularGraph = regularGraph;
     	
     	inspect();
@@ -38,6 +40,9 @@ public final class SmartGraphWrapper {
     	
     	SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
 		SmartGraphPanel<String, String> graphView = new SmartGraphPanel<>(smartGraph, strategy);
+		graphView.setMinSize(1, 1);
+		
+		graphView.getStylableVertex("1").setStyleClass("init-vertex");
 		
 		graphView.setAutomaticLayout(true);
     	

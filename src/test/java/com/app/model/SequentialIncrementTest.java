@@ -277,7 +277,7 @@ class SequentialIncrementTest {
 				); // Real counterexamples
 		assertThat(toIds(valcIds, nds)).allSatisfy(pth -> {
 			assertThat(manager.isValid(pth, graph)).isTrue();
-			assertThat(manager.splitPATH(pth)).isNull();
+			assertThat(manager.splitPath(pth)).isNull();
 		});
 		
 		List<List<Integer>> invalcIds = Arrays.asList(	
@@ -287,21 +287,21 @@ class SequentialIncrementTest {
 				); // Spurious counterexamples
 		assertThat(toIds(invalcIds, nds)).allSatisfy(pth -> {
 			assertThat(manager.isValid(pth, graph)).isTrue();
-			assertThat(manager.splitPATH(pth)).isNotNull();
+			assertThat(manager.splitPath(pth)).isNotNull();
 		});
 
-		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(0)).getKey()).isEqualTo(nds.get(2).getId());
-		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(0)).getValue()).containsExactlyInAnyOrder(exp.get(2));
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(0)).getKey()).isEqualTo(nds.get(2).getId());
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(0)).getValue()).containsExactlyInAnyOrder(exp.get(2));
 
-		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(1)).getKey()).isEqualTo(nds.get(1).getId());
-		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(1)).getValue()).containsExactlyInAnyOrder(exp.get(11));
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(1)).getKey()).isEqualTo(nds.get(1).getId());
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(1)).getValue()).containsExactlyInAnyOrder(exp.get(11));
 
-		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(2)).getKey()).isEqualTo(nds.get(2).getId());
-		assertThat(manager.splitPATH(toIds(invalcIds, nds).get(2)).getValue()).containsExactlyInAnyOrder(exp.get(2));
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(4)).getKey()).isEqualTo(nds.get(2).getId());
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(2)).getValue()).containsExactlyInAnyOrder(exp.get(2));
 
 		// Verify refinement algorithm
 		for(int i: new int[]{2}) {
-			Pair<String, Set<Tuple>> ret = manager.splitPATH(toIds(invalcIds, nds).get(i));
+			Pair<String, Set<Tuple>> ret = manager.splitPath(toIds(invalcIds, nds).get(i));
 			manager.refine(ret.getKey(), ret.getValue());
 		}
 
