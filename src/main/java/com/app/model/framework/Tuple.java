@@ -6,8 +6,13 @@ import java.util.stream.Collectors;
 
 import org.mariuszgromada.math.mxparser.Argument;
 
+import com.app.model.graph.KState;
+import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
+
 @SuppressWarnings("serial")
-public class Tuple extends HashMap<String, Double> {	
+public class Tuple extends HashMap<String, Double> implements KState{	
+	
+	private String id;
 	
 	public Tuple() {
         super();
@@ -21,9 +26,13 @@ public class Tuple extends HashMap<String, Double> {
 		super(tuple);
 	}
 	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	public boolean isInitial() {
-		
 		assert ModelManager.getInitialTuples() != null;	
+		
 		return ModelManager.getInitialTuples().contains(this);
 		
 	}
@@ -46,13 +55,19 @@ public class Tuple extends HashMap<String, Double> {
 		return arguments;
 
 	}
-
-	@Override
-	public String toString() {
+	
+	@SmartLabelSource
+	public String getLabel() {
 		String mapAsString = this.keySet().stream()
 				.map(key -> key + "=" + this.get(key))
 				.collect(Collectors.joining(", ", "[", "]"));
 		return mapAsString;
+	}
+	
+	
+	@Override
+	public String getId() {
+		return id;
 	}
 
 }

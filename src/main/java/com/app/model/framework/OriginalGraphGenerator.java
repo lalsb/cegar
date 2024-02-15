@@ -4,12 +4,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.graphstream.algorithm.generator.Generator;
-import org.graphstream.stream.SourceBase;
+import com.app.model.graph.KStructGenerator;
+import com.app.model.graph.OriginalStruct;
 
-public class OriginalGraphGenerator extends SourceBase
-implements Generator {
+public class OriginalGraphGenerator implements KStructGenerator<Tuple> {
 
+	
+	OriginalStruct struct;
 	/**
 	 * Map of variable ids as keys with corresponding values e.g. a 'state'
 	 */
@@ -23,11 +24,21 @@ implements Generator {
 	Set<Tuple> added;
 	
 	public OriginalGraphGenerator() {
-		super();
 		audited = new HashSet<Tuple>();
 		unaudited = new HashSet<Tuple>();
 		found = new HashSet<Tuple>();
 		added = new HashSet<Tuple>();
+	}
+	
+	
+	public OriginalStruct generateStruct() {
+		
+		struct = new OriginalStruct();
+		
+		begin();
+		while(nextEvents());
+		
+		return struct;
 	}
 
 	public void begin() {
@@ -73,9 +84,6 @@ implements Generator {
 		return true;
 	}
 
-	public void end() {
-		// Nothing to do
-	}
 
 	/**
 	 * Sends a node to the generator sink (graph)
@@ -84,19 +92,11 @@ implements Generator {
 	protected void addNode(Tuple tuple) {
 
 		if(!added.contains(tuple) && !tuple.isEmpty()) {
-			sendNodeAdded(sourceId, tuple + "");
-
-			sendNodeAttributeAdded(sourceId, tuple + "", "value", tuple);
-			
-			if(tuple.isInitial()) {
-			sendNodeAttributeAdded(sourceId, tuple + "", "ui.style", "fill-color: rgb(255,0,0);");
-			}
-
-			ModelManager.nodeId++;
+			tuple.setId(Integer.toString(ModelManager.nodeId++));
+			struct.insertVertex(tuple);
 			added.add(tuple);
 		}
 	}
-
 
 	/**
 	 * Sends an edge to the generator sink (graph)
@@ -112,8 +112,7 @@ implements Generator {
 		}
 		
 		if(added.contains(from) && added.contains(to)) {
-			this.sendEdgeAdded(sourceId, Integer.toString(ModelManager.edgeId), from + "", to + "", true);
-			ModelManager.edgeId++;
+			struct.insertEdge(from, to,  Integer.toString(ModelManager.edgeId++));
 		}
 	}
 }

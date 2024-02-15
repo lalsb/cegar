@@ -3,6 +3,7 @@ package com.app.ui;
 import org.mariuszgromada.math.mxparser.License;
 
 import com.app.model.exceptions.IllegalInputException;
+import com.app.model.exceptions.IllegalStructStateException;
 
 import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
@@ -39,12 +40,16 @@ public class Main extends Application {
 
 		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
 
-			//throwable.printStackTrace();
+			throwable.printStackTrace();
 			
 			Platform.runLater(() -> {
 
 				if (throwable.getCause().getCause() instanceof IllegalInputException) {
 					IllegalInputException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
+				}
+				
+				if (throwable.getCause().getCause() instanceof IllegalStructStateException) {
+					IllegalStructStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
 				}
 			});
 

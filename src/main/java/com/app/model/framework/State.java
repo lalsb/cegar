@@ -3,7 +3,11 @@ package com.app.model.framework;
 import java.util.HashSet;
 import java.util.Set;
 
-public class State {
+import com.app.model.graph.KState;
+import com.brunomnsilva.smartgraph.graph.Vertex;
+import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
+
+public class State implements KState{
 	
 	private String id;
 	private Set<Tuple> inverseImage;
@@ -30,7 +34,7 @@ public class State {
 			isInitial = true;
 		}
 	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -39,11 +43,14 @@ public class State {
 		return isInitial;
 	}
 	
-	@Override
-	public String toString() {
+	public boolean isEmpty() {
+		return inverseImage.isEmpty();
+	}
+	
+	@SmartLabelSource
+	public String getLabel() {
 		
 		return "#" + id + " = " + inverseImage;
 		
 	}
-
 }

@@ -457,7 +457,11 @@ public class MainController {
 	 * @param text String
 	 * @return Double value
 	 */
-	private Double parseDouble(String text) throws NumberFormatException{
+	private Double parseDouble(String text) throws IllegalInputException{
+		try {
 		return Double.parseDouble(text);
+		} catch(NumberFormatException e) {
+			throw new IllegalInputException(String.format("Unable to format %s as a number. Please enter numeric values only.", text));
+		}
 	}
 }

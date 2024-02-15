@@ -62,3 +62,7 @@ This should help you understand which styles you can apply.
     -fx-stroke-type: inside; /* you should keep this if using arrows */
     -fx-fill: #faa6a2; /* #faef93*/
 }
+
+.init-vertex:hover { 
+    -fx-stroke-width: 4;
+}

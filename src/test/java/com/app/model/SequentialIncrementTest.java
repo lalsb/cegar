@@ -4,14 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.graphstream.graph.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +20,15 @@ import org.mariuszgromada.math.mxparser.License;
 import com.app.model.framework.AtomicFormula;
 import com.app.model.framework.InitialAbstractionGenerator;
 import com.app.model.framework.OriginalGraphGenerator;
+import com.app.model.framework.State;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.ModelManager;
 import com.app.model.framework.Variable;
-import com.app.model.graph.KripkeStruct;
+import com.app.model.graph.AbstractStruct;
+import com.app.model.graph.OriginalStruct;
+import com.brunomnsilva.smartgraph.graph.Vertex;
 
 import javafx.util.Pair;
 
@@ -110,27 +111,16 @@ class SequentialIncrementTest {
 	@Test
 	void testOriginalGraphGenerator() {
 
-		KripkeStruct graph = new KripkeStruct("Initial Abstraction");
 		OriginalGraphGenerator gen = new OriginalGraphGenerator();
+		OriginalStruct graph = gen.generateStruct();
 
-		gen.addSink(graph);
-		gen.begin();
-		while(gen.nextEvents());
-		gen.end();
-
-		List<Node> nodes = graph.nodes().collect(Collectors.toList());
-		Map<Tuple, Node> actual = new HashMap<Tuple, Node>();
-		nodes.forEach(node -> {
-			actual.put((Tuple) node.getAttribute("value"), node);
-		});
+		List<Tuple> nodes = graph.vertices().stream().map(v -> v.element()).collect(Collectors.toList());
 
 		// Verify states
-		Assertions.assertTrue(!actual.isEmpty());
-		Assertions.assertEquals(exp.size(), actual.keySet().size());
-		for(Tuple tuple: exp) {
-			Assertions.assertTrue(
-					actual.containsKey(tuple), "Graph is missing tuple " + tuple);
-		}
+		Assertions.assertTrue(!nodes.isEmpty());
+		Assertions.assertEquals(exp.size(), nodes.size());
+
+		assertThat(nodes).containsExactlyInAnyOrderElementsOf(exp);
 
 		// Verify initial states by sampling
 		Assertions.assertTrue(
@@ -171,8 +161,7 @@ class SequentialIncrementTest {
 				);
 
 		for(int[] pair: edg) {
-			assertThat(graph.getNode(exp.get(pair[0]))
-					.hasEdgeToward(graph.getNode(exp.get(pair[1]))))
+			assertThat(graph.areAdjacent(graph.getNode(exp.get(pair[0])), graph.getNode(exp.get(pair[1]))))
 			.as("Couldn't find any edge from tuple" + exp.get(pair[0]) + " towards tuple " + exp.get(pair[1]) + " as is required.")
 			.isTrue();
 		}
@@ -183,14 +172,8 @@ class SequentialIncrementTest {
 	void testInitialAbstractionGraphGenerator() {
 
 		// Generating visualization
-		KripkeStruct graph = new KripkeStruct("Initial Abstraction");
 		InitialAbstractionGenerator gen = new InitialAbstractionGenerator();
-
-		gen.addSink(graph);
-		gen.begin();
-		while(gen.nextEvents());
-		gen.end();
-
+		AbstractStruct graph = gen.generateStruct();
 
 		// Verify clusters e.g. states
 		List<int[]> cluster = Arrays.asList(
@@ -205,7 +188,7 @@ class SequentialIncrementTest {
 				new int[]{10}
 				);
 
-		assertThat(graph.nodes().count()).isEqualTo(10); // Only 8 reachable
+		assertThat(graph.numVertices()).isEqualTo(10); // Only 8 reachable
 
 		for(int[] c0: cluster) {
 
@@ -221,26 +204,27 @@ class SequentialIncrementTest {
 		}
 
 		// Verify edges
-		List<Node> nds = cluster.stream().
+		List<Vertex<State>> nds = cluster.stream().
 				map(c0 -> graph.getNode(exp.get(c0[0]))).collect(Collectors.toList());
 
-		List<Node[]> edg = Arrays.asList(
-				new Node[] {nds.get(0), nds.get(1), nds.get(6)},
-				new Node[] {nds.get(1), nds.get(2), nds.get(3), nds.get(7), nds.get(0)},
-				new Node[] {nds.get(2), nds.get(2), nds.get(4), nds.get(5)},
-				new Node[] {nds.get(3), nds.get(6), nds.get(1)},
-				new Node[] {nds.get(4), nds.get(6), nds.get(1)},
-				new Node[] {nds.get(5), nds.get(6), nds.get(1)},
-				new Node[] {nds.get(6), nds.get(6), nds.get(1)},
-				new Node[] {nds.get(7), nds.get(6), nds.get(1)}
+		List<List<Vertex<State>>> edg = Arrays.asList(
+				Arrays.asList(nds.get(0), nds.get(1), nds.get(6)),
+				Arrays.asList(nds.get(1), nds.get(2), nds.get(3), nds.get(7), nds.get(0)),
+				Arrays.asList(nds.get(2), nds.get(2), nds.get(4), nds.get(5)),
+				Arrays.asList(nds.get(3), nds.get(6), nds.get(1)),
+				Arrays.asList(nds.get(4), nds.get(6), nds.get(1)),
+				Arrays.asList(nds.get(5), nds.get(6), nds.get(1)),
+				Arrays.asList(nds.get(6), nds.get(6), nds.get(1)),
+				Arrays.asList(nds.get(7), nds.get(6), nds.get(1))
 				);
 
-		assertThat(graph.edges().count()).isEqualTo(24); // Only 19 reachable
 
-		for(Node[] n: edg) {
-			for(int i = 1; i < n.length; i++) {
-				assertThat(n[0].hasEdgeToward(n[i]))
-				.as("Couldn't find any edge from tuple" + n[0] + " towards tuple " +  n[i] + " as is required.").isTrue();
+		assertThat(graph.numEdges()).isEqualTo(24); // Only 19 reachable
+
+		for(List<Vertex<State>> n: edg) {
+			for(int i = 1; i < n.size(); i++) {
+				assertThat(graph.areAdjacent(n.get(0), n.get(i)))
+				.as("Couldn't find any edge from tuple" + n.get(0) + " towards tuple " +  n.get(i) + " as is required.").isTrue();
 			}
 		}
 
@@ -279,7 +263,7 @@ class SequentialIncrementTest {
 			assertThat(manager.isValid(pth, graph)).isTrue();
 			assertThat(manager.splitPath(pth)).isNull();
 		});
-		
+
 		List<List<Integer>> invalcIds = Arrays.asList(	
 				Arrays.asList(0, 1, 2, 4, 1, 0, 6),
 				Arrays.asList(0, 6, 1, 3),
@@ -290,13 +274,13 @@ class SequentialIncrementTest {
 			assertThat(manager.splitPath(pth)).isNotNull();
 		});
 
-		assertThat(manager.splitPath(toIds(invalcIds, nds).get(0)).getKey()).isEqualTo(nds.get(2).getId());
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(0)).getKey()).isEqualTo(nds.get(2).element().getId());
 		assertThat(manager.splitPath(toIds(invalcIds, nds).get(0)).getValue()).containsExactlyInAnyOrder(exp.get(2));
 
-		assertThat(manager.splitPath(toIds(invalcIds, nds).get(1)).getKey()).isEqualTo(nds.get(1).getId());
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(1)).getKey()).isEqualTo(nds.get(1).element().getId());
 		assertThat(manager.splitPath(toIds(invalcIds, nds).get(1)).getValue()).containsExactlyInAnyOrder(exp.get(11));
 
-		assertThat(manager.splitPath(toIds(invalcIds, nds).get(4)).getKey()).isEqualTo(nds.get(2).getId());
+		assertThat(manager.splitPath(toIds(invalcIds, nds).get(2)).getKey()).isEqualTo(nds.get(2).element().getId());
 		assertThat(manager.splitPath(toIds(invalcIds, nds).get(2)).getValue()).containsExactlyInAnyOrder(exp.get(2));
 
 		// Verify refinement algorithm
@@ -310,10 +294,10 @@ class SequentialIncrementTest {
 
 	}
 
-	private List<List<String>> toIds(List<List<Integer>> indices, List<Node> nodeTable){
+	private List<List<String>> toIds(List<List<Integer>> indices, List<Vertex<State>> nodeTable){
 
 		return indices.stream()
-				.map(list -> list.stream().map(id -> nodeTable.get(id).getId())
+				.map(list -> list.stream().map(id -> nodeTable.get(id).element().getId())
 						.collect(Collectors.toList()))
 				.collect(Collectors.toList());
 	}
@@ -365,7 +349,7 @@ class SequentialIncrementTest {
 
 	@Test
 	void testgetImage() {
-		
+
 		Set<Tuple> input = new HashSet<Tuple>();
 		Tuple test = new Tuple();
 		test.put("r", 0d);

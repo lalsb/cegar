@@ -3,24 +3,22 @@ package com.app.model.framework;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.graphstream.algorithm.generator.Generator;
-import org.graphstream.stream.SourceBase;
-
+import com.app.model.graph.AbstractStruct;
+import com.app.model.graph.KStructGenerator;
 import com.app.util.SetUtils;
 
 import javafx.util.Pair;
 
-public class InitialAbstractionGenerator extends SourceBase
-implements Generator {
+public class InitialAbstractionGenerator implements KStructGenerator<State> {
 
+	
+	AbstractStruct struct;
 	/**
 	 * List of formula clusters
 	 */
@@ -48,6 +46,18 @@ implements Generator {
 		ImageMap = new HashMap<Tuple, State>();
 		edges = new ArrayList<Pair<State, State>>();
 	}
+	
+	public AbstractStruct generateStruct() {
+		
+		struct = new AbstractStruct();
+		
+		begin();
+		while(nextEvents());
+		
+		return struct;
+		
+	}
+	
 
 	/**
 	 * Gets the atomic formulas
@@ -188,13 +198,10 @@ implements Generator {
 	 */
 	protected void addNode(State state) {
 		states.add(state);
-		sendNodeAdded(sourceId, state.getId());
-		sendNodeAttributeAdded(sourceId,  state.getId(), "inverseImage", state.getInverseImage());
+		struct.insertVertex(state);
 
 		if(state.isInitial()) {
 			System.out.println("Found intial state: " + state.getId() + " (tuples: " + state.getInverseImage() + ")");
-			sendNodeAttributeAdded(sourceId, state.getId(), "ui.style", "fill-color: rgb(255,0,0);");
-			sendNodeAttributeAdded(sourceId, state.getId(), "isInitial", true);
 		}
 
 	}
@@ -209,8 +216,7 @@ implements Generator {
 		Pair<State, State> edge = new Pair<State, State>(from, to);
 
 		if(!edges.contains(edge)){
-
-			sendEdgeAdded(sourceId, Integer.toString(ModelManager.edgeId++) , from.getId(), to.getId(), true);
+			struct.insertEdge(from, to,  Integer.toString(ModelManager.edgeId++));
 			edges.add(edge);
 		}
 	}

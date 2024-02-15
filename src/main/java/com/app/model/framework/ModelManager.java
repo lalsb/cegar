@@ -2,7 +2,6 @@ package com.app.model.framework;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,12 +9,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Node;
-
-import com.app.model.graph.ConsoleSink;
-import com.app.model.graph.KripkeStruct;
+import com.app.model.graph.AbstractStruct;
+import com.app.model.graph.OriginalStruct;
 import com.app.util.SetUtils;
+import com.brunomnsilva.smartgraph.graph.Edge;
+import com.brunomnsilva.smartgraph.graph.Vertex;
 
 import javafx.util.Pair;
 
@@ -41,9 +39,9 @@ public class ModelManager{
 	 */
 	public static final int ITERATION_LMIT = 1000;
 
-	public KripkeStruct abstractionGraph;
+	public AbstractStruct abstractionGraph;
 
-	public KripkeStruct originalGraph;
+	public OriginalStruct originalGraph;
 
 	public ModelManager() {
 		// Init
@@ -52,7 +50,7 @@ public class ModelManager{
 		initialTuples = new HashSet<Tuple>();
 	}
 
-	public void setAbstractionGraph(KripkeStruct abstractionGraph) {
+	public void setAbstractionGraph(AbstractStruct abstractionGraph) {
 		this.abstractionGraph = abstractionGraph;
 	}
 
@@ -100,7 +98,7 @@ public class ModelManager{
 	/**
 	 * Return the Variable corresponding to a given Id
 	 * @param variableId
-	 * @return
+	 * @return Variable
 	 */
 	public static Variable getVariable(String variableId) {
 		assert !variablesMap.isEmpty();
@@ -110,9 +108,9 @@ public class ModelManager{
 
 	/**
 	 * Generates a Graph corresponding to the model.
-	 * @return
+	 * @return OriginalStruct
 	 */
-	public KripkeStruct generateOriginalGraph() {
+	public OriginalStruct generateOriginalGraph() {
 		assert !variablesMap.isEmpty();
 		assert transitionBlockMap.keySet().equals(variablesMap.keySet());
 
@@ -120,25 +118,17 @@ public class ModelManager{
 		edgeId = 0;
 
 		// Init graph and graph generator 
-		originalGraph = new KripkeStruct("Original Graph");
 		OriginalGraphGenerator gen = new OriginalGraphGenerator();
-
-		gen.addSink(originalGraph);
-		originalGraph.addSink(new ConsoleSink(originalGraph)); // Print to Console
-
-		int i = 0;
-		gen.begin();
-		while(gen.nextEvents() && i < ITERATION_LMIT) {i++;} // returns false if finished
-		gen.end();
+		originalGraph = gen.generateStruct();
 
 		return originalGraph;
 	}
 
 	/**
 	 * Generates a Graph representing the initial abstraction.
-	 * @return KripkeStruct
+	 * @return AbstractStruct
 	 */
-	public KripkeStruct generateInitialAbstraction() {
+	public AbstractStruct generateInitialAbstraction() {
 		assert !variablesMap.isEmpty();
 		assert transitionBlockMap.keySet().equals(variablesMap.keySet());
 
@@ -146,16 +136,8 @@ public class ModelManager{
 		edgeId = 0;
 
 		// Init graph and graph generator 
-		abstractionGraph = new KripkeStruct("Initial Abstraction");
 		InitialAbstractionGenerator gen = new InitialAbstractionGenerator();
-
-		gen.addSink(abstractionGraph);
-		abstractionGraph.addSink(new ConsoleSink(abstractionGraph)); // Print to Console
-
-		int i = 0;
-		gen.begin();
-		while(gen.nextEvents() && i < ITERATION_LMIT) {i++;} // returns false if finished
-		gen.end();
+		abstractionGraph = gen.generateStruct();
 
 		return abstractionGraph;
 	}
@@ -166,7 +148,6 @@ public class ModelManager{
 	 * @param abstractionGraph Kripkestruct
 	 * @return Failure state s and S
 	 */
-	@SuppressWarnings("unchecked")
 	public Pair<String, Set<Tuple>> splitPath(List<String> finitePath) {
 
 		// Assertions, validate parameters
@@ -181,14 +162,14 @@ public class ModelManager{
 
 		assert finitePath.size() > 1;
 		assert getInitialTuples().size() > 0;
-		assert abstractionGraph.getNode(finitePath.get(0)).hasAttribute("isInitial");
-		assert abstractionGraph.getNode(finitePath.get(0)).hasAttribute("inverseImage");
+		assert abstractionGraph.getNode(finitePath.get(0)).isInitial();
+		assert !abstractionGraph.getNode(finitePath.get(0)).isEmpty();
 
 		System.out.println("\nComputing SplitPATH for " + finitePath + "\n");
 
 		// Set up S, j, S_prev
 		Set<Tuple> prevS = new HashSet<Tuple>();
-		Set<Tuple> currS = new HashSet<Tuple>((Set<Tuple>) abstractionGraph.getNode(finitePath.get(0)).getAttribute("inverseImage"));
+		Set<Tuple> currS = new HashSet<Tuple>((Set<Tuple>) abstractionGraph.getNode(finitePath.get(0)).getInverseImage());
 		currS.retainAll(getInitialTuples());
 		assert !currS.isEmpty();	
 		int j = 1;
@@ -198,7 +179,7 @@ public class ModelManager{
 		while(!currS.isEmpty() && j < finitePath.size()) {
 
 			prevS = new HashSet<Tuple>(currS);
-			Set<Tuple> inverseImage = new HashSet<Tuple>((Set<Tuple>) abstractionGraph.getNode(finitePath.get(j)).getAttribute("inverseImage"));
+			Set<Tuple> inverseImage = new HashSet<Tuple>((Set<Tuple>) abstractionGraph.getNode(finitePath.get(j)).getInverseImage());
 
 			System.out.println("----------------------------------------------------------------------------");
 			System.out.print(String.format("S(%d) = Img() = %s -- h^-1(%d) = %s", j, getImage(currS), j, inverseImage));
@@ -218,13 +199,12 @@ public class ModelManager{
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Pair<String, Set<Tuple>> splitLoop(List<String> finitePath, List<String> loopingPath) {
 		
 		int min = Integer.MAX_VALUE;
 		
 		for(String id: loopingPath) {
-			Set<Tuple> inverseImage = (Set<Tuple>) abstractionGraph.getNode(id).getAttribute("inverseImage");
+			Set<Tuple> inverseImage = (Set<Tuple>) abstractionGraph.getNode(id).getInverseImage();
 			min = Math.min(min, inverseImage.size());
 		}
 		
@@ -263,7 +243,7 @@ public class ModelManager{
 		
 	}
 
-	public boolean isValid(List<String> finitePath, KripkeStruct graph) {
+	public boolean isValid(List<String> finitePath, AbstractStruct graph) {
 
 
 		System.out.print("Checking Path: " + finitePath + " : ");
@@ -274,14 +254,14 @@ public class ModelManager{
 
 		ListIterator<String> i = finitePath.listIterator();
 
-		Node prev = graph.getNode(i.next());
-		if(!prev.hasAttribute("isInitial") || !(boolean) prev.getAttribute("isInitial")) {
-			System.out.println("First node " + prev + " with " + prev.getAttribute("inverseImage") + " is not initial.");
+		State prev = graph.getNode(i.next());
+		if(!prev.isInitial()) {
+			System.out.println("First node " + prev + " with " + prev.getInverseImage() + " is not initial.");
 			return false;
 		}
 		while(i.hasNext()) {	
-			Node next = graph.getNode(i.next());		
-			if(prev.getEdgeToward(next) == null) {
+			State next = graph.getNode(i.next());		
+			if(!graph.areAdjacent(graph.getNode(prev), graph.getNode(next))) {
 				System.out.println("No edge from node " + prev.getId() + " to node " + next.getId() + ".");
 				return false;
 			}
@@ -362,7 +342,6 @@ public class ModelManager{
 			found.add(result);
 		}
 
-		//TODO: Not important?? found.remove(input);
 		return found;
 	}
 
@@ -373,8 +352,7 @@ public class ModelManager{
 	 * Bad union irrelevat and dead-end.
 	 */
 
-	@SuppressWarnings("unchecked")
-	public KripkeStruct refine(String failureState, Set<Tuple> deadEnds) {
+	public AbstractStruct refine(String failureState, Set<Tuple> deadEnds) {
 
 
 		if(failureState == null || failureState.isBlank() ||
@@ -387,86 +365,47 @@ public class ModelManager{
 		}
 
 		// Old Node
-		Node old = abstractionGraph.getNode(failureState);
+		State old = abstractionGraph.getNode(failureState);
 
 		// Update Old Node
-		Set<Tuple> rest = (Set<Tuple>) old.getAttribute("inverseImage");
+		Set<Tuple> rest = old.getInverseImage();
 		rest.removeAll(deadEnds);
 
 		// New Node
-		Node n = abstractionGraph.addNode(Integer.toString(nodeId++));
-		n.setAttribute("inverseImage", deadEnds);
+		State n = new State(Integer.toString(nodeId++));
+		n.setInverseImage(deadEnds);
+		
+		abstractionGraph.insertVertex(n);
 
-		System.out.println("Old node " + old.getId() + "'s inverse image: " + old.getAttribute("inverseImage"));
-		System.out.println("New node " + n.getId() + "'s inverse image: " + n.getAttribute("inverseImage"));
-
-		// Re-evaluate incoming edges
-		for(Edge entering: old.enteringEdges().toList()) {
-			
-			Set<Tuple> target = getImage((Set<Tuple>) entering.getSourceNode().getAttribute("inverseImage"));
-			
-			if(SetUtils.intersect(target, rest) && SetUtils.intersect(target, deadEnds)) {
-
-				System.out.println("Entering: Keeping edge from " + entering.getSourceNode() + " to old state and adding new edge from there to new state");
-				// keep edge to old node
-				// add new entering edge for new sate
-				abstractionGraph.addEdge(Integer.toString(edgeId++), entering.getSourceNode(), n);
-
-			} else if(SetUtils.intersect(target, deadEnds)){
-
-				System.out.println("Entering: Changing target of edge from " + entering.getSourceNode() + " to new node.");
-				setTargetTo(abstractionGraph, entering, n); // change edge target to new node
-				
-			}else {
-				
-				System.out.println("Entering: Keeping edge from " + entering.getSourceNode());
-				// keep edge to old node
-				
-			}
+		System.out.println("Old node " + old.getId() + "'s inverse image: " + old.getInverseImage());
+		System.out.println("New node " + n.getId() + "'s inverse image: " + n.getInverseImage());
+		
+		
+		List<Vertex<State>> reevaluate = new ArrayList<Vertex<State>>();
+		reevaluate.add(abstractionGraph.getNode(old));
+		reevaluate.add(abstractionGraph.getNode(n));
+		Vertex<State> oldVertex = abstractionGraph.getNode(old);
+		for(Edge<String, State> e: abstractionGraph.incidentEdges(oldVertex)) {
+			reevaluate.add(abstractionGraph.opposite(oldVertex, e));
 		}
-		// Re-evaluate outgoing egdes
-		for(Edge leaving: old.leavingEdges().toList()) {
-			
-			Set<Tuple> target = (Set<Tuple>) leaving.getTargetNode().getAttribute("inverseImage");
-			
-			if(SetUtils.intersect(target, getImage(rest)) && SetUtils.intersect(target, getImage(deadEnds))) {
-
-				System.out.println("Leaving: Keeping edge to " + leaving.getTargetNode() + " from old state and adding new edge to there from new state");
-				// keep edge from old node
-				// add new leaving edge for new state
-				abstractionGraph.addEdge(Integer.toString(edgeId++), n, leaving.getTargetNode());
-
-			} else if(SetUtils.intersect(target, getImage(deadEnds))){
-
-				// change edge source to new node
-				System.out.println("Leaving: Changing source form edge towards " + leaving.getTargetNode() + " to new node.");
-				setSourceTo(abstractionGraph, leaving, n);
-				
-			} else {
-				
-				System.out.println("Leaving: Keeping edge to " + leaving.getTargetNode());
-				// keep edge from old node
-				
-			}
+		
+		for(Edge<String, State> e: abstractionGraph.incidentEdges(oldVertex)) {
+			abstractionGraph.removeEdge(e);
 		}
+		
+		for(Edge<String, State> e: abstractionGraph.outboundEdges(oldVertex)) {
+			abstractionGraph.removeEdge(e);
+		}
+		
+		abstractionGraph.reevaluateEdges(reevaluate);
 
 		return abstractionGraph;
-	}
-
-	// Method to change the target node of an edge while keeping the source node and the edge ID
-	public static void setTargetTo(KripkeStruct graph, Edge edge, Node newTargetNode) {
-		// Remove the existing edge
-		graph.removeEdge(edge);
-		// Add a new edge with the same ID but different target node
-		graph.addEdge(edge.getId(), edge.getSourceNode(), newTargetNode, true);
-	}
-
-	// Method to change the source node of an edge while keeping the target node and the edge ID
-	public static void setSourceTo(KripkeStruct graph, Edge edge, Node newSourceNode) {
-		// Remove the existing edge
-		graph.removeEdge(edge);
-		// Add a new edge with the same ID but different source node
-		graph.addEdge(edge.getId(), newSourceNode, edge.getTargetNode(), true);
+		
+		
+		// unevaluated vertices = all vetices from inbound edges, old state, new state
+		// delete = inbound edges, outbound edges
+		// reeavalute vertice
+		
 	}
 
 	public static Set<Tuple> getInitialTuples() {	
