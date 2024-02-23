@@ -4,10 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.app.model.framework.AtomicFormula;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Variable;

@@ -1,18 +1,25 @@
 package com.app.model.graph;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.app.model.exceptions.IllegalStructStateException;
+import com.app.model.framework.State;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphVertexNode;
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
+import com.brunomnsilva.smartgraph.graphview.SmartStylableNode;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Tooltip;
+import javafx.util.Duration;
 
 /**
  * An implementation of a Kripke structures which is a directed graph whose vertices are labeled by a set of atomic propositions.
@@ -48,13 +55,25 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 	public SmartGraphPanel<T, String> getSmartGraphView() {
 
 		validate();
-	
+
 		SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
 		SmartGraphPanel<T, String> graphPanel = new SmartGraphPanel<T, String>(this, strategy);
 		graphPanel.setAutomaticLayout(true);
-		
-		vertices().forEach(v -> {if(v.element().isInitial()) {graphPanel.getStylableVertex(v).setStyleClass("init-vertex");
-		}});
+
+		vertices().forEach(v -> {
+
+				SmartStylableNode node = graphPanel.getStylableVertex(v);
+				SmartGraphVertexNode<State> vnode = (SmartGraphVertexNode<State>) node;
+
+				//Tooltip tooltip = new Tooltip("A Square");
+				//tooltip.setShowDelay(Duration.seconds(0));
+				//Tooltip.install(vnode, tooltip);
+				
+				
+				if(v.element().isInitial()) {
+				node.setStyleClass("init-vertex");
+				}
+			});
 
 		return graphPanel;
 	}

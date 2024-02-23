@@ -1,7 +1,5 @@
 package com.app.model.graph;
 
-import java.util.Collection;
-
 import com.app.model.framework.Tuple;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 

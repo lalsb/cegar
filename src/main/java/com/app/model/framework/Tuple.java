@@ -61,7 +61,7 @@ public class Tuple extends HashMap<String, Double> implements KState{
 		String mapAsString = this.keySet().stream()
 				.map(key -> key + "=" + this.get(key))
 				.collect(Collectors.joining(", ", "[", "]"));
-		return mapAsString;
+		return "#" + id + mapAsString;
 	}
 	
 	

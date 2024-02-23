@@ -10,7 +10,7 @@ import javafx.scene.layout.StackPane;
 @SuppressWarnings("serial")
 public abstract class AbstractException extends RuntimeException {
 	
-	public static String heading;
+	public static String heading = "Unable to continue.";
 	
 	public AbstractException(String msg) {
 		super(msg);

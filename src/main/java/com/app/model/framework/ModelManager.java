@@ -63,23 +63,20 @@ public class ModelManager{
 
 		assert variables.length > 0;
 
-		Tuple init = new Tuple();
+		Arrays.asList(variables).forEach(v-> {
 
-		Arrays.asList(variables).forEach(x -> {
-
-			String id = x.getId();
-			TransitionBlock block = x.getTransitionBlock();
+			String id = v.getId();
+			TransitionBlock block = v.getTransitionBlock();
 
 			assert !id.isBlank();
 			assert block != null;
 
-			variablesMap.put(id, x); // fill map
-			transitionBlockMap.put(id, block);
-			init.put(id, x.getValue());		
+			variablesMap.put(id, v); // fill map
+			transitionBlockMap.put(id, block); // fill map
 		});
 
-		initialTuples.add(init);
-
+		Set<Set<Tuple>> initials = SetUtils.cartesianProduct(Arrays.asList(variables).stream().map(v -> v.getInitials()).toArray(Set[]::new));
+		initialTuples.addAll(SetUtils.condense(initials));
 	}
 
 	public static Map<String, TransitionBlock> getTransitionBlockMap(){	
@@ -152,12 +149,12 @@ public class ModelManager{
 
 		// Assertions, validate parameters
 		if(!isValid(finitePath, abstractionGraph)) {
-			throw new IllegalArgumentException("Path invalid");
+			throw new IllegalArgumentException("There appears to be a problem in validating your path.");
 		}
 
 		// Assertions, validate parameters
 		if(abstractionGraph == null) {
-			throw new IllegalArgumentException("Graph invalid");
+			throw new IllegalArgumentException("The graph appears to be missing. ");
 		}
 
 		assert finitePath.size() > 1;
@@ -198,25 +195,31 @@ public class ModelManager{
 			return new Pair<String, Set<Tuple>>(finitePath.get(j-2), prevS);
 		}
 	}
-	
+
 	public Pair<String, Set<Tuple>> splitLoop(List<String> finitePath, List<String> loopingPath) {
-		
+
+		// Assertions, validate parameters
+		if(abstractionGraph == null) {
+			throw new IllegalArgumentException("The graph appears to be missing. ");
+		}
+
 		int min = Integer.MAX_VALUE;
-		
+
 		for(String id: loopingPath) {
-			Set<Tuple> inverseImage = (Set<Tuple>) abstractionGraph.getNode(id).getInverseImage();
+			Set<Tuple> inverseImage = abstractionGraph.getNode(id).getInverseImage();
 			min = Math.min(min, inverseImage.size());
 		}
-		
+
 		List<String> unwoundPath = unwind(finitePath, loopingPath, min);
+
+		if(!isValid(unwoundPath, abstractionGraph)) {
+			throw new IllegalArgumentException("There appears to be a problem in validating your path.");
+		}
 		
-		Pair<String, Set<Tuple>> ret = splitPath(unwoundPath);
 		
-		int j = (int) Double.NaN;
-		
-		return null;
+		return splitPath(unwoundPath);
 	}
-	
+
 	/**
 	 * Unwinds an infinite path by copying the finite part and appending the looping part for a given number of repetitions. 
 	 * 
@@ -226,21 +229,21 @@ public class ModelManager{
 	 * @return unwoundPath
 	 */
 	public List<String> unwind(List<String> finitePath, List<String> loopingPath, int unwindings){
-		
+
 		// Copy finite part
 		List<String> unwoundPath = new ArrayList<String>(finitePath); 
-		
+
 		// Append looping part repeatedly
 		for(int i = 0; i <= unwindings; i++)
 			for(String element: loopingPath) {
 				unwoundPath.add(element);
 			}
-		
+
 		// Return composite
 		return unwoundPath;
-		
-		
-		
+
+
+
 	}
 
 	public boolean isValid(List<String> finitePath, AbstractStruct graph) {
@@ -255,12 +258,18 @@ public class ModelManager{
 		ListIterator<String> i = finitePath.listIterator();
 
 		State prev = graph.getNode(i.next());
+
+		if(prev == null) return false;
+
 		if(!prev.isInitial()) {
 			System.out.println("First node " + prev + " with " + prev.getInverseImage() + " is not initial.");
 			return false;
 		}
-		while(i.hasNext()) {	
+		while(i.hasNext()) {
+
 			State next = graph.getNode(i.next());		
+			if(next == null) return false;
+
 			if(!graph.areAdjacent(graph.getNode(prev), graph.getNode(next))) {
 				System.out.println("No edge from node " + prev.getId() + " to node " + next.getId() + ".");
 				return false;
@@ -329,15 +338,15 @@ public class ModelManager{
 
 		// Combine possible new values for each variable
 		// e.g. [[x=0], [x=1]] x [[y=1], [y=2]] x [[r=0]]
-		Set<Set<Object>> tuples = SetUtils.cartesianProduct(all.toArray(new Set<?>[0]));
+		Set<Set<Tuple>> tuples = SetUtils.cartesianProduct(all.toArray(new Set[0]));
 
 		// Merge combination into a single tuple
 		// e.g.: [[x=0],[y=1],[r=0]] -> [x=0,y=1,r=0]
-		for(Set<Object> tuple : tuples) {		
+		for(Set<Tuple> tuple : tuples) {		
 			Tuple result = new Tuple();	
 
-			for(Object d : tuple) {		
-				result.putAll((Tuple) d);
+			for(Tuple t : tuple) {		
+				result.putAll(t);
 			}
 			found.add(result);
 		}
@@ -374,13 +383,13 @@ public class ModelManager{
 		// New Node
 		State n = new State(Integer.toString(nodeId++));
 		n.setInverseImage(deadEnds);
-		
+
 		abstractionGraph.insertVertex(n);
 
 		System.out.println("Old node " + old.getId() + "'s inverse image: " + old.getInverseImage());
 		System.out.println("New node " + n.getId() + "'s inverse image: " + n.getInverseImage());
-		
-		
+
+
 		List<Vertex<State>> reevaluate = new ArrayList<Vertex<State>>();
 		reevaluate.add(abstractionGraph.getNode(old));
 		reevaluate.add(abstractionGraph.getNode(n));
@@ -388,24 +397,24 @@ public class ModelManager{
 		for(Edge<String, State> e: abstractionGraph.incidentEdges(oldVertex)) {
 			reevaluate.add(abstractionGraph.opposite(oldVertex, e));
 		}
-		
+
 		for(Edge<String, State> e: abstractionGraph.incidentEdges(oldVertex)) {
 			abstractionGraph.removeEdge(e);
 		}
-		
+
 		for(Edge<String, State> e: abstractionGraph.outboundEdges(oldVertex)) {
 			abstractionGraph.removeEdge(e);
 		}
-		
+
 		abstractionGraph.reevaluateEdges(reevaluate);
 
 		return abstractionGraph;
-		
-		
+
+
 		// unevaluated vertices = all vetices from inbound edges, old state, new state
 		// delete = inbound edges, outbound edges
 		// reeavalute vertice
-		
+
 	}
 
 	public static Set<Tuple> getInitialTuples() {	

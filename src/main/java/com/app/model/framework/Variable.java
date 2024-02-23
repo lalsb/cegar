@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,16 +42,15 @@ public class Variable implements Serializable {
 		return id;
 	}
 
-	public double getValue() {
-		return initials.iterator().next();
-	}
-
-	public List<Double> getInitials() {
-
+	public List<Double> getInitialValues() {
 		List<Double> ret = initials.stream().collect(Collectors.toList());
 		Collections.sort(ret);
 
 		return ret;	
+	}
+
+	public Set<Tuple> getInitials() {
+		return initials.stream().map(v -> new Tuple(Map.of(id, v))).collect(Collectors.toSet());
 	}
 
 	public TransitionBlock getTransitionBlock() {

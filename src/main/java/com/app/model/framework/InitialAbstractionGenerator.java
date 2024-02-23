@@ -108,6 +108,7 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean nextEvents() {
 
 		// Entire partition 
@@ -126,17 +127,17 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 		}
 
 		// Cartesian product of all equivalence classes from each formula Cluster
-		Set<Set<Object>> equivalenceCombinations = SetUtils.cartesianProduct(partition.toArray(new Set<?>[0]));
+		Set<Set<Tuple>> equivalenceCombinations = SetUtils.cartesianProduct(partition.toArray(new Set[0]));
 
 		System.out.println("\nGenerating states:");
 
-		for(Set<Object> combination: equivalenceCombinations) {
+		for(Set<Tuple> combination: equivalenceCombinations) {
 
-			Set<Set<Object>> fullTuples = SetUtils.cartesianProduct(combination.toArray(new Set<?>[0]));
+			Set<Set<Tuple>> fullTuples = SetUtils.cartesianProduct(combination.toArray(new Set[0]));
 
 			State s = new State(Integer.toString(ModelManager.nodeId++));
 
-			for(Set<Object> full: fullTuples) {
+			for(Set<Tuple> full: fullTuples) {
 
 				Tuple inverse = new Tuple();
 
@@ -186,12 +187,7 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 
 		return false; // finished
 	}
-
-	public void end() {
-		return;
-
-	}
-
+	
 	/**
 	 * Sends a node to the generator sink (graph)
 	 * @param state

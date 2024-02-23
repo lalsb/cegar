@@ -69,7 +69,6 @@
                   <Label text="Original Graph" />
                   <Separator prefWidth="200.0" />
                   <Button fx:id="genOriginalButton" mnemonicParsing="false" onAction="#handleGenerateOriginalGraph" prefHeight="25.0" prefWidth="307.0" text="Generate Original Graph" />
-                  <Button fx:id="validateButton" mnemonicParsing="false" onAction="#handleValidateOriginalGraph" prefHeight="25.0" prefWidth="307.0" text="Validate" />
                   <Separator prefWidth="200.0" />
                </children>
             </VBox>

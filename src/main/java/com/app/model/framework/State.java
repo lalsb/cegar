@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.app.model.graph.KState;
-import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
 
 public class State implements KState{
@@ -51,6 +50,10 @@ public class State implements KState{
 	public String getLabel() {
 		
 		return "#" + id + " = " + inverseImage;
-		
+	}
+	
+	@Override
+	public String toString() {
+		return id;
 	}
 }

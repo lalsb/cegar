@@ -38,6 +38,7 @@ public class Main extends Application {
 		// Set up the stage
 		primaryStage.setTitle("Cegar");
 
+		// Set up error handling
 		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
 
 			throwable.printStackTrace();
@@ -51,6 +52,11 @@ public class Main extends Application {
 				if (throwable.getCause().getCause() instanceof IllegalStructStateException) {
 					IllegalStructStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
 				}
+				
+				if (throwable.getCause().getCause() instanceof IllegalArgumentException) {
+					IllegalStructStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
+				}
+				
 			});
 
 		});

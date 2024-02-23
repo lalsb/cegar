@@ -6,29 +6,42 @@ import java.util.Set;
 
 import com.app.model.framework.Tuple;
 
-
 public class SetUtils {
 
 	// By https://stackoverflow.com/a/714256
-	public static Set<Set<Object>> cartesianProduct(Set<?>... sets) {
-
-
+	@SafeVarargs
+	public static <T> Set<Set<T>> cartesianProduct(Set<T>... sets) {
 		return _cartesianProduct(0, sets);
 	}
 
 	// By https://stackoverflow.com/a/714256
-	private static Set<Set<Object>> _cartesianProduct(int index, Set<?>... sets) {
-		Set<Set<Object>> ret = new HashSet<Set<Object>>();
+	@SafeVarargs
+	private static <T> Set<Set<T>> _cartesianProduct(int index, Set<T>... sets) {
+		Set<Set<T>> ret = new HashSet<Set<T>>();
 		if (index == sets.length) {
-			ret.add(new HashSet<Object>());
+			ret.add(new HashSet<T>());
 		} else {
-			for (Object obj : sets[index]) {
-				for (Set<Object> set : _cartesianProduct(index+1, sets)) {
+			for (T obj : sets[index]) {
+				for (Set<T> set : _cartesianProduct(index+1, sets)) {
 					set.add(obj);
 					ret.add(set);
 				}
 			}
 		}
+		return ret;
+	}
+	
+	public static Set<Tuple> condense(Set<Set<Tuple>> sets){
+		Set<Tuple> ret = new HashSet<Tuple>();
+		
+		for(Set<Tuple> tuple : sets) {
+			Tuple result = new Tuple();
+			for(Tuple t : tuple) {		
+				result.putAll(t);
+			}
+			ret.add(result);
+		}
+		
 		return ret;
 	}
 

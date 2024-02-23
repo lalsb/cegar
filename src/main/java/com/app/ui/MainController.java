@@ -116,7 +116,7 @@ public class MainController {
 					nameField.setText(newValue.getId());
 					// Fill intiial values field
 					initialValuesField.setText(String.join(",",
-							newValue.getInitials().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+							newValue.getInitialValues().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
 							.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
 					// Fill Domain field
 					domainField.setText(String.join(",",
