@@ -9,8 +9,7 @@ import java.util.Set;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
-import com.app.model.exceptions.IllegalInputException;
-import com.app.util.PredicateSplitter;
+import com.app.model.exceptions.ModelInputException;
 
 /**
  * Transition line implementation that parses one transition line.
@@ -23,12 +22,13 @@ public class TransitionLine implements Serializable{
 	private String varId;
 	private String condition;
 	private List<String> actions;
-	private List<AtomicFormula> atoms;
+	private List<AtomicFormula> atomicFormulas;
 
 	public TransitionLine(String varId, String condition, List<String> action) {
 		this.varId = varId;
 		this.condition = condition;
 		this.actions = action;
+		atomicFormulas = new ArrayList<AtomicFormula>();
 		isValid();
 		parse();
 	}
@@ -41,22 +41,25 @@ public class TransitionLine implements Serializable{
 		return condition;
 	}
 
-	public List<AtomicFormula> getAtoms(){
-		return atoms;
+	public List<AtomicFormula> getAtomicFormulas(){
+		//TODO: entefernen
+		atomicFormulas = new ArrayList<AtomicFormula>();
+		parse();
+		return atomicFormulas;
 	}
 
 	/**
 	 * Checks Transition Block6
 	 * @throws IllegalArgumentException
 	 */
-	private void isValid() throws IllegalInputException{
+	private void isValid() throws ModelInputException{
 
 		if(condition == null || condition.isBlank()) {
-			throw new IllegalInputException("The field \"condition\" must not be empty or blank.");
+			throw new ModelInputException("The field \"condition\" must not be empty or blank.");
 		}
 		
 		if(actions == null ||actions.isEmpty() || actions.contains("") || actions.contains(null)) {
-			throw new IllegalInputException("The field \"actions\" must not be empty or blank.");
+			throw new ModelInputException("The field \"actions\" must not be empty or blank.");
 		}
 	}
 
@@ -65,9 +68,8 @@ public class TransitionLine implements Serializable{
 	 */
 	private void parse() {
 
-		atoms = new ArrayList<AtomicFormula>();
 
-		for(String atom: PredicateSplitter.splitPredicate(condition)) { // Split conditions at junctions
+		for(String atom: AtomicFormulaScanner.scan(condition)) { // Split conditions at junctions
 
 			Expression e = new Expression(atom);
 			String[] arguments = e.getMissingUserDefinedArguments();
@@ -75,7 +77,7 @@ public class TransitionLine implements Serializable{
 			assert arguments.length > 0;
 			
 			e.defineArguments(arguments);
-			atoms.add(new AtomicFormula(e)); // Atomc formula object
+			atomicFormulas.add(new AtomicFormula(e)); // Atomc formula object
 		}
 	}
 
@@ -95,6 +97,13 @@ public class TransitionLine implements Serializable{
 		// Calculate condition with mXParser
 		Argument[] arguments = current.genereateArguments();
 		Expression c = new Expression(condition,arguments);
+		
+		
+		if(!c.checkSyntax()) {
+			System.out.println(c.getErrorMessage());
+			throw new ModelInputException("Unable to calculate \"" + c.getCanonicalExpressionString() +
+					"\" while processing conditions in transition block \"" + varId + "\"");
+		}
 
 		// Check if condition c is true
 		if(c.calculate() == (1.0)) {
@@ -103,7 +112,19 @@ public class TransitionLine implements Serializable{
 				
 				// Calculate action expression with mXParser
 				Expression a = new Expression(action,arguments);	
+				
+				if(!a.checkSyntax()) {
+					System.out.println(a.getErrorMessage());
+					throw new ModelInputException("Unable to calculate \"" + a.getCanonicalExpressionString() +
+							"\" while processing actions in transition block \"" + varId + "\"");
+				}
+				
 				double result = a.calculate();
+				
+				if(Double.isNaN(result)) {
+					throw new ModelInputException("Unable to process the ");
+				}
+				
 				if(ModelManager.getVariable(varId).isInBounds(result)) {
 					values.add(result);
 				}

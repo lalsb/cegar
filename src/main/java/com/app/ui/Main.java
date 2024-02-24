@@ -2,8 +2,8 @@ package com.app.ui;
 
 import org.mariuszgromada.math.mxparser.License;
 
-import com.app.model.exceptions.IllegalInputException;
-import com.app.model.exceptions.IllegalStructStateException;
+import com.app.model.exceptions.ModelInputException;
+import com.app.model.exceptions.ModelStateException;
 
 import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
@@ -45,16 +45,16 @@ public class Main extends Application {
 			
 			Platform.runLater(() -> {
 
-				if (throwable.getCause().getCause() instanceof IllegalInputException) {
-					IllegalInputException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
+				if (throwable.getCause().getCause() instanceof ModelInputException) {
+					ModelInputException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
 				}
 				
-				if (throwable.getCause().getCause() instanceof IllegalStructStateException) {
-					IllegalStructStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
+				if (throwable.getCause().getCause() instanceof ModelStateException) {
+					ModelStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
 				}
 				
 				if (throwable.getCause().getCause() instanceof IllegalArgumentException) {
-					IllegalStructStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
+					ModelStateException.showErrorMessage(rootPane, throwable.getCause().getCause().getMessage());;
 				}
 				
 			});

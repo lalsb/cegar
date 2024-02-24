@@ -8,14 +8,18 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
 @SuppressWarnings("serial")
-public abstract class AbstractException extends RuntimeException {
+public abstract class ModelException extends RuntimeException {
 	
 	public static String heading = "Unable to continue.";
 	
-	public AbstractException(String msg) {
+	public ModelException(String msg) {
 		super(msg);
 	}
 	
+	public ModelException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
 	public static void showErrorMessage(StackPane rootPane, String message) {
         // Create a dialog layout with a label for the error message
         JFXDialogLayout content = new JFXDialogLayout();

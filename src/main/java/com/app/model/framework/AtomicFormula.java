@@ -3,9 +3,12 @@ package com.app.model.framework;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.mariuszgromada.math.mxparser.Expression;
+
+import com.app.model.exceptions.ModelInputException;
 
 public class AtomicFormula implements Serializable {
 
@@ -17,7 +20,7 @@ public class AtomicFormula implements Serializable {
 	
 	@Override
 	public String toString() {
-		return e.getCanonicalExpressionString();
+		return e.getExpressionString();
 	}
 	
 	@Override
@@ -35,6 +38,11 @@ public class AtomicFormula implements Serializable {
 		
 		return this.toString().equals(a.toString());
 	}
+	
+	 @Override
+	    public int hashCode() {
+	        return Objects.hash(e.getExpressionString());
+	    }
 	
 	public AtomicFormula(Expression e) {
 		this.e = e;
@@ -62,10 +70,15 @@ public class AtomicFormula implements Serializable {
 		return new HashSet<>(Arrays.asList(var_names));	
 	}
 
-	public boolean audit(Tuple current) {
-		
+	public boolean audit(Tuple current) throws ModelInputException{
 		e.removeAllArguments();
 		e.addArguments(current.genereateArguments());
+		
+		if(!e.checkSyntax()) {
+			System.out.println(e.getErrorMessage());
+			throw new ModelInputException("Unable to calculate \"" + e.getCanonicalExpressionString() +
+					"\" while processing label for tuple \"" + current + "\"");
+		}	
 		
 		if(e.calculate() == 1.0) {
 			return true;

@@ -72,16 +72,7 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 	 */
 	public void begin() {
 
-		Map<String, TransitionBlock> transitionBlocks = ModelManager.getTransitionBlockMap();
-		List<AtomicFormula> atomicFormulas = new LinkedList<AtomicFormula>();
-
-		transitionBlocks.forEach((k,v)->{
-			v.transitions().forEach(x-> {
-				atomicFormulas.addAll(x.getAtoms());
-			});
-		});
-
-		ListIterator<AtomicFormula> iterator = atomicFormulas.listIterator();
+		ListIterator<AtomicFormula> iterator =  ModelManager.getAtomicFormulas().listIterator();
 
 		while(iterator.hasNext()) {
 

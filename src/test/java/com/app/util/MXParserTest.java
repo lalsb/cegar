@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.License;
+import org.mariuszgromada.math.mxparser.mXparser;
 
 class MXParserTest {
 	
@@ -19,14 +20,14 @@ class MXParserTest {
 	}
 
 	@Test
-	void simpleCalculation() {
+	void simpleCalculationTest() {
 		
 		Expression e = new Expression("2+1");
 		Assertions.assertEquals(3, e.calculate());
 	}
 
 	@Test
-	void variablesCalculation() {
+	void variablesCalculationTest() {
 		
 		Argument longname = new Argument("longname");
 		Argument y = new Argument("y",1);
@@ -37,7 +38,7 @@ class MXParserTest {
 	}
 	
 	@Test
-	void simpleRelationCalculation(){
+	void simpleRelationCalculationTest(){
 		Expression e = new Expression("¬(2<3)");	
 		// 1.0d equals "true"
 		Assertions.assertEquals(0, e.calculate());
@@ -45,7 +46,7 @@ class MXParserTest {
 
 	
 	@Test
-	void RelationWithVariablesCalculation(){
+	void RelationWithVariablesCalculationTest(){
 		
 		Argument x = new Argument("x");
 		Argument y = new Argument("y",1);
@@ -63,7 +64,7 @@ class MXParserTest {
 	}
 	
 	@Test
-	void getArguments(){
+	void getArgumentsTest(){
 		
 		Expression e = new Expression("2*x<3*y & reset=1");
 		String[] expected = {"x", "y","reset"};
@@ -90,4 +91,21 @@ class MXParserTest {
 		
 		Assertions.assertEquals(Arrays.deepToString(expected),Arrays.deepToString(keys));
 	}
+	
+	
+	@Test
+	void missingArgumentTest(){
+		
+		Expression e = new Expression("start=start+reset");
+		Argument x = new Argument("start",0);
+		
+		Argument[] arguments = {x};
+		e.addArguments(arguments);
+		
+		Double result = e.calculate();
+		
+		System.out.println(result);
+		
+	}
+		
 }

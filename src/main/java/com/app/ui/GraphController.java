@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.app.model.framework.KStateLabel;
 import com.app.model.framework.ModelManager;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
@@ -19,6 +20,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -69,6 +71,9 @@ public class GraphController {
 
 	private SmartGraphPanel<?,?> graphPanel;
 
+	@FXML
+	private ChoiceBox<KStateLabel> labelChoiceBox;
+
 
 	// Initialize method is called after the FXML file is loaded in Main
 	@FXML
@@ -87,6 +92,17 @@ public class GraphController {
 
 		// Set up ModelManager
 		manager = new ModelManager();
+
+		// Set up ChoiceBox
+		labelChoiceBox.getSelectionModel()
+		.selectedItemProperty()
+		.addListener((arg, oldVal, newVal)-> {
+			ModelManager.setLabel(newVal);
+			Platform.runLater(() -> {
+				if(graphPanel != null)
+					graphPanel.update();});
+
+		});
 	}
 
 
@@ -111,8 +127,10 @@ public class GraphController {
 		addLayoutListener(graphPanel);
 		graphPanel.setAutomaticLayout(false);
 		graphPanel.setAutomaticLayout(true);
-		
-		Platform.runLater(() -> {graphPanel.init();});
+
+		Platform.runLater(() -> {
+			if(graphPanel != null)
+				graphPanel.init();});
 
 		System.out.println("Finished handleGenerateOriginalGraph");
 	}
@@ -156,7 +174,7 @@ public class GraphController {
 		addLayoutListener(graphPanel);
 		graphPanel.setAutomaticLayout(false);
 		graphPanel.setAutomaticLayout(true);
-		
+
 		Platform.runLater(() -> {graphPanel.init();});
 	}
 
@@ -168,7 +186,7 @@ public class GraphController {
 
 		List<String> finitePath = Arrays.asList(counterExampleField.getText().split(","));
 		List<String> loopingPath = Arrays.asList(loopField.getText().split(","));	
-			
+
 		if(loopField.getText().isBlank()) {
 			result = manager.splitPath(finitePath);
 			System.out.println("-> Checking finite Path");
@@ -203,7 +221,7 @@ public class GraphController {
 		 */
 		Platform.runLater(() -> {graphPanel.update();});
 	}
-	
+
 	private void addLayoutListener(SmartGraphPanel<?, ?> graphPanel2) {
 		graphPanel.automaticLayoutProperty().addListener(new ChangeListener<Boolean>() {
 
@@ -218,7 +236,7 @@ public class GraphController {
 				}
 			}
 		});
-		
+
 	}
 
 	public class Console extends OutputStream {

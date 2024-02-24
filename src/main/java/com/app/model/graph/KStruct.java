@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.app.model.exceptions.IllegalStructStateException;
+import com.app.model.exceptions.ModelStateException;
 import com.app.model.framework.State;
 import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
@@ -63,12 +63,6 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 		vertices().forEach(v -> {
 
 				SmartStylableNode node = graphPanel.getStylableVertex(v);
-				SmartGraphVertexNode<State> vnode = (SmartGraphVertexNode<State>) node;
-
-				//Tooltip tooltip = new Tooltip("A Square");
-				//tooltip.setShowDelay(Duration.seconds(0));
-				//Tooltip.install(vnode, tooltip);
-				
 				
 				if(v.element().isInitial()) {
 				node.setStyleClass("init-vertex");
@@ -94,7 +88,7 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 	 */
 	public void validate() {
 		if (numVertices() == 0) {
-			throw new IllegalStructStateException("Set of states S is empty.");
+			throw new ModelStateException("Set of states S is empty.");
 		}
 
 		validateLeftTotalRelation();
@@ -110,7 +104,7 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 
 		for(Vertex<T> v: vertices()) {
 			if(outboundEdges(v).isEmpty()) {
-				throw new IllegalStructStateException(String.format("State %s does not satisfy the left total property.", v.element().getId()));
+				throw new ModelStateException(String.format("State %s does not satisfy the left total property.", v.element().getId()));
 			}
 		}
 	}

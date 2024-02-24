@@ -1,7 +1,10 @@
 package com.app.model.framework;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.app.model.graph.KState;
 import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
@@ -49,7 +52,26 @@ public class State implements KState{
 	@SmartLabelSource
 	public String getLabel() {
 		
-		return "#" + id + " = " + inverseImage;
+		switch(ModelManager.getLabel()) {
+		case VALUE:
+			return inverseImage.toString();
+		case ID:
+			return getId();
+		case ATOMS:
+			return getHoldingAtomicFormulas();
+		default:
+			return getId();
+		}
+	}
+	
+private String getHoldingAtomicFormulas() {
+		
+		List<AtomicFormula> atomicFormulas = ModelManager.getAtomicFormulas().
+				stream().distinct().collect(Collectors.toList());
+	
+		atomicFormulas.removeIf(f -> !f.audit(inverseImage.iterator().next()));
+
+		return atomicFormulas.toString();
 	}
 	
 	@Override

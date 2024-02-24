@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -17,37 +18,62 @@ import com.brunomnsilva.smartgraph.graph.Vertex;
 
 import javafx.util.Pair;
 
+/**
+ * Class maintaing all model references for one session and provding key algorithms.
+ * @author Linus Alsbach
+ */
 public class ModelManager{
 
+	/**
+	 * Provides arbitrary node IDs
+	 */
 	public static int nodeId = 0;
+	/**
+	 * Provides arbitrary edge IDs
+	 */
 	public static int edgeId = 0;
-
+	
+	/**
+	 * Labels options include {@code VALUE} for underlying tuple(s), {@code ID}	for arbitrary IDs
+	 * and {@code ATOMS} for atomic formulas holding.
+	 */
+	private static KStateLabel label;
 	/**
 	 * Map of variable id and variable.
 	 */
-	public static Map<String, Variable> variablesMap;
+	private static Map<String, Variable> variablesMap;
 	/**
 	 * Map of variable id and transition block.
 	 */
-	public static Map<String, TransitionBlock> transitionBlockMap;	
+	private static Map<String, TransitionBlock> transitionBlockMap;	
 	/**
 	 * Set of initial tuples.
 	 */
-	public static Set<Tuple> initialTuples;	
+	private static Set<Tuple> initialTuples;	
 	/**
-	 * Iteration limit for all the generators.
+	 * List of atomic formulas
 	 */
-	public static final int ITERATION_LMIT = 1000;
-
+	private static List<AtomicFormula> atomicFormulas;	
+	/**
+	 * Reference to the abstracted model
+	 */
 	public AbstractStruct abstractionGraph;
-
+	/**
+	 * Reference to the original model
+	 */
 	public OriginalStruct originalGraph;
 
 	public ModelManager() {
-		// Init
+		// Set up maps and list
 		variablesMap = new HashMap<String, Variable>();	
 		transitionBlockMap = new HashMap<String, TransitionBlock>();
+		atomicFormulas = new ArrayList<AtomicFormula>();
+		
+		// Set up intial tuples
 		initialTuples = new HashSet<Tuple>();
+		
+		// Set up Label
+		label = KStateLabel.ID;
 	}
 
 	public void setAbstractionGraph(AbstractStruct abstractionGraph) {
@@ -73,10 +99,19 @@ public class ModelManager{
 
 			variablesMap.put(id, v); // fill map
 			transitionBlockMap.put(id, block); // fill map
+			atomicFormulas.addAll(block.getAtomicFormulas()); // fill list
 		});
 
 		Set<Set<Tuple>> initials = SetUtils.cartesianProduct(Arrays.asList(variables).stream().map(v -> v.getInitials()).toArray(Set[]::new));
 		initialTuples.addAll(SetUtils.condense(initials));
+	}
+	
+	public static KStateLabel getLabel() {
+		return label;
+	}
+	
+	public static void setLabel(KStateLabel newLabel) {
+		label = newLabel;
 	}
 
 	public static Map<String, TransitionBlock> getTransitionBlockMap(){	
@@ -91,6 +126,14 @@ public class ModelManager{
 		return variablesMap;
 	}
 
+	/**
+	 * Returns all terms of type {@code AtomicFormula}
+	 * @return List of atomic formulas
+	 */
+	public static List<AtomicFormula> getAtomicFormulas() {
+		assert !atomicFormulas.isEmpty();
+		return atomicFormulas;
+	}
 
 	/**
 	 * Return the Variable corresponding to a given Id

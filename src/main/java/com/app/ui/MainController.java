@@ -13,7 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.app.model.exceptions.IllegalInputException;
+import com.app.model.exceptions.ModelInputException;
+import com.app.model.framework.KStateLabel;
+import com.app.model.framework.ModelManager;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Variable;
@@ -23,6 +25,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -185,7 +188,7 @@ public class MainController {
 	 * Handles the "Add" button action.
 	 */
 	@FXML
-	private void handleAddVariable() throws IllegalInputException {
+	private void handleAddVariable() throws ModelInputException {
 			validate();
 
 		// Get data from fields
@@ -436,18 +439,18 @@ public class MainController {
 
 	/**
 	 * Helper method to validate input data, handling possible exceptions
-	 * @throws IllegalInputException
+	 * @throws ModelInputException
 	 */
-	private void validate() throws IllegalInputException {
+	private void validate() throws ModelInputException {
 
 		for (TextField field : Arrays.asList(nameField, initialValuesField, domainField)) {
 			if (field.getText().isBlank()) {
-				throw new IllegalInputException(String.format("The field \"%s\" must not be empty or blank.", field.getId()));
+				throw new ModelInputException(String.format("The field \"%s\" must not be empty or blank.", field.getId()));
 			}
 		}
 		
 		if (elseBox.getTags().isEmpty() || elseBox.getTags().contains("")) {
-			throw new IllegalInputException(String.format("The field \"%s\" must not be empty or blank.", elseBox.getId()));
+			throw new ModelInputException(String.format("The field \"%s\" must not be empty or blank.", elseBox.getId()));
 		}
 	}
 
@@ -457,11 +460,11 @@ public class MainController {
 	 * @param text String
 	 * @return Double value
 	 */
-	private Double parseDouble(String text) throws IllegalInputException{
+	private Double parseDouble(String text) throws ModelInputException{
 		try {
 		return Double.parseDouble(text);
 		} catch(NumberFormatException e) {
-			throw new IllegalInputException(String.format("Unable to format %s as a number. Please enter numeric values only.", text));
+			throw new ModelInputException(String.format("Unable to format \"%s\" as a number. Please enter numeric values only.", text), e);
 		}
 	}
 }
