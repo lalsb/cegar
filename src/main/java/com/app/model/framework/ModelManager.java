@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.app.model.graph.AbstractStruct;
 import com.app.model.graph.OriginalStruct;
@@ -349,53 +350,27 @@ public class ModelManager{
 
 	/**
 	 * Calculates the image of a tuple with respect to the previously defined transitions.
-	 * @param input Tuple
+	 * @param s Tuple
 	 * @return Image
 	 */
-	public static Set<Tuple> getImage(Tuple input) {	
-		assert !transitionBlockMap.isEmpty();
+	@SuppressWarnings("unchecked")
+	public static Set<Tuple> getImage(Tuple s) {	
+		 assert s.keySet().equals(variablesMap.keySet());
 
-		// Img(input) as a set of tuples 
-		Set<Tuple> found = new HashSet<Tuple>();
-
-		// Map of variable id and possible new values
-		Map<String, Set<Tuple>> retAll = new HashMap<String, Set<Tuple>>();
-
-		// Collect possible new values for each variable
-		// e.g. (x=[0,1], y=[1,2], r=[0])
-		input.forEach((k,v) -> {
-
-			Set<Double> ret = ModelManager.getTransitionBlockMap().get(k).audit(input);
-			Set<Tuple> temp= new HashSet<Tuple>();
-
-			for(Double d: ret) {
-				Tuple t = new Tuple();
-				t.put(k, d);
-				temp.add(t);
-			}
-			retAll.put(k, temp);
-		});
-
-		List<Set<Tuple>> all = new ArrayList<Set<Tuple>>();
-		retAll.forEach((k,v) -> all.add(new HashSet<Tuple>(v)));
-
-		// Combine possible new values for each variable
-		// e.g. [[x=0], [x=1]] x [[y=1], [y=2]] x [[r=0]]
-		Set<Set<Tuple>> tuples = SetUtils.cartesianProduct(all.toArray(new Set[0]));
-
-		// Merge combination into a single tuple
-		// e.g.: [[x=0],[y=1],[r=0]] -> [x=0,y=1,r=0]
-		for(Set<Tuple> tuple : tuples) {		
-			Tuple result = new Tuple();	
-
-			for(Tuple t : tuple) {		
-				result.putAll(t);
-			}
-			found.add(result);
+		 Set<Tuple> image; 
+				
+		 Set<Set<Tuple>> setOfPartialTuples = SetUtils.cartesianProduct(s.entrySet().stream() /* e.g. set of {(0), (42)}, ...  */
+				 .map(entry -> transitionBlockMap.get(entry.getKey()).audit(s).stream()
+						 .map(value -> new Tuple(Map.of(entry.getKey(),value)))				
+			 .collect(Collectors.toSet()))
+		 .collect(Collectors.toList()) 
+		 .toArray(new Set[0])); /* e.g. array of {v ~ 0}, {u ~ 42 }, ... */
+				
+		 image = setOfPartialTuples.stream()
+					 .map(Tuple::new).collect(Collectors.toSet()); /* e.g. set of (0, 42), ... */
+				
+		 return image;
 		}
-
-		return found;
-	}
 
 	/**
 	 * Refines the abstraction

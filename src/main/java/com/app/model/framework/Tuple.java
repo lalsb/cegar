@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.mariuszgromada.math.mxparser.Argument;
@@ -27,6 +28,11 @@ public class Tuple extends HashMap<String, Double> implements KState{
 
 	public Tuple(Tuple tuple) {
 		super(tuple);
+	}
+	
+	public Tuple(Set<Tuple> tuples) {
+		super();
+		tuples.forEach(tuple -> putAll(tuple));
 	}
 
 	public void setId(String id) {
