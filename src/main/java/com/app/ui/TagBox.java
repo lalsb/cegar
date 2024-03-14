@@ -1,4 +1,4 @@
-package com.app.util;
+package com.app.ui;
 
 
 
@@ -14,8 +14,6 @@ import javafx.scene.layout.Priority;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.app.ui.MainController;
 
 /**
  * Implements a custom HBox storing tags. 

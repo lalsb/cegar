@@ -5,9 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.app.model.framework.ModelManager;
-import com.app.model.framework.State;
-import com.app.model.framework.Tuple;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 
 public class AbstractStruct extends KStruct<State> {

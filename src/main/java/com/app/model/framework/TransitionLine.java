@@ -10,6 +10,8 @@ import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import com.app.model.exceptions.ModelInputException;
+import com.app.model.graph.ModelManager;
+import com.app.model.graph.Tuple;
 
 /**
  * Transition line implementation that parses one transition line.

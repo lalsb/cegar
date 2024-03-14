@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.app.model.exceptions.ModelStateException;
-import com.app.model.framework.State;
-import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
 import com.brunomnsilva.smartgraph.graph.Vertex;

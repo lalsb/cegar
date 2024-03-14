@@ -1,4 +1,4 @@
-package com.app.model.framework;
+package com.app.model.graph;
 
 /**
  * Labels options include {@code VALUE} for underlying tuple(s), {@code ID}	for arbitrary IDs

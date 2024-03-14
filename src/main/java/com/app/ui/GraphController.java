@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.app.model.framework.KStateLabel;
-import com.app.model.framework.ModelManager;
-import com.app.model.framework.Tuple;
 import com.app.model.framework.Variable;
 import com.app.model.graph.AbstractStruct;
+import com.app.model.graph.KStateLabel;
+import com.app.model.graph.ModelManager;
+import com.app.model.graph.Tuple;
 import com.brunomnsilva.smartgraph.containers.ContentZoomPane;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
 

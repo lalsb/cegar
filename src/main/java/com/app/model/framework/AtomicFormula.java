@@ -9,9 +9,14 @@ import java.util.Set;
 import org.mariuszgromada.math.mxparser.Expression;
 
 import com.app.model.exceptions.ModelInputException;
+import com.app.model.graph.Tuple;
 
 public class AtomicFormula implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1098254098552206244L;
 	public Expression e; 
 	
 	public AtomicFormula() {

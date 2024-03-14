@@ -1,4 +1,4 @@
-package com.app.model.framework;
+package com.app.model.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.app.model.graph.AbstractStruct;
-import com.app.model.graph.OriginalStruct;
+import com.app.model.framework.AtomicFormula;
+import com.app.model.framework.TransitionBlock;
+import com.app.model.framework.Variable;
 import com.app.util.SetUtils;
 import com.brunomnsilva.smartgraph.graph.Edge;
 import com.brunomnsilva.smartgraph.graph.Vertex;

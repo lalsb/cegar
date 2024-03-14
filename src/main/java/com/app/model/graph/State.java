@@ -1,4 +1,4 @@
-package com.app.model.framework;
+package com.app.model.graph;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.app.model.graph.KState;
+import com.app.model.framework.AtomicFormula;
 import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
 
 public class State implements KState{

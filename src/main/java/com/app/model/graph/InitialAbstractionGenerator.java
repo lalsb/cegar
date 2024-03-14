@@ -1,4 +1,4 @@
-package com.app.model.framework;
+package com.app.model.graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +9,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.app.model.graph.AbstractStruct;
-import com.app.model.graph.KStructGenerator;
+import com.app.model.framework.AtomicFormula;
+import com.app.model.framework.FormulaCluster;
 import com.app.util.SetUtils;
 
 import javafx.util.Pair;

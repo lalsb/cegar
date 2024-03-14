@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.app.model.graph.ModelManager;
+import com.app.model.graph.Tuple;
+
 public class FormulaCluster {
 	
 	public int nodeID;

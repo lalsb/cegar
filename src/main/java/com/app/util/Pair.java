@@ -1,4 +1,4 @@
-package com.app.model.framework;
+package com.app.util;
 
 public class Pair {
 	

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.app.model.graph.Tuple;
+
 public class Variable implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -60,16 +62,18 @@ public class Variable implements Serializable {
 
 
 	// Getters for ListView
-	public String getInitialsCell() {
-		return String.join(",",
-				initials.stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
-				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll));
+	public String getInitialsCell() {		
+		ArrayList<String> ls = initials.stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+		.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+		
+		return String.join(",", ls);
 	}
 
-	public String getDomainCell() {
-		return String.join(",",
-				domain.stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
-				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll));
+	public String getDomainCell() {	
+		ArrayList<String> ls = initials.stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+				.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+		
+		return String.join(",", ls);
 	}
 
 	public String getTransitionsCell() {

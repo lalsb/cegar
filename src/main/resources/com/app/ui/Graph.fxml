@@ -2,7 +2,7 @@
 
 <!-- Graph.fxml -->
 
-<?import com.app.model.framework.KStateLabel?>
+<?import com.app.model.graph.KStateLabel?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>

@@ -1,6 +1,5 @@
 package com.app.model.graph;
 
-import com.app.model.framework.Tuple;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 
 public class OriginalStruct extends KStruct<Tuple> {

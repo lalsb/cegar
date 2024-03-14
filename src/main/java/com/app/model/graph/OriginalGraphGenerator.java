@@ -1,11 +1,8 @@
-package com.app.model.framework;
+package com.app.model.graph;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.app.model.graph.KStructGenerator;
-import com.app.model.graph.OriginalStruct;
 
 public class OriginalGraphGenerator implements KStructGenerator<Tuple> {
 

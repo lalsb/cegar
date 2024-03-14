@@ -19,13 +19,10 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
-		// MX Parser
-		License.iConfirmNonCommercialUse("Linus Alsbach");
-
+		
 		// Load CSS Stylesheet
 		Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
-
+		
 		// Load the FXML file
 		StackPane rootPane = new StackPane();
 		Parent root = FXMLLoader.load(getClass().getResource("Graph.fxml"));
@@ -37,6 +34,9 @@ public class Main extends Application {
 
 		// Set up the stage
 		primaryStage.setTitle("Cegar");
+		
+		// MX Parser
+		License.iConfirmNonCommercialUse("Linus Alsbach");
 
 		// Set up error handling
 		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -60,10 +60,10 @@ public class Main extends Application {
 			});
 
 		});
-
+		
 		try{
-			primaryStage.getIcons().add(new Image(getClass().getResource("/resources/icon.png").toURI().toString()));
-		} catch (Exception e){System.out.println("Missing file \"icon.png\".");} 
+			primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("application_icon.png")));
+		} catch (Exception e){} 
 
 		primaryStage.setScene(scene);
 		primaryStage.show();

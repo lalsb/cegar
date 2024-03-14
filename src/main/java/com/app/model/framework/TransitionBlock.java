@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import com.app.model.graph.Tuple;
+
 
 /**
  * Transition block implementation that splits transition blocks by line and passes them on.

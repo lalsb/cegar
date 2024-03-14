@@ -18,16 +18,16 @@ import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.License;
 
 import com.app.model.framework.AtomicFormula;
-import com.app.model.framework.InitialAbstractionGenerator;
-import com.app.model.framework.OriginalGraphGenerator;
-import com.app.model.framework.State;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
-import com.app.model.framework.Tuple;
-import com.app.model.framework.ModelManager;
 import com.app.model.framework.Variable;
 import com.app.model.graph.AbstractStruct;
+import com.app.model.graph.InitialAbstractionGenerator;
+import com.app.model.graph.ModelManager;
+import com.app.model.graph.OriginalGraphGenerator;
 import com.app.model.graph.OriginalStruct;
+import com.app.model.graph.State;
+import com.app.model.graph.Tuple;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 
 import javafx.util.Pair;

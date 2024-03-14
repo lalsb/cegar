@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.app.model.framework.Tuple;
+import com.app.model.graph.Tuple;
 
 public class SetUtils {
 

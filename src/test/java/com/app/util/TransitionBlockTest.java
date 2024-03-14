@@ -10,7 +10,7 @@ import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Variable;
 
-class ParserTest {
+class TransitionBlockTest {
 
 	@Test
 	void simpleBlockTest() {

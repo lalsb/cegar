@@ -1,4 +1,4 @@
-package com.app.model.framework;
+package com.app.model.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.mariuszgromada.math.mxparser.Argument;
 
-import com.app.model.graph.KState;
+import com.app.model.framework.AtomicFormula;
 import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
 
 @SuppressWarnings("serial")

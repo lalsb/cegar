@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.Set;
 
 import com.app.model.exceptions.ModelInputException;
-import com.app.model.framework.KStateLabel;
-import com.app.model.framework.ModelManager;
 import com.app.model.framework.TransitionBlock;
 import com.app.model.framework.TransitionLine;
 import com.app.model.framework.Variable;
-import com.app.util.TagBox;
+import com.app.model.graph.KStateLabel;
+import com.app.model.graph.ModelManager;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -118,13 +117,13 @@ public class MainController {
 					// Fill name field
 					nameField.setText(newValue.getId());
 					// Fill intiial values field
-					initialValuesField.setText(String.join(",",
-							newValue.getInitialValues().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
-							.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
+					ArrayList<String> initsarrayls = newValue.getInitialValues().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+					.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+					initialValuesField.setText(String.join(",", initsarrayls));
 					// Fill Domain field
-					domainField.setText(String.join(",",
-							newValue.getDomain().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
-							.collect(ArrayList::new, ArrayList::add, ArrayList::addAll)));
+					ArrayList<String> initsdomainls = newValue.getDomain().stream().map(x -> String.valueOf(Double.valueOf(x).intValue()))
+							.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+					domainField.setText(String.join(",", initsdomainls));
 					// Fill case block
 					List<TransitionLine> lines = newValue.getTransitionBlock().transitions();	
 					
