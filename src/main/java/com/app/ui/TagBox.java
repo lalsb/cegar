@@ -51,7 +51,7 @@ public class TagBox extends HBox {
 		
 		// Set up list, field
 		tempTagList = FXCollections.observableArrayList();
-		inputField = MainController.createTextField(); // Selected field is monitored in MainController
+		inputField = InputController.createTextField(); // Selected field is monitored in MainController
 		inputField.setPromptText("Action.");
 		inputField.setOnAction(e -> {
 			
@@ -109,7 +109,7 @@ public class TagBox extends HBox {
 			rmbutton.setOnAction((e) -> tempTagList.remove(tag));
 			
 			// Action is Displayed in a text field
-			TextField action = MainController.createTextField(); // Selected field is monitored in MainController
+			TextField action = InputController.createTextField(); // Selected field is monitored in MainController
 			action.setText(tag);
 			getChildren().addAll(action, rmbutton);
 		}

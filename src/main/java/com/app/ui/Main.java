@@ -25,7 +25,7 @@ public class Main extends Application {
 		
 		// Load the FXML file
 		StackPane rootPane = new StackPane();
-		Parent root = FXMLLoader.load(getClass().getResource("Graph.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
 
 		rootPane.getChildren().add(root);
 		
