@@ -10,12 +10,6 @@ Dieses Repository beinhaltet eine einfache Implementierung von CEGAR (Clarke et 
 
 Es folgen eine Installationsanleitung und eine Einführung in die Bedienung.
 
-The related documentation for each sample can be found [here](https://openjfx.io/openjfx-docs/).
-
-For more information go to https://openjfx.io.
-
-
-
 Inhalt
 ---
 
@@ -37,7 +31,7 @@ wie folgt bearbeitet werden.
 `org.gradle.java.home=C:/my/path/to/jdk-21.0.2`
 
 Der enthaltene `gradle-wrapper` lädt eine aktuelle gradle-version automatisch bei
-der ersten Ausführung nach. Ist bereits eine `gradle`-Installation verhanden,
+der ersten Ausführung nach. Ist bereits eine `gradle`-Installation vorhanden,
 wird dies i. d. R erkannt.
 
 Einführung in die Bedienung<a name="instructions" />
@@ -56,7 +50,7 @@ eingetragen werden. Darauf folgen beliebig viele Transitionen, wobei mit dem
 Button `+` eine neue Zeile hinzugefügt werden kann und bestehende Zeilen mit 
 dem Button `-` entfernt werden können. Eine Transition besteht aus
 
-- `Condition` als Bedindung für die Transition,
+- `Condition` als Bedingung für die Transition,
 - `Action` als ein neuer Werte, oder eine Mengen an neuen Werten.
 
 In das Feld `Name` sollten Literale, für `Intials` und `Domain` mit Kommata 
@@ -70,7 +64,7 @@ werden, indem zunächst ein Ausdruck eingetragen und dieser mit `ENTER` bestäti
 wird. Das Feld `Action` wir durch diesen Befehl aufgeteilt, sodass ein neuer
 Ausdruck eingetragen werden kann. Jeder Ausdruck (auch der Erste, falls nur ein
 Ausdruck benötigt wird, muss mit `ENTER` bestätigt werden). Unerwünschte
-Ausdrücke können mit dem jeweiliegen Button `-` entfernt werden.
+Ausdrücke können mit dem jeweiligen Button `-` entfernt werden.
 
 Das Feld `Else` kann wie ein Feld `Action` behandelt werden. 
 
@@ -92,15 +86,15 @@ Der konkrete Graph kann mittels `Generate Original Graph` visualisiert werden.
 Die Applikation wechselt dann in den Tab Graph. Mittels `Generate Initial Abstraction`
 kann die initiale Abstraktion visualisiert werden. 
 *Achtung:* Es wird immer nur ein Graph angezeigt. Eine neue Visualisierung überschreibt
-voherige Visualisierungen.
+vorherige Visualisierungen.
 
 Die Visualisierung kann folgendermaßen untersucht werden.
 
 - `Verschiebung der Ebene` durch Halten der rechten Maustaste und Ziehen.
 - `Verschiebung eines Knotens` durch Halten der linken Maustaste und Ziehen.
 - `Zoomen` durch Scrollen des Mausrades.
-- `Umschalten des automatischen Layout` mit dem Button `Automatic Layout`.
-- `Umschalten der Label-Modi` mit dem Menü `Dispaly Label`.
+- `Umschalten des automatischen Layouts` mit dem Button `Automatic Layout`.
+- `Umschalten der Label-Modi` mit dem Menü `Display Label`.
 
 Da kein Model-Checker angebunden ist, können Gegenbeispiele manuell eingetragen
 werden, wobei endliche Pfade in `finite Part` eingetragen werden. Dabei wird
