@@ -1,12 +1,8 @@
 CEGAR
 ===
 
-
-
-Beschreibung
----
-
-Dieses Repository beinhaltet eine einfache Implementierung von CEGAR (Clarke et al., 2023).
+Dieses Repository beinhaltet eine einfache Implementierung von [CEGAR](https://doi.org/10.1145/876638.876643)
+aus (Clarke et al., 2023).
 
 Es folgen eine Installationsanleitung und eine Einführung in die Bedienung.
 
@@ -30,9 +26,9 @@ wie folgt bearbeitet werden.
 
 `org.gradle.java.home=C:/my/path/to/jdk-21.0.2`
 
-Der enthaltene `gradle-wrapper` lädt eine aktuelle gradle-version automatisch bei
+Der enthaltene `gradle-wrapper` lädt eine aktuelle Gradle-version automatisch bei
 der ersten Ausführung nach. Ist bereits eine `gradle`-Installation vorhanden,
-wird dies i. d. R erkannt.
+wird dies in der Regel berücksichtigt.
 
 Einführung in die Bedienung<a name="instructions" />
 ---
@@ -51,15 +47,15 @@ Button `+` eine neue Zeile hinzugefügt werden kann und bestehende Zeilen mit
 dem Button `-` entfernt werden können. Eine Transition besteht aus
 
 - `Condition` als Bedingung für die Transition,
-- `Action` als ein neuer Werte, oder eine Mengen an neuen Werten.
+- `Action` als ein neuer Wert, oder eine Mengen an neuen Werten.
 
-In das Feld `Name` sollten Literale, für `Intials` und `Domain` mit Kommata 
-separierte Werte eingetragen werden. In `Condition` können Prädikate und in
-`Action` arithmetische Ausdrücke eingetragen werden. Dabei kann können die
+In das Feld `Name` sollten Literale, in `Intials` und `Domain` mit Kommata 
+separierte numerische Werte eingetragen werden. In `Condition` können Prädikate
+und in `Action` arithmetische Ausdrücke eingetragen werden. Dabei kann können die
 Tastatur oder die Buttons für boolesche Operatoren und Relationen verwendet
-werden. Wahrheitswerte werden als 0 (falsch) und 1 (wahr) eingetragen.
+werden. Wahrheitswerte werden als 0 ( falsch ) und 1 ( wahr ) eingetragen.
 
-*Besonderheit:* In `Action` können mehrere arithmetische Ausdrücke eingetragen
+**Besonderheit:** In `Action` können mehrere arithmetische Ausdrücke eingetragen
 werden, indem zunächst ein Ausdruck eingetragen und dieser mit `ENTER` bestätigt
 wird. Das Feld `Action` wir durch diesen Befehl aufgeteilt, sodass ein neuer
 Ausdruck eingetragen werden kann. Jeder Ausdruck (auch der Erste, falls nur ein
@@ -77,8 +73,7 @@ kann mittels linker Maustaste angewählt und in das Formular geladen werden. Ein
 Der Button `Delete` löscht den ausgewählten Tabelleneintrag, `Clear` leert nur
 die Felder des Formulars für eine neue Eingabe. 
 
-Alle Tabelleneinträge können mittels `Load` und `Save` serialisiert und
-deserialisiert werden.
+Die Tabelle kann mittels `Load` und `Save` serialisiert und deserialisiert werden.
 
 ### Ausführung
 
@@ -92,8 +87,8 @@ Die Visualisierung kann folgendermaßen untersucht werden.
 
 - `Verschiebung der Ebene` durch Halten der rechten Maustaste und Ziehen.
 - `Verschiebung eines Knotens` durch Halten der linken Maustaste und Ziehen.
-- `Zoomen` durch Scrollen des Mausrades.
-- `Umschalten des automatischen Layouts` mit dem Button `Automatic Layout`.
+- `Zoomen` durch Scrollen des Mausrades,
+- `Umschalten des automatischen Layouts` mit dem Button `Automatic Layout`,
 - `Umschalten der Label-Modi` mit dem Menü `Display Label`.
 
 Da kein Model-Checker angebunden ist, können Gegenbeispiele manuell eingetragen
@@ -109,7 +104,9 @@ kann mit `Refine abstraction` eine Verfeinerung generiert werden.
 Beispiele<a name="examples" />
 ---
 
-### SquentialIncrement-Beispiel aus Clarke et al., S. 760
+Die Beispiele befinden sich in `cegar/resources/`.
+
+### SquentialIncrement-Beispiel (s. Clarke et al., S. 760)
 
 Das Beispiel kann mittels `Load -> SquentialIncrement.ser` geladen werden.
 
@@ -120,18 +117,19 @@ Mögliche fehlerhafte Gegenbeispiele sind:
 - 1,4,5,2
 - 1 && 4,5,0
 
-### IllegalInpit-Beispiel (eigenes Beispiel)
+### IllegalInput-Beispiel 
 
 Das Beispiel kann mittels `Load -> IllegalInput.ser` geladen werden.
+
 Es ist syntaktisch richtig, hat aber einen semantischen Fehler. So
 kann die Fehlerbehandlung mittels `ModelInputException` gezeigt werden.
 
 
-### Elevator-Beispiel (eigenes Beispiel)
+### Elevator-Beispiel (s. Beispiel 2)
 
-Das Beispiel kann mittels `Load -> elevator.ser` geladen werden. Es
-veranschaulicht das Fahrstuhlsystem aus Beispiel 2 (Dort wurde die
-manuelle Abstraktion manuell berechnet).
+Das Beispiel kann mittels `Load -> Elevator.ser` geladen werden. Es
+veranschaulicht das Fahrstuhlsystem aus Beispiel 2.
+
 
 Die Implementierung verwendet die Bibliothek [Smartgraph](https://github.com/brunomnsilva/JavaFXSmartGraph) für die Visualisierung 
 und [mXParser](https://mathparser.org/mxparser-license/) für die Auswertung von Ausdrücken, sowie [AtlantaFX](https://mkpaz.github.io/atlantafx/) für die UI.
