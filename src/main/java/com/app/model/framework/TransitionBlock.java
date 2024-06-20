@@ -52,8 +52,6 @@ public class TransitionBlock implements Serializable{
 		List<AtomicFormula> atomicFormulas = new ArrayList<AtomicFormula>();
 		
 		for(TransitionLine transition: transitions) {
-			System.out.println("The transition line" + transition +  "is handeled:");
-			System.out.println("transition.getAtomicFormulas() is null?: " + (transition.getAtomicFormulas() == null) + " ends.");
 			atomicFormulas.addAll(transition.getAtomicFormulas());
 		}	
 		return atomicFormulas;

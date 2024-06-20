@@ -4,6 +4,7 @@ plugins {
 	id 'jacoco'
 	id 'eclipse'
 	id 'org.beryx.jlink' version '2.26.0'
+	id 'java'
 }
 
 repositories {
@@ -51,6 +52,24 @@ test {
 
 
 mainClassName = 'com.app.ui.Main'
+
+jar {
+	duplicatesStrategy(DuplicatesStrategy.WARN) // richtig
+    manifest {
+        attributes 'Main-Class': 'com.app.ui.Launcher'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        // falsch: tasks.withType(Copy).all { duplicatesStrategy 'warn' }
+    }
+    
+    from('src/main/java') {
+    	include  '**/*.properties'
+    	include  '**/*.xml'
+    	include  '**/*.css'
+   }
+}
+
 
 
 run {

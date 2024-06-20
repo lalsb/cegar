@@ -50,10 +50,9 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 	public AbstractStruct generateStruct() {
 		
 		struct = new AbstractStruct();
-		
 		begin();
 		while(nextEvents());
-		
+		System.out.println("generated intial abstraction graph");
 		return struct;
 		
 	}
@@ -101,7 +100,7 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 
 	@SuppressWarnings("unchecked")
 	public boolean nextEvents() {
-
+		
 		// Entire partition 
 		List<Set<Set<Tuple>>> partition = new ArrayList<Set<Set<Tuple>>>();
 
@@ -109,18 +108,13 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 		for(FormulaCluster currentCluster: formulaClusters) {
 			Set<Set<Tuple>> equivalenceClass = currentCluster.generatePartition();
 
-			for(Set<Tuple> printlist: equivalenceClass) {
-				System.out.println(printlist + " # = " + printlist.size());
-			}
-
-
 			partition.add(equivalenceClass);
 		}
+		
+		System.out.println("generated partition clusters");
 
 		// Cartesian product of all equivalence classes from each formula Cluster
 		Set<Set<Tuple>> equivalenceCombinations = SetUtils.cartesianProduct(partition.toArray(new Set[0]));
-
-		System.out.println("\nGenerating states:");
 
 		for(Set<Tuple> combination: equivalenceCombinations) {
 
@@ -143,11 +137,8 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 
 			addNode(s);
 		}
-
-		System.out.println("\nGenerating edges: ");
-		ImageMap.forEach((k,v) -> {
-			System.out.println(k + "~" + v.getId());
-		});
+		
+		System.out.println("generated states");
 
 		ListIterator<State> iterator = states.listIterator();
 
@@ -175,6 +166,8 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 				addEdge(from, to);
 			}
 		}
+		
+		System.out.println("generated edges");
 
 		return false; // finished
 	}
@@ -186,11 +179,6 @@ public class InitialAbstractionGenerator implements KStructGenerator<State> {
 	protected void addNode(State state) {
 		states.add(state);
 		struct.insertVertex(state);
-
-		if(state.isInitial()) {
-			System.out.println("Found intial state: " + state.getId() + " (tuples: " + state.getInverseImage() + ")");
-		}
-
 	}
 
 	/**

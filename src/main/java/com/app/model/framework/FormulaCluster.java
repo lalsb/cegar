@@ -49,7 +49,6 @@ public class FormulaCluster {
 	}
 
 	public Set<Set<Tuple>> generatePartition() {
-		System.out.println("\nGenerating partition for cluster: " + variableIds + " with formulas: " + atomicFormulas);
 		
 		// Generate Map
 		variableValues = new HashMap<>();

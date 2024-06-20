@@ -31,10 +31,9 @@ public class OriginalGraphGenerator implements KStructGenerator<Tuple> {
 	public OriginalStruct generateStruct() {
 		
 		struct = new OriginalStruct();
-		
 		begin();
 		while(nextEvents());
-		
+		System.out.println("generated original graph");
 		return struct;
 	}
 
@@ -42,7 +41,6 @@ public class OriginalGraphGenerator implements KStructGenerator<Tuple> {
 		
 		unaudited.addAll(ModelManager.getInitialTuples()); // Get initial tuples
 		
-		System.out.println("\nGenerating original graph, starting with intials: " + unaudited + "\n");
 	}
 
 	public boolean nextEvents() {
@@ -55,8 +53,6 @@ public class OriginalGraphGenerator implements KStructGenerator<Tuple> {
 		
 		current = i.next();
 		addNode(current);
-		System.out.println("Current: " + current);
-		System.out.println("Audited: " + audited);
 		
 		for(Tuple result: ModelManager.getImage(current)){
 			
@@ -72,12 +68,8 @@ public class OriginalGraphGenerator implements KStructGenerator<Tuple> {
 		found.removeAll(audited);
 		unaudited.addAll(found);
 		
-		System.out.println("> Found: " + found);
-		System.out.println("> Todo : " + unaudited);
-		System.out.println("----------------------------------------------------------------------------");
-
-		
 		found.clear();
+		
 		return true;
 	}
 

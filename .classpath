@@ -1,24 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="bin/main" path="src/main/java">
+	<classpathentry kind="output" path="bin/default"/>
+	<classpathentry output="bin/main" kind="src" path="src/main/java">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="bin/test" path="src/test/java">
+	<classpathentry output="bin/main" kind="src" path="src/main/resources">
 		<attributes>
-			<attribute name="test" value="true"/>
+			<attribute name="gradle_scope" value="main"/>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry output="bin/test" kind="src" path="src/test/java">
+		<attributes>
 			<attribute name="gradle_scope" value="test"/>
 			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17/">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21/"/>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/com.jfoenix/jfoenix/9.0.10/d263470fec5271c6d835892a2069e64d3b36cb4b/jfoenix-9.0.10-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/com.jfoenix/jfoenix/9.0.10/a7625792db8d15615ea6eebbc31e01504f20b2df/jfoenix-9.0.10.jar">
 		<attributes>
-			<attribute name="module" value="true"/>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
-	<classpathentry kind="output" path="bin/default"/>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/com.brunomnsilva/smartgraph/1.0.0/4cdd1d70e4ff25994da39c05b3b136e3a2605837/smartgraph-1.0.0-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/com.brunomnsilva/smartgraph/1.0.0/98d09aab2daa61cfa9bc3c1ef38ba0484dee3ba7/smartgraph-1.0.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.mariuszgromada.math/MathParser.org-mXparser/5.2.1/f14a6787dc92bd02844576e132177a9a502ee7ad/MathParser.org-mXparser-5.2.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.mariuszgromada.math/MathParser.org-mXparser/5.2.1/5d53c4256d6d37fd78c6ea507678c08ba441b847/MathParser.org-mXparser-5.2.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-core/1.5.2/3878883ec60de666b1f157789d70e44d2d93247a/jgrapht-core-1.5.2-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-core/1.5.2/bea9b92d4ff37111f8e3d58cd8cf0714e5c83774/jgrapht-core-1.5.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/io.github.mkpaz/atlantafx-base/2.0.1/7f10209b7d3c1def4d725a38eebfa8f7673854b/atlantafx-base-2.0.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/io.github.mkpaz/atlantafx-base/2.0.1/51d2bfa35150921fe5b8b5e3c1a1bf78a6d57684/atlantafx-base-2.0.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-fxml/21.0.2/851e3776478f084df12d1fe3788625fd127ba7d6/javafx-fxml-21.0.2-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-fxml/21.0.2/e1e47aa357bedb99dfcf7a1ae402030ca438a879/javafx-fxml-21.0.2-win.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/21.0.2/a6d7f2c978eb170e5de809ec55289431294571c4/javafx-controls-21.0.2-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-controls/21.0.2/76c2c5b29a08edfbf56266079fcefb8c490b4a49/javafx-controls-21.0.2-win.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.jheaps/jheaps/0.14/1597703286917d4cc34b288428aa8ec67eac0942/jheaps-0.14-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.jheaps/jheaps/0.14/2f97e59108979ba44e71ab1f8166722e62bc6d96/jheaps-0.14.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.apfloat/apfloat/1.10.1/3ddf96f12a1aed1f4520539e729605f095f80746/apfloat-1.10.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.apfloat/apfloat/1.10.1/a32c54f97317c72c9377bb4f2cdecd52fe6329a/apfloat-1.10.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/21.0.2/5f346538f68b9ee6a452cc23730d9f8a3a6c5518/javafx-graphics-21.0.2-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/21.0.2/e5d2f774d53e2ad0aa13057c82b3ff09f515e200/javafx-graphics-21.0.2-win.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/21.0.2/9b03450d769ba7296653735145e66bdef7f8417f/javafx-base-21.0.2-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-base/21.0.2/7b3bb793fde4402c0eeb5204c08597c6be30362e/javafx-base-21.0.2-win.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-commons/1.8.1/386b61876dd33d0ef0381189d3c1db9455d99659/junit-platform-commons-1.8.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-commons/1.8.1/1e362cbe6d0f225b066757865e233972557484/junit-platform-commons-1.8.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-api/5.8.1/a3e13f34a2a47fb2c0d7385c5e6e0e8623194061/junit-jupiter-api-5.8.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-api/5.8.1/6538b88eb8bf8811bc7b6efb5246f835c15e0bfe/junit-jupiter-api-5.8.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.assertj/assertj-core/3.25.3/227e1a8a29851120c8fcfecf5f329135a0311308/assertj-core-3.25.3-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.assertj/assertj-core/3.25.3/792b270e73aa1cfc28fa135be0b95e69ea451432/assertj-core-3.25.3.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.opentest4j/opentest4j/1.2.0/41d55b3c2254de9837b4ec8923cbd371b8a7eab5/opentest4j-1.2.0-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.opentest4j/opentest4j/1.2.0/28c11eb91f9b6d8e200631d46e20a7f407f2a046/opentest4j-1.2.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.apiguardian/apiguardian-api/1.1.2/e0787a997746ac32639e0bf3cb27af8dce8a3428/apiguardian-api-1.1.2-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.apiguardian/apiguardian-api/1.1.2/a231e0d844d2721b0fa1b238006d15c6ded6842a/apiguardian-api-1.1.2.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value=""/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.14.11/67010508a95b30eff7fc6f8ffe16b6d03fc57b99/byte-buddy-1.14.11-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.14.11/725602eb7c8c56b51b9c21f273f9df5c909d9e7d/byte-buddy-1.14.11.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-launcher/1.8.1/c402dbc15f998e67966816133fcc49196faa8aa3/junit-platform-launcher-1.8.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-launcher/1.8.1/c77eab66c4c4ef92ce6bd2175a5184771ff1d0dd/junit-platform-launcher-1.8.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-engine/1.8.1/9d87ea7959823714ad803aa91e0618bf2213b52c/junit-platform-engine-1.8.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-engine/1.8.1/e6c63bf990dc88a6527b4ed617b23e47048f07e0/junit-platform-engine-1.8.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-engine/5.8.1/ea87fe3d752e24397f71f347872e79a89c61a704/junit-jupiter-engine-5.8.1-sources.jar" kind="lib" path="C:/Users/linus/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-engine/5.8.1/21b86e08aae2720bbf017703669948be96d1388c/junit-jupiter-engine-5.8.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="test"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 </classpath>

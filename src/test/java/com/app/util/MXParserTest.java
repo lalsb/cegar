@@ -103,9 +103,6 @@ class MXParserTest {
 		e.addArguments(arguments);
 		
 		Double result = e.calculate();
-		
-		System.out.println(result);
-		
 	}
 		
 }

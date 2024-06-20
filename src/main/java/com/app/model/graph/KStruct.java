@@ -1,15 +1,22 @@
 package com.app.model.graph;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.app.model.exceptions.ModelStateException;
 import com.app.model.framework.Variable;
+import com.app.ui.Main;
 import com.brunomnsilva.smartgraph.graph.DigraphEdgeList;
 import com.brunomnsilva.smartgraph.graph.Vertex;
 import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel;
+import com.brunomnsilva.smartgraph.graphview.SmartGraphProperties;
 import com.brunomnsilva.smartgraph.graphview.SmartGraphVertexNode;
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy;
 import com.brunomnsilva.smartgraph.graphview.SmartStylableNode;
@@ -53,9 +60,24 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 	public SmartGraphPanel<T, String> getSmartGraphView() {
 
 		validate();
+		
+		URI uri = null;
+		URI uri2 = null;
+		InputStream inputStream = null;
+		
+		try {
+			uri = Main.class.getClassLoader().getResource("smartgraph.css").toURI();
+			uri2 = Main.class.getClassLoader().getResource("smartgraph.properties").toURI();
+			inputStream = uri2.toURL().openStream();
+		} catch (URISyntaxException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		SmartGraphProperties properties = new SmartGraphProperties(inputStream);
 
 		SmartPlacementStrategy strategy = new SmartCircularSortedPlacementStrategy();
-		SmartGraphPanel<T, String> graphPanel = new SmartGraphPanel<T, String>(this, strategy);
+		SmartGraphPanel<T, String> graphPanel = new SmartGraphPanel<T, String>(this, properties, strategy, uri);
 		graphPanel.setAutomaticLayout(true);
 
 		vertices().forEach(v -> {
@@ -86,12 +108,12 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 	 */
 	public void validate() {
 		if (numVertices() == 0) {
-			throw new ModelStateException("Set of states S is empty.");
+			throw new ModelStateException("set of states is empty");
 		}
-
+		
 		validateLeftTotalRelation();
 
-		System.out.println("The Kripke structure satifies all formal properties.");
+		System.out.println("checked kripke properties");
 	}
 
 	/**
@@ -102,7 +124,7 @@ public abstract class KStruct<T extends KState> extends DigraphEdgeList<T, Strin
 
 		for(Vertex<T> v: vertices()) {
 			if(outboundEdges(v).isEmpty()) {
-				throw new ModelStateException(String.format("State %s does not satisfy the left total property.", v.element().getId()));
+				throw new ModelStateException(String.format("state %s does not satisfy the left total property", v.element().getId()));
 			}
 		}
 	}

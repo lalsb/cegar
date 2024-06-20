@@ -194,20 +194,18 @@ public class ModelManager{
 
 		// Assertions, validate parameters
 		if(!isValid(finitePath, abstractionGraph)) {
-			throw new IllegalArgumentException("There appears to be a problem in validating your path.");
+			throw new IllegalArgumentException("There appears to be a problem in validating your path");
 		}
 
 		// Assertions, validate parameters
 		if(abstractionGraph == null) {
-			throw new IllegalArgumentException("The graph appears to be missing. ");
+			throw new IllegalArgumentException("The graph appears to be missing");
 		}
 
 		assert finitePath.size() > 1;
 		assert getInitialTuples().size() > 0;
 		assert abstractionGraph.getNode(finitePath.get(0)).isInitial();
 		assert !abstractionGraph.getNode(finitePath.get(0)).isEmpty();
-
-		System.out.println("\nComputing SplitPATH for " + finitePath + "\n");
 
 		// Set up S, j, S_prev
 		Set<Tuple> prevS = new HashSet<Tuple>();
@@ -216,23 +214,18 @@ public class ModelManager{
 		assert !currS.isEmpty();	
 		int j = 1;
 
-		System.out.println("S° = " + currS);
-
 		while(!currS.isEmpty() && j < finitePath.size()) {
 
 			prevS = new HashSet<Tuple>(currS);
 			Set<Tuple> inverseImage = new HashSet<Tuple>((Set<Tuple>) abstractionGraph.getNode(finitePath.get(j)).getInverseImage());
 
-			System.out.println("----------------------------------------------------------------------------");
-			System.out.print(String.format("S(%d) = Img() = %s -- h^-1(%d) = %s", j, getImage(currS), j, inverseImage));
-
 			inverseImage.retainAll(getImage(currS));	
 			currS = inverseImage;
 
-			System.out.println(" = " + currS);
-
 			j++;
 		}
+		
+		System.out.println("finished splitpath");
 
 		if(!currS.isEmpty()){ // if S != {} the counterexample exists  
 			return null;
@@ -293,9 +286,6 @@ public class ModelManager{
 
 	public boolean isValid(List<String> finitePath, AbstractStruct graph) {
 
-
-		System.out.print("Checking Path: " + finitePath + " : ");
-
 		if(finitePath == null || finitePath.isEmpty() || graph == null) {
 			return false;
 		}
@@ -307,22 +297,22 @@ public class ModelManager{
 		if(prev == null) return false;
 
 		if(!prev.isInitial()) {
-			System.out.println("First node " + prev + " with " + prev.getInverseImage() + " is not initial.");
 			return false;
 		}
+		
 		while(i.hasNext()) {
 
 			State next = graph.getNode(i.next());		
 			if(next == null) return false;
 
 			if(!graph.areAdjacent(graph.getNode(prev), graph.getNode(next))) {
-				System.out.println("No edge from node " + prev.getId() + " to node " + next.getId() + ".");
 				return false;
 			}
+			
 			prev = next;
 		}
 
-		System.out.println("Valid.");
+		System.out.println("valid");
 		return true;
 
 	}
@@ -405,10 +395,6 @@ public class ModelManager{
 
 		abstractionGraph.insertVertex(n);
 
-		System.out.println("Old node " + old.getId() + "'s inverse image: " + old.getInverseImage());
-		System.out.println("New node " + n.getId() + "'s inverse image: " + n.getInverseImage());
-
-
 		List<Vertex<State>> reevaluate = new ArrayList<Vertex<State>>();
 		reevaluate.add(abstractionGraph.getNode(old));
 		reevaluate.add(abstractionGraph.getNode(n));
@@ -426,6 +412,8 @@ public class ModelManager{
 		}
 
 		abstractionGraph.reevaluateEdges(reevaluate);
+		
+		System.out.println("refined graph");
 
 		return abstractionGraph;
 

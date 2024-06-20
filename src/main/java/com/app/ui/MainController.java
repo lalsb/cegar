@@ -132,7 +132,7 @@ public class MainController {
 			if(graphPanel != null)
 				graphPanel.init();});
 
-		System.out.println("Finished handleGenerateOriginalGraph");
+		System.out.println("visualized original graph");
 	}
 
 	@FXML
@@ -176,6 +176,8 @@ public class MainController {
 		graphPanel.setAutomaticLayout(true);
 
 		Platform.runLater(() -> {graphPanel.init();});
+		
+		System.out.println("visualized abstract graph");
 	}
 
 	/**
@@ -189,18 +191,16 @@ public class MainController {
 
 		if(loopField.getText().isBlank()) {
 			result = manager.splitPath(finitePath);
-			System.out.println("-> Checking finite Path");
 		} else {
 			result = manager.splitLoop(finitePath,loopingPath);
-			System.out.println("-> Checking infinite Path");
 		}
 
 		if(result == null) {
-			System.out.println("Path corresponds to real counterexampe");
 		} else {
-			System.out.println("Counterexample Path spurious. Failure State:" + result.getKey() + ", S = " + result.getValue());
 			refineButton.setDisable(false);
 		}
+		
+		System.out.println("checked path");
 	}
 
 	/**
